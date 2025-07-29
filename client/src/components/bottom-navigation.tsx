@@ -6,7 +6,6 @@ export default function BottomNavigation() {
 
   const navItems = [
     { href: "/", icon: Home, label: "หน้าหลัก" },
-    { href: "/menu", icon: UtensilsCrossed, label: "เมนู" },
     { href: "/orders", icon: Receipt, label: "คำสั่งซื้อ" },
     { href: "/admin", icon: User, label: "แอดมิน" },
   ];

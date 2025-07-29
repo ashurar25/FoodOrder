@@ -34,7 +34,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create default food items
       const createdCategories = await storage.getCategories(restaurant.id);
-      
+
       // Find categories by name
       const meatballCategory = createdCategories.find(c => c.name === "ลูกชิ้น");
       const foodCategory = createdCategories.find(c => c.name === "อาหาร");
@@ -43,13 +43,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Sample meatball items
       if (meatballCategory) {
         const meatballItems = [
-          { name: "ลูกชิ้นปลา", description: "ลูกชิ้นปลาสด เนื้อเนียนนุ่ม", price: "25.00", imageUrl: "https://images.unsplash.com/photo-1563379091339-03246963d96c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นหมู", description: "ลูกชิ้นหมูแท้ รสชาติกลมกล่อม", price: "20.00", imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นกุ้ง", description: "ลูกชิ้นกุ้งแท้ เนื้อกุ้งชิ้นใหญ่", price: "35.00", imageUrl: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นเนื้อ", description: "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน", price: "30.00", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นปลาหมึก", description: "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว", price: "28.00", imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: meatballCategory.id, restaurantId: restaurant.id }
+          { name: "ลูกชิ้นหมู", description: "ลูกชิ้นหมูสด เนื้อแน่น รสชาติเข้มข้น", price: "25", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นเนื้อ", description: "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน", price: "30", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นปลาหมึก", description: "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว", price: "28", imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นปลา", description: "ลูกชิ้นปลาสดใหม่ หวานหอม", price: "27", imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นกุ้ง", description: "ลูกชิ้นกุ้งแท้ เนื้อกุ้งแน่น", price: "35", imageUrl: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: meatballCategory.id, restaurantId: restaurant.id }
         ];
-        
+
         for (const item of meatballItems) {
           await storage.createFoodItem(item);
         }
@@ -64,7 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { name: "แกงเขียวหวานไก่", description: "แกงเขียวหวานไก่ เผ็ดร้อน", price: "50.00", imageUrl: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: foodCategory.id, restaurantId: restaurant.id },
           { name: "ส้มตำไทย", description: "ส้มตำไทยแซ่บ เผ็ดจี๊ดจ๊าด", price: "35.00", imageUrl: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: foodCategory.id, restaurantId: restaurant.id }
         ];
-        
+
         for (const item of foodItems) {
           await storage.createFoodItem(item);
         }
@@ -73,13 +73,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Sample drink items
       if (drinkCategory) {
         const drinkItems = [
-          { name: "ชาไทย", description: "ชาไทยเข้มข้น หอมหวาน", price: "15.00", imageUrl: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "กาแฟเย็น", description: "กาแฟโบราณ หอมกรุ่น", price: "18.00", imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "น้ำมะนาว", description: "น้ำมะนาวสด เปรี้ยวหวาน", price: "12.00", imageUrl: "https://images.unsplash.com/photo-1621263764928-df1444c5e859?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "น้ำปั่น", description: "น้ำปั่นผลไม้รวม สดชื่น", price: "25.00", imageUrl: "https://images.unsplash.com/photo-1570197788417-0e82375c9371?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "น้ำแข็งใส", description: "น้ำดื่มแข็งใส เย็นฉ่ำ", price: "8.00", imageUrl: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.0", categoryId: drinkCategory.id, restaurantId: restaurant.id }
+          { name: "น้ำส้ม", description: "น้ำส้มคั้นสด เซาต์จัด", price: "15", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "ชาเย็น", description: "ชาเย็นหอมหวาน รสชาติเข้มข้น", price: "18", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "กาแฟเย็น", description: "กาแฟเย็นเข้มข้น หอมกรุ่น", price: "20", imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำแข็งใส", description: "น้ำแข็งใสเย็นชื่นใจ", price: "10", imageUrl: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำมะนาว", description: "น้ำมะนาวสด เซาต์เปรี้ยว", price: "12", imageUrl: "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: drinkCategory.id, restaurantId: restaurant.id }
         ];
-        
+
         for (const item of drinkItems) {
           await storage.createFoodItem(item);
         }
@@ -146,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!restaurant) {
         return res.status(404).json({ message: "Restaurant not found" });
       }
-      
+
       const categoryId = req.query.categoryId as string;
       const foodItems = await storage.getFoodItems(restaurant.id, categoryId);
       res.json(foodItems);
@@ -161,12 +161,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!restaurant) {
         return res.status(404).json({ message: "Restaurant not found" });
       }
-      
+
       const query = req.query.q as string;
       if (!query) {
         return res.status(400).json({ message: "Search query is required" });
       }
-      
+
       const foodItems = await storage.searchFoodItems(restaurant.id, query);
       res.json(foodItems);
     } catch (error) {
@@ -249,7 +249,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/orders", async (req, res) => {
     try {
       const { items, total } = req.body;
-      
+
       if (!items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ message: "Order items are required" });
       }
