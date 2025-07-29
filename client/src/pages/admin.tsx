@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "wouter";
@@ -21,7 +20,7 @@ export default function Admin() {
     subtitle: "",
     imageUrl: "",
   });
-  
+
   const [newFoodItem, setNewFoodItem] = useState({
     name: "",
     description: "",
@@ -193,49 +192,14 @@ export default function Admin() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
-        {/* Banner Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              จัดการแบนเนอร์โปรโมชั่น
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    เพิ่มแบนเนอร์
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>เพิ่มแบนเนอร์ใหม่</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="ชื่อแบนเนอร์"
-                      value={newBanner.title}
-                      onChange={(e) => setNewBanner({ ...newBanner, title: e.target.value })}
-                    />
-                    <Input
-                      placeholder="คำอธิบาย"
-                      value={newBanner.subtitle}
-                      onChange={(e) => setNewBanner({ ...newBanner, subtitle: e.target.value })}
-                    />
-                    <Input
-                      placeholder="URL รูปภาพ"
-                      value={newBanner.imageUrl}
-                      onChange={(e) => setNewBanner({ ...newBanner, imageUrl: e.target.value })}
-                    />
-                    <Button 
-                      onClick={handleCreateBanner} 
-                      className="w-full"
-                      disabled={createBannerMutation.isPending}
-                    >
-                      {createBannerMutation.isPending ? "กำลังเพิ่ม..." : "เพิ่มแบนเนอร์"}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </CardTitle>
+          {/* Banner Management */}
+          <Card className="bg-white/70 backdrop-blur-md border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-pink-500/10 to-rose-500/10 rounded-t-lg">
+              <CardTitle className="flex items-center justify-between text-slate-800">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                  <span>จัดการแบนเนอร์โปรโมชั่น</span>
+                </div></CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-80 overflow-y-auto">
@@ -269,70 +233,14 @@ export default function Admin() {
           </CardContent>
         </Card>
 
-        {/* Food Item Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              จัดการรายการอาหาร
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    เพิ่มอาหาร
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>เพิ่มรายการอาหารใหม่</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="ชื่ออาหาร"
-                      value={newFoodItem.name}
-                      onChange={(e) => setNewFoodItem({ ...newFoodItem, name: e.target.value })}
-                    />
-                    <Textarea
-                      placeholder="คำอธิบาย"
-                      value={newFoodItem.description}
-                      onChange={(e) => setNewFoodItem({ ...newFoodItem, description: e.target.value })}
-                    />
-                    <Input
-                      placeholder="ราคา (บาท)"
-                      type="number"
-                      value={newFoodItem.price}
-                      onChange={(e) => setNewFoodItem({ ...newFoodItem, price: e.target.value })}
-                    />
-                    <Select 
-                      value={newFoodItem.categoryId} 
-                      onValueChange={(value) => setNewFoodItem({ ...newFoodItem, categoryId: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="เลือกหมวดหมู่" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.icon} {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      placeholder="URL รูปภาพ"
-                      value={newFoodItem.imageUrl}
-                      onChange={(e) => setNewFoodItem({ ...newFoodItem, imageUrl: e.target.value })}
-                    />
-                    <Button 
-                      onClick={handleCreateFoodItem} 
-                      className="w-full"
-                      disabled={createFoodItemMutation.isPending}
-                    >
-                      {createFoodItemMutation.isPending ? "กำลังเพิ่ม..." : "เพิ่มรายการอาหาร"}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </CardTitle>
+          {/* Food Item Management */}
+          <Card className="bg-white/70 backdrop-blur-md border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-t-lg">
+              <CardTitle className="flex items-center justify-between text-slate-800">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span>จัดการรายการอาหาร</span>
+                </div></CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-80 overflow-y-auto">

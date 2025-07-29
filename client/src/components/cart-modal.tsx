@@ -48,13 +48,20 @@ export default function CartModal({
       return apiRequest("POST", "/api/orders", {
         items: orderItems,
         total,
+        customerName: customerName.trim(),
+        tableNumber: tableNumber.trim(),
+        notes: orderNotes.trim() || undefined,
       });
     },
     onSuccess: () => {
       toast({
         title: "สำเร็จ!",
-        description: "สั่งซื้อเรียบร้อยแล้ว",
+        description: `สั่งซื้อเรียบร้อยแล้ว โต๊ะ ${tableNumber}`,
       });
+      // Clear form
+      setCustomerName("");
+      setTableNumber("");
+      setOrderNotes("");
       onClose();
       // Clear cart (this would typically be handled by parent component)
       items.forEach(item => onRemoveItem(item.foodItemId));
@@ -116,19 +123,81 @@ export default function CartModal({
               ))}
             </div>
 
-            <div className="border-t border-gray-200 pt-4 mb-4">
+            <div className="border-t border-gray-200 pt-4 mb-6">
               <div className="flex justify-between items-center">
                 <span className="font-semibold">รวมทั้งสิ้น</span>
                 <span className="font-bold text-xl text-primary">฿{total.toFixed(0)}</span>
               </div>
             </div>
 
+            {/* Customer Information Form */}
+            <div className="space-y-4 mb-6">
+              <h3 className="font-semibold text-gray-800 mb-3">ข้อมูลการสั่งซื้อ</h3>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ชื่อผู้สั่ง <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="กรุณากรอกชื่อ"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  หมายเลขโต๊ะ <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={tableNumber}
+                  onChange={(e) => setTableNumber(e.target.value)}
+                  placeholder="เช่น A1, B2, C3"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  หมายเหตุ (ไม่บังคับ)
+                </label>
+                <textarea
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                  placeholder="ความต้องการพิเศษ เช่น ไม่ใส่ผักชี, เผ็ดน้อย"
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
+                />
+              </div>
+            </div>
+
             <Button 
-              onClick={() => checkoutMutation.mutate()}
+              onClick={() => {
+                if (!customerName.trim()) {
+                  toast({
+                    title: "ข้อผิดพลาด",
+                    description: "กรุณากรอกชื่อผู้สั่ง",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                if (!tableNumber.trim()) {
+                  toast({
+                    title: "ข้อผิดพลาด", 
+                    description: "กรุณากรอกหมายเลขโต๊ะ",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                checkoutMutation.mutate();
+              }}
               disabled={checkoutMutation.isPending}
-              className="w-full bg-primary text-white py-4 rounded-2xl font-semibold hover:bg-primary/90 transition-colors"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-4 rounded-2xl font-semibold hover:from-primary/90 hover:to-primary/70 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              {checkoutMutation.isPending ? "กำลังสั่งซื้อ..." : "สั่งซื้อ"}
+              {checkoutMutation.isPending ? "กำลังสั่งซื้อ..." : "ยืนยันการสั่งซื้อ"}
             </Button>
           </>
         )}
