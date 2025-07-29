@@ -349,7 +349,13 @@ export default function Home() {
           </div>
         </div>
         
-        <Footer restaurant={restaurant} />
+        <Footer restaurant={restaurant ? {
+          name: restaurant.name,
+          description: restaurant.description || '',
+          phone: '02-123-4567',
+          address: 'กรุงเทพฯ 10110',
+          hours: 'เปิดทุกวัน 08:00 - 22:00'
+        } : undefined} />
       </div>
 
       {/* Add to Cart Toast */}

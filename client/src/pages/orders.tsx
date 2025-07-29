@@ -52,70 +52,67 @@ export default function Orders() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4 min-h-screen bg-soft-mint">
-      <div className="mb-6">
+    <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-100 p-4 mb-4">
         <Link href="/">
-          <Button variant="ghost" className="mb-4">
+          <Button variant="ghost" className="mb-3 hover:bg-gray-50">
             <ArrowLeft className="w-4 h-4 mr-2" />
             กลับสู่หน้าหลัก
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-800">คำสั่งซื้อของฉน</h1>
+        <div className="flex items-center space-x-3">
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-2 rounded-full">
+            <ShoppingBag className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">คำสั่งซื้อของฉัน</h1>
+        </div>
       </div>
+      
+      <div className="px-4">
 
-      {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">ยังไม่มีคำสั่งซื้อ</h3>
-          <p className="text-gray-500 mb-6">เมื่อคุณสั่งอาหาร จะแสดงในหน้านี้</p>
-          <Link href="/">
-            <Button className="bg-primary text-white">
-              เริ่มสั่งอาหาร
-            </Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-4 pb-20">
-          {orders.map((order) => (
-            <Card key={order.id} className="bg-white shadow-sm">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">
-                      คำสั่งซื้อ #{order.id.slice(0, 8)}
+        {orders.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+              <ShoppingBag className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-3">ยังไม่มีคำสั่งซื้อ</h3>
+            <p className="text-gray-500 mb-8 px-4">เมื่อคุณสั่งอาหาร ประวัติการสั่งซื้อจะแสดงที่นี่</p>
+            <Link href="/">
+              <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg transform transition-all duration-200 hover:scale-105">
+                เริ่มสั่งอาหาร
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4 pb-20">
+            {orders.map((order) => (
+              <Card key={order.id} className="shadow-md hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg font-bold text-gray-800">
+                      คำสั่งซื้อ #{order.id.slice(-8)}
                     </CardTitle>
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {order.createdAt ? formatDateTime(order.createdAt.toString()) : 'ไม่ระบุเวลา'}
-                    </div>
+                    {getStatusBadge(order.status)}
                   </div>
-                  {getStatusBadge(order.status)}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {order.orderItems && order.orderItems.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center text-sm">
-                      <span className="text-gray-700">
-                        {item.foodItem?.name || 'รายการอาหาร'} x{item.quantity}
-                      </span>
-                      <span className="font-medium">
-                        ฿{(parseFloat(item.foodItem?.price || '0') * item.quantity).toFixed(0)}
-                      </span>
-                    </div>
-                  ))}
-                  <div className="border-t pt-2 mt-2">
-                    <div className="flex justify-between items-center font-semibold">
-                      <span className="text-gray-900">รวมทั้งสิ้น</span>
-                      <span className="text-lg text-primary">฿{parseFloat(order.total).toFixed(0)}</span>
-                    </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {formatDateTime(order.createdAt!.toString())}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">ยอดรวม</span>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                      ฿{parseFloat(order.total).toFixed(0)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
