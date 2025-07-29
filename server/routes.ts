@@ -149,8 +149,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const categoryId = req.query.categoryId as string;
       const foodItems = await storage.getFoodItems(restaurant.id, categoryId);
+      
+      // เพิ่ม log เพื่อ debug
+      console.log(`[DEBUG] categoryId: ${categoryId}, found ${foodItems.length} items`);
+      
       res.json(foodItems);
     } catch (error) {
+      console.error("[ERROR] Failed to get food items:", error);
       res.status(500).json({ message: "Failed to get food items" });
     }
   });

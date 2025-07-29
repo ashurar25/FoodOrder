@@ -75,6 +75,7 @@ export default function Home() {
       return response.json();
     },
     enabled: !!initData && !searchQuery.trim(),
+    staleTime: 0, // เพื่อให้ fetch ข้อมูลใหม่เสมอ
   });
 
   const { data: searchResults = [] } = useQuery<FoodItem[]>({

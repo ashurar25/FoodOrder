@@ -96,13 +96,26 @@ export class DatabaseStorage implements IStorage {
 
   // Food item methods
   async getFoodItems(restaurantId: string, categoryId?: string): Promise<FoodItem[]> {
-    const query = db.select().from(foodItems).where(eq(foodItems.restaurantId, restaurantId));
-    
+    console.log(`[DEBUG getFoodItems] restaurantId: ${restaurantId}, categoryId: ${categoryId}`);
+
     if (categoryId) {
-      return await query.where(and(eq(foodItems.restaurantId, restaurantId), eq(foodItems.categoryId, categoryId)));
+      const result = await db
+        .select()
+        .from(foodItems)
+        .where(and(
+          eq(foodItems.restaurantId, restaurantId),
+          eq(foodItems.categoryId, categoryId)
+        ));
+      console.log(`[DEBUG getFoodItems] With categoryId - found ${result.length} items`);
+      return result;
     }
-    
-    return await query;
+
+    const result = await db
+      .select()
+      .from(foodItems)
+      .where(eq(foodItems.restaurantId, restaurantId));
+    console.log(`[DEBUG getFoodItems] Without categoryId - found ${result.length} items`);
+    return result;
   }
 
   async searchFoodItems(restaurantId: string, query: string): Promise<FoodItem[]> {
