@@ -236,6 +236,13 @@
       "restaurantId": "id_kay6d35me_1753812074501",
       "total": "30",
       "status": "confirmed"
+    },
+    {
+      "id": "id_tvsc8tm7e_1753815259717",
+      "createdAt": "2025-07-29T18:54:19.717Z",
+      "restaurantId": "id_kay6d35me_1753812074501",
+      "total": "30",
+      "status": "confirmed"
     }
   ],
   "orderItems": [
@@ -249,6 +256,13 @@
     {
       "id": "id_ur30hty8a_1753812850734",
       "orderId": "id_gy01gwg1u_1753812850733",
+      "foodItemId": "id_rcuhms5vv_1753812074507",
+      "quantity": 1,
+      "price": "30"
+    },
+    {
+      "id": "id_v1goib0hf_1753815259719",
+      "orderId": "id_tvsc8tm7e_1753815259717",
       "foodItemId": "id_rcuhms5vv_1753812074507",
       "quantity": 1,
       "price": "30"
