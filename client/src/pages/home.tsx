@@ -182,7 +182,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="pt-20">
+        <div className="pt-16">
           <SearchBar 
             value={searchQuery}
             onChange={setSearchQuery}

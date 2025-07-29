@@ -39,20 +39,20 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
       </div>
       
       {/* Mobile Layout */}
-      <div className="relative z-10 p-3 md:hidden">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+      <div className="relative z-10 p-2 md:hidden">
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-1 rounded-full">
             {currentTime}
           </div>
           <div className="relative">
             <button 
-              className="bg-white/10 backdrop-blur-sm rounded-full p-2 hover:bg-white/20 transition-all duration-300 shadow-lg"
+              className="bg-white/10 backdrop-blur-sm rounded-full p-1.5 hover:bg-white/20 transition-all duration-300 shadow-lg"
               onClick={onCartClick}
             >
-              <ShoppingCart className="text-white w-5 h-5" />
+              <ShoppingCart className="text-white w-4 h-4" />
             </button>
             {cartItemCount > 0 && (
-              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg">
+              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold shadow-lg">
                 {cartItemCount}
               </div>
             )}
@@ -60,7 +60,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
         </div>
         
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-2 ring-1 ring-white/10">
+          <div className="w-10 h-10 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-1 ring-1 ring-white/10">
             <img 
               src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
               alt="Restaurant Logo" 
@@ -68,10 +68,10 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             />
           </div>
           <div>
-            <h1 className="text-lg font-bold mb-1 text-white drop-shadow-lg">
+            <h1 className="text-base font-bold mb-0.5 text-white drop-shadow-lg">
               {restaurant?.name || "ร้านอาหารไทยแท้"}
             </h1>
-            <p className="text-sm text-white/80 font-medium">
+            <p className="text-xs text-white/80 font-medium">
               {restaurant?.description || "อาหารไทยต้นตำรับ"}
             </p>
           </div>
