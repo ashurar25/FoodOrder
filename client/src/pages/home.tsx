@@ -170,10 +170,16 @@ export default function Home() {
       <div className="px-4 pb-24">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
-            {searchQuery.trim() ? "ผลการค้นหา" : "อาหารยอดนิยม"}
+            {searchQuery.trim() ? "ผลการค้นหา" : 
+             selectedCategory ? 
+               `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
+               "อาหารยอดนิยม"}
           </h2>
-          {!searchQuery.trim() && (
-            <button className="text-primary text-sm font-medium">
+          {!searchQuery.trim() && selectedCategory && (
+            <button 
+              onClick={() => setSelectedCategory("")}
+              className="text-primary text-sm font-medium"
+            >
               ดูทั้งหมด
             </button>
           )}
@@ -209,11 +215,24 @@ export default function Home() {
                   <p>ไม่พบอาหารที่ค้นหา</p>
                   <p className="text-sm">ลองค้นหาด้วยคำอื่น</p>
                 </div>
+              ) : selectedCategory ? (
+                <div>
+                  <p className="text-lg mb-2">🍽️</p>
+                  <p>ไม่มีอาหารในหมวดหมู่ "{categories.find(c => c.id === selectedCategory)?.name}"</p>
+                  <p className="text-sm">
+                    <button 
+                      onClick={() => setSelectedCategory("")}
+                      className="text-primary underline"
+                    >
+                      ดูอาหารทั้งหมด
+                    </button>
+                  </p>
+                </div>
               ) : (
                 <div>
                   <p className="text-lg mb-2">🍽️</p>
-                  <p>ไม่มีอาหารในหมวดหมู่นี้</p>
-                  <p className="text-sm">ลองเลือกหมวดหมู่อื่น หรือดูทั้งหมด</p>
+                  <p>ไม่มีอาหารในร้าน</p>
+                  <p className="text-sm">กรุณาติดต่อร้านค้า</p>
                 </div>
               )}
             </div>

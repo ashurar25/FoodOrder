@@ -180,12 +180,20 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     let result = data.foodItems.filter(item => item.restaurantId === restaurantId);
     
-    if (categoryId) {
+    if (categoryId && categoryId.trim() !== '') {
       result = result.filter(item => item.categoryId === categoryId);
-      console.log(`[DEBUG getFoodItems] With categoryId - found ${result.length} items`);
+      console.log(`[DEBUG getFoodItems] Filtered by categoryId ${categoryId} - found ${result.length} items`);
     } else {
-      console.log(`[DEBUG getFoodItems] Without categoryId - found ${result.length} items`);
+      console.log(`[DEBUG getFoodItems] No category filter - showing all ${result.length} items`);
     }
+    
+    // Sort by category for better organization
+    result.sort((a, b) => {
+      if (a.categoryId && b.categoryId) {
+        return a.categoryId.localeCompare(b.categoryId);
+      }
+      return a.name.localeCompare(b.name);
+    });
     
     return result;
   }
