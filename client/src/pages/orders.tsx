@@ -4,13 +4,23 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Calendar, ShoppingBag, Receipt } from "lucide-react";
+import { useState } from "react";
+import ReceiptModal from "@/components/receipt-modal";
 import type { Order } from "@shared/schema";
 
 export default function Orders() {
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showReceipt, setShowReceipt] = useState(false);
+  
   const { data: orders = [], isLoading } = useQuery<Order[]>({
     queryKey: ["/api/orders"],
   });
+
+  const handleShowReceipt = (order: Order) => {
+    setSelectedOrder(order);
+    setShowReceipt(true);
+  };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -101,18 +111,31 @@ export default function Orders() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-600 font-medium">ยอดรวม</span>
                     <p className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
                       ฿{parseFloat(order.total).toFixed(0)}
                     </p>
                   </div>
+                  <button
+                    onClick={() => handleShowReceipt(order)}
+                    className="w-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white py-2 px-4 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
+                  >
+                    <Receipt className="w-4 h-4" />
+                    <span>ดูใบเสร็จ</span>
+                  </button>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      <ReceiptModal 
+        isOpen={showReceipt}
+        onClose={() => setShowReceipt(false)}
+        order={selectedOrder}
+      />
     </div>
   );
 }

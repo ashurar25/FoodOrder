@@ -106,4 +106,23 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+  
+  /* Ensure buttons are easily tappable */
+  button, .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve input field visibility */
+  input, textarea, select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+  
+  /* Better spacing for mobile */
+  .mobile-spacing {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
 }
