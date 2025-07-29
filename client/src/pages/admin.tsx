@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "wouter";
@@ -7,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Edit, Trash2, Calendar } from "lucide-react";
-import type { Banner, Order } from "@shared/schema";
+import { ArrowLeft, Plus, Edit, Trash2, Calendar, Utensils } from "lucide-react";
+import type { Banner, Order, FoodItem, Category } from "@shared/schema";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -19,6 +21,14 @@ export default function Admin() {
     subtitle: "",
     imageUrl: "",
   });
+  
+  const [newFoodItem, setNewFoodItem] = useState({
+    name: "",
+    description: "",
+    price: "",
+    imageUrl: "",
+    categoryId: "",
+  });
 
   const { data: banners = [] } = useQuery<Banner[]>({
     queryKey: ["/api/banners"],
@@ -26,6 +36,14 @@ export default function Admin() {
 
   const { data: orders = [] } = useQuery<Order[]>({
     queryKey: ["/api/orders"],
+  });
+
+  const { data: categories = [] } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
+
+  const { data: foodItems = [] } = useQuery<FoodItem[]>({
+    queryKey: ["/api/food-items"],
   });
 
   const createBannerMutation = useMutation({
@@ -71,6 +89,52 @@ export default function Admin() {
     },
   });
 
+  const createFoodItemMutation = useMutation({
+    mutationFn: async (foodItemData: typeof newFoodItem) => {
+      const restaurant = await fetch("/api/restaurant").then(r => r.json());
+      return apiRequest("POST", "/api/food-items", {
+        ...foodItemData,
+        restaurantId: restaurant.id,
+        price: foodItemData.price,
+        rating: "4.0",
+        isAvailable: true,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/food-items"] });
+      setNewFoodItem({ name: "", description: "", price: "", imageUrl: "", categoryId: "" });
+      toast({
+        title: "สำเร็จ",
+        description: "เพิ่มรายการอาหารใหม่แล้ว",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "ไม่สามารถเพิ่มรายการอาหารได้",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteFoodItemMutation = useMutation({
+    mutationFn: (foodItemId: string) => apiRequest("DELETE", `/api/food-items/${foodItemId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/food-items"] });
+      toast({
+        title: "สำเร็จ",
+        description: "ลบรายการอาหารแล้ว",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "ไม่สามารถลบรายการอาหารได้",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateBanner = () => {
     if (!newBanner.title || !newBanner.imageUrl) {
       toast({
@@ -81,6 +145,18 @@ export default function Admin() {
       return;
     }
     createBannerMutation.mutate(newBanner);
+  };
+
+  const handleCreateFoodItem = () => {
+    if (!newFoodItem.name || !newFoodItem.price || !newFoodItem.categoryId) {
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "กรุณากรอกข้อมูลให้ครบถ้วน",
+        variant: "destructive",
+      });
+      return;
+    }
+    createFoodItemMutation.mutate(newFoodItem);
   };
 
   const formatDateTime = (dateString: string) => {
@@ -94,8 +170,18 @@ export default function Admin() {
     });
   };
 
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : 'ไม่ระบุหมวดหมู่';
+  };
+
+  const groupedFoodItems = categories.map(category => ({
+    category,
+    items: foodItems.filter(item => item.categoryId === category.id)
+  }));
+
   return (
-    <div className="max-w-4xl mx-auto p-4 min-h-screen bg-soft-mint">
+    <div className="max-w-6xl mx-auto p-4 min-h-screen bg-soft-mint">
       <div className="mb-6">
         <Link href="/">
           <Button variant="ghost" className="mb-4">
@@ -106,7 +192,7 @@ export default function Admin() {
         <h1 className="text-2xl font-bold text-gray-800">แผงควบคุมผู้ดูแลระบบ</h1>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
         {/* Banner Management */}
         <Card>
           <CardHeader>
@@ -152,7 +238,7 @@ export default function Admin() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-80 overflow-y-auto">
               {banners.map((banner) => (
                 <div key={banner.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1">
@@ -183,13 +269,113 @@ export default function Admin() {
           </CardContent>
         </Card>
 
+        {/* Food Item Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              จัดการรายการอาหาร
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="w-4 h-4 mr-2" />
+                    เพิ่มอาหาร
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>เพิ่มรายการอาหารใหม่</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input
+                      placeholder="ชื่ออาหาร"
+                      value={newFoodItem.name}
+                      onChange={(e) => setNewFoodItem({ ...newFoodItem, name: e.target.value })}
+                    />
+                    <Textarea
+                      placeholder="คำอธิบาย"
+                      value={newFoodItem.description}
+                      onChange={(e) => setNewFoodItem({ ...newFoodItem, description: e.target.value })}
+                    />
+                    <Input
+                      placeholder="ราคา (บาท)"
+                      type="number"
+                      value={newFoodItem.price}
+                      onChange={(e) => setNewFoodItem({ ...newFoodItem, price: e.target.value })}
+                    />
+                    <Select 
+                      value={newFoodItem.categoryId} 
+                      onValueChange={(value) => setNewFoodItem({ ...newFoodItem, categoryId: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="เลือกหมวดหมู่" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.icon} {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      placeholder="URL รูปภาพ"
+                      value={newFoodItem.imageUrl}
+                      onChange={(e) => setNewFoodItem({ ...newFoodItem, imageUrl: e.target.value })}
+                    />
+                    <Button 
+                      onClick={handleCreateFoodItem} 
+                      className="w-full"
+                      disabled={createFoodItemMutation.isPending}
+                    >
+                      {createFoodItemMutation.isPending ? "กำลังเพิ่ม..." : "เพิ่มรายการอาหาร"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              {groupedFoodItems.map(({ category, items }) => (
+                <div key={category.id}>
+                  <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center">
+                    <span className="mr-2">{category.icon}</span>
+                    {category.name} ({items.length})
+                  </h4>
+                  <div className="space-y-2 ml-4">
+                    {items.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-600">฿{parseFloat(item.price).toFixed(0)}</p>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => deleteFoodItemMutation.mutate(item.id)}
+                          disabled={deleteFoodItemMutation.isPending}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))}
+                    {items.length === 0 && (
+                      <p className="text-xs text-gray-500 ml-2">ยังไม่มีรายการอาหารในหมวดนี้</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Order Management */}
         <Card>
           <CardHeader>
             <CardTitle>รายการสั่งซื้อล่าสุด</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-80 overflow-y-auto">
               {orders.map((order) => (
                 <div key={order.id} className="p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex justify-between items-start">
@@ -220,12 +406,12 @@ export default function Admin() {
         </Card>
 
         {/* Quick Stats */}
-        <Card className="md:col-span-2">
+        <Card className="lg:col-span-3 md:col-span-2">
           <CardHeader>
             <CardTitle>สถิติด่วน</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="text-center p-4 bg-primary/10 rounded-lg">
                 <p className="text-2xl font-bold text-primary">{orders.length}</p>
                 <p className="text-sm text-gray-600">คำสั่งซื้อทั้งหมด</p>
@@ -245,6 +431,10 @@ export default function Admin() {
                   {orders.filter(o => o.status === 'confirmed').length}
                 </p>
                 <p className="text-sm text-gray-600">คำสั่งซื้อสำเร็จ</p>
+              </div>
+              <div className="text-center p-4 bg-orange-100 rounded-lg">
+                <p className="text-2xl font-bold text-orange-600">{foodItems.length}</p>
+                <p className="text-sm text-gray-600">รายการอาหารทั้งหมด</p>
               </div>
             </div>
           </CardContent>

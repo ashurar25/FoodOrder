@@ -118,6 +118,10 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
+  async deleteFoodItem(id: string): Promise<void> {
+    await db.delete(foodItems).where(eq(foodItems.id, id));
+  }
+
   async updateFoodItem(id: string, foodItem: Partial<InsertFoodItem>): Promise<FoodItem> {
     const [updated] = await db.update(foodItems)
       .set(foodItem)

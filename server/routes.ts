@@ -32,6 +32,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createCategory(category);
       }
 
+      // Create default food items
+      const createdCategories = await storage.getCategories(restaurant.id);
+      
+      // Find categories by name
+      const meatballCategory = createdCategories.find(c => c.name === "ลูกชิ้น");
+      const foodCategory = createdCategories.find(c => c.name === "อาหาร");
+      const drinkCategory = createdCategories.find(c => c.name === "เครื่องดื่ม");
+
+      // Sample meatball items
+      if (meatballCategory) {
+        const meatballItems = [
+          { name: "ลูกชิ้นปลา", description: "ลูกชิ้นปลาสด เนื้อเนียนนุ่ม", price: "25.00", imageUrl: "https://images.unsplash.com/photo-1563379091339-03246963d96c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นหมู", description: "ลูกชิ้นหมูแท้ รสชาติกลมกล่อม", price: "20.00", imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นกุ้ง", description: "ลูกชิ้นกุ้งแท้ เนื้อกุ้งชิ้นใหญ่", price: "35.00", imageUrl: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นเนื้อ", description: "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน", price: "30.00", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นปลาหมึก", description: "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว", price: "28.00", imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: meatballCategory.id, restaurantId: restaurant.id }
+        ];
+        
+        for (const item of meatballItems) {
+          await storage.createFoodItem(item);
+        }
+      }
+
+      // Sample food items
+      if (foodCategory) {
+        const foodItems = [
+          { name: "ข้าวผัดกุ้ง", description: "ข้าวผัดกุ้งสด หอมกรุ่น", price: "45.00", imageUrl: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: foodCategory.id, restaurantId: restaurant.id },
+          { name: "ผัดไทย", description: "ผัดไทยแท้ รสชาติต้นตำรับ", price: "40.00", imageUrl: "https://images.unsplash.com/photo-1559314809-0f31657b9ccd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.8", categoryId: foodCategory.id, restaurantId: restaurant.id },
+          { name: "ต้มยำกุ้ง", description: "ต้มยำกุ้งน้ำข้น รสเข้มข้น", price: "55.00", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.9", categoryId: foodCategory.id, restaurantId: restaurant.id },
+          { name: "แกงเขียวหวานไก่", description: "แกงเขียวหวานไก่ เผ็ดร้อน", price: "50.00", imageUrl: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: foodCategory.id, restaurantId: restaurant.id },
+          { name: "ส้มตำไทย", description: "ส้มตำไทยแซ่บ เผ็ดจี๊ดจ๊าด", price: "35.00", imageUrl: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: foodCategory.id, restaurantId: restaurant.id }
+        ];
+        
+        for (const item of foodItems) {
+          await storage.createFoodItem(item);
+        }
+      }
+
+      // Sample drink items
+      if (drinkCategory) {
+        const drinkItems = [
+          { name: "ชาไทย", description: "ชาไทยเข้มข้น หอมหวาน", price: "15.00", imageUrl: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "กาแฟเย็น", description: "กาแฟโบราณ หอมกรุ่น", price: "18.00", imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำมะนาว", description: "น้ำมะนาวสด เปรี้ยวหวาน", price: "12.00", imageUrl: "https://images.unsplash.com/photo-1621263764928-df1444c5e859?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำปั่น", description: "น้ำปั่นผลไม้รวม สดชื่น", price: "25.00", imageUrl: "https://images.unsplash.com/photo-1570197788417-0e82375c9371?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำแข็งใส", description: "น้ำดื่มแข็งใส เย็นฉ่ำ", price: "8.00", imageUrl: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.0", categoryId: drinkCategory.id, restaurantId: restaurant.id }
+        ];
+        
+        for (const item of drinkItems) {
+          await storage.createFoodItem(item);
+        }
+      }
+
       // Create default banners
       await storage.createBanner({
         title: "10 ไข่ ฟรี 1",
@@ -131,6 +184,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid food item data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create food item" });
+    }
+  });
+
+  app.delete("/api/food-items/:id", async (req, res) => {
+    try {
+      const id = req.params.id;
+      await storage.deleteFoodItem(id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete food item" });
     }
   });
 
