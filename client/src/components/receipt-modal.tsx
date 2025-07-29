@@ -12,11 +12,11 @@ interface OrderItem {
 
 interface Order {
   id: string;
-  customerName: string;
-  tableNumber: string;
+  customerName?: string;
+  tableNumber?: string;
   total: string;
   status: string;
-  createdAt: Date;
+  createdAt: Date | null;
   notes?: string;
   items?: OrderItem[];
 }
@@ -27,15 +27,24 @@ interface ReceiptModalProps {
   order: Order | null;
 }
 
-function formatDateTime(date: Date): string {
-  return new Intl.DateTimeFormat('th-TH', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }).format(date);
+function formatDateTime(date: Date | string | null): string {
+  if (!date) return "ไม่ระบุเวลา";
+  
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(dateObj.getTime())) return "ไม่ระบุเวลา";
+    
+    return new Intl.DateTimeFormat('th-TH', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(dateObj);
+  } catch (error) {
+    return "ไม่ระบุเวลา";
+  }
 }
 
 export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
@@ -96,11 +105,11 @@ export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalPro
               </div>
               <div>
                 <span className="text-gray-600">โต๊ะ:</span>
-                <span className="font-semibold ml-1">{order.tableNumber}</span>
+                <span className="font-semibold ml-1">{order.tableNumber || "ไม่ระบุ"}</span>
               </div>
               <div>
                 <span className="text-gray-600">ลูกค้า:</span>
-                <span className="ml-1">{order.customerName}</span>
+                <span className="ml-1">{order.customerName || "ลูกค้าทั่วไป"}</span>
               </div>
               <div>
                 <span className="text-gray-600">สถานะ:</span>

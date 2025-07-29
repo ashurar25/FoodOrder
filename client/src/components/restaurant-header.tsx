@@ -41,34 +41,34 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
       
       {/* Mobile Layout */}
       <div className="relative z-10 p-1.5 md:hidden">
-        <div className="flex flex-col items-center text-center mb-2">
-          <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-1 ring-1 ring-white/10">
-            <img 
-              src={logoPath} 
-              alt="Restaurant Logo" 
-              className="w-full h-full object-cover"
-            />
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden ring-1 ring-white/10">
+              <img 
+                src={logoPath} 
+                alt="Restaurant Logo" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-white drop-shadow-lg">
+                {restaurant?.name || "ซอมกอ"}
+              </h1>
+              <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full inline-block">
+                {currentTime}
+              </div>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-bold text-white drop-shadow-lg">
-              {restaurant?.name || "ซอมกอ"}
-            </h1>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">
-            {currentTime}
-          </div>
+          
           <div className="relative">
             <button 
-              className="bg-white/10 backdrop-blur-sm rounded-full p-1.5 hover:bg-white/20 transition-all duration-300 shadow-lg"
+              className="bg-white/10 backdrop-blur-sm rounded-full p-2 hover:bg-white/20 transition-all duration-300 shadow-lg touch-target"
               onClick={onCartClick}
             >
-              <ShoppingCart className="text-white w-4 h-4" />
+              <ShoppingCart className="text-white w-5 h-5" />
             </button>
             {cartItemCount > 0 && (
-              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold shadow-lg">
+              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg animate-pulse">
                 {cartItemCount}
               </div>
             )}
