@@ -182,7 +182,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="pt-32">
+        <div className="pt-24">
           <SearchBar 
             value={searchQuery}
             onChange={setSearchQuery}
@@ -190,14 +190,8 @@ export default function Home() {
         </div>
 
         <div className="px-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2">
             <h3 className="text-sm font-medium text-gray-600">โปรโมชัน</h3>
-            <button
-              onClick={() => setIsBannerEditorOpen(true)}
-              className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-            >
-              จัดการแบนเนอร์
-            </button>
           </div>
         </div>
 
