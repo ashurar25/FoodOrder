@@ -1,8 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { X, Minus, Plus, ShoppingBag } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { X, Minus, Plus, ShoppingBag, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface CartItem {
   id: string;
@@ -29,6 +30,11 @@ export default function CartModal({
   onUpdateQuantity, 
   onRemoveItem 
 }: CartModalProps) {
+  const queryClient = useQueryClient();
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [tableNumber, setTableNumber] = useState("");
+  const [orderNotes, setOrderNotes] = useState("");
   const { toast } = useToast();
 
   const checkoutMutation = useMutation({
@@ -76,7 +82,7 @@ export default function CartModal({
             <X className="w-6 h-6" />
           </button>
         </div>
-        
+
         {items.length === 0 ? (
           <div className="text-center py-8">
             <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -109,14 +115,14 @@ export default function CartModal({
                 </div>
               ))}
             </div>
-            
+
             <div className="border-t border-gray-200 pt-4 mb-4">
               <div className="flex justify-between items-center">
                 <span className="font-semibold">รวมทั้งสิ้น</span>
                 <span className="font-bold text-xl text-primary">฿{total.toFixed(0)}</span>
               </div>
             </div>
-            
+
             <Button 
               onClick={() => checkoutMutation.mutate()}
               disabled={checkoutMutation.isPending}

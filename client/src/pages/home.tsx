@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import * as React from "react";
 import RestaurantHeader from "@/components/restaurant-header";
 import SearchBar from "@/components/search-bar";
 import PromotionalBanner from "@/components/promotional-banner";
@@ -7,6 +8,7 @@ import CategoryButtons from "@/components/category-buttons";
 import FoodItemCard from "@/components/food-item-card";
 import CartModal from "@/components/cart-modal";
 import BottomNavigation from "@/components/bottom-navigation";
+import BannerEditor from "@/components/banner-editor";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Restaurant, Category, FoodItem, Banner } from "@shared/schema";
 
@@ -19,11 +21,13 @@ interface CartItem {
 }
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("meatball");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showAddToCartToast, setShowAddToCartToast] = useState(false);
+  const [addedItemName, setAddedItemName] = useState("");
+  const [isBannerEditorOpen, setIsBannerEditorOpen] = useState(false);
 
   // Initialize restaurant and sample data
   const { data: initData, isLoading: initLoading } = useQuery({
@@ -56,6 +60,16 @@ export default function Home() {
     },
     enabled: !!initData,
   });
+
+  // Set default category to meatball when categories load
+  React.useEffect(() => {
+    if (categories.length > 0 && !selectedCategory) {
+      const meatballCategory = categories.find(c => c.name === "ลูกชิ้น");
+      if (meatballCategory) {
+        setSelectedCategory(meatballCategory.id);
+      }
+    }
+  }, [categories, selectedCategory]);
 
   const { data: banners = [] } = useQuery<Banner[]>({
     queryKey: ["/api/banners"],
@@ -111,11 +125,13 @@ export default function Home() {
       }];
     });
 
-    // Show toast notification
+    // Show toast notification with item name
+    setAddedItemName(foodItem.name);
     setShowAddToCartToast(true);
     setTimeout(() => {
       setShowAddToCartToast(false);
-    }, 2000);
+      setAddedItemName("");
+    }, 3000);
   };
 
   const removeFromCart = (foodItemId: string) => {
@@ -170,6 +186,18 @@ export default function Home() {
             value={searchQuery}
             onChange={setSearchQuery}
           />
+        </div>
+
+        <div className="px-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-600">โปรโมชัน</h3>
+            <button
+              onClick={() => setIsBannerEditorOpen(true)}
+              className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+            >
+              จัดการแบนเนอร์
+            </button>
+          </div>
         </div>
 
         <PromotionalBanner banners={banners} />
@@ -329,80 +357,20 @@ export default function Home() {
 
       {/* Add to Cart Toast */}
       {showAddToCartToast && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
-          <div className="flex items-center space-x-2">
-            <span>✅</span>
-            <span>เพิ่มอาหารเข้าตะกร้าแล้ว!</span>
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 animate-bounce max-w-sm">
+          <div className="flex items-center space-x-3">
+            <div className="bg-white text-green-500 rounded-full p-1">
+              <span className="text-lg">✓</span>
+            </div>
+            <div>
+              <p className="font-medium">เพิ่มเข้าตะกร้าแล้ว!</p>
+              <p className="text-sm text-green-100">{addedItemName}</p>
+            </div>
           </div>
         </div>
       )}
 
-      <PromotionalBanner banners={banners} />
-
-      <CategoryButtons 
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
-
-      <div className="px-4 pb-24">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">
-            {searchQuery.trim() ? "ผลการค้นหา" : 
-             selectedCategory ? 
-               `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
-               "อาหารยอดนิยม"}
-          </h2>
-          
-        </div>
-
-        <div className="space-y-4">
-          {foodItemsLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="flex">
-                  <Skeleton className="w-24 h-20" />
-                  <div className="flex-1 p-4">
-                    <Skeleton className="h-4 w-3/4 mb-2" />
-                    <Skeleton className="h-3 w-1/2 mb-2" />
-                    <Skeleton className="h-4 w-1/4" />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : displayItems.length > 0 ? (
-            displayItems.map((item) => (
-              <FoodItemCard
-                key={item.id}
-                foodItem={item}
-                onAddToCart={() => addToCart(item)}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              {searchQuery.trim() ? (
-                <div>
-                  <p className="text-lg mb-2">😔</p>
-                  <p>ไม่พบอาหารที่ค้นหา</p>
-                  <p className="text-sm">ลองค้นหาด้วยคำอื่น</p>
-                </div>
-              ) : selectedCategory ? (
-                <div>
-                  <p className="text-lg mb-2">🍽️</p>
-                  <p>ไม่มีอาหารในหมวดหมู่ "{categories.find(c => c.id === selectedCategory)?.name}"</p>
-                  <p className="text-sm">ลองเลือกหมวดหมู่อื่น</p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-lg mb-2">🍽️</p>
-                  <p>ไม่มีอาหารในร้าน</p>
-                  <p className="text-sm">กรุณาติดต่อร้านค้า</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      
 
       <CartModal
         isOpen={isCartOpen}
@@ -411,6 +379,13 @@ export default function Home() {
         total={cartTotal}
         onUpdateQuantity={updateCartItemQuantity}
         onRemoveItem={removeFromCart}
+      />
+
+      <BannerEditor
+        isOpen={isBannerEditorOpen}
+        onClose={() => setIsBannerEditorOpen(false)}
+        banners={banners}
+        restaurantId={restaurant?.id || ""}
       />
 
       <BottomNavigation />

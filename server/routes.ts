@@ -149,9 +149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const categoryId = req.query.categoryId as string;
       const foodItems = await storage.getFoodItems(restaurant.id, categoryId);
-      
+
       console.log(`[DEBUG] Filtering by categoryId: ${categoryId || 'all'}, found ${foodItems.length} items`);
-      
+
       res.json(foodItems);
     } catch (error) {
       console.error("[ERROR] Failed to get food items:", error);
@@ -206,46 +206,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const restaurant = await storage.getRestaurant();
       if (!restaurant) {
-        return res.status(404).json({ message: "Restaurant not found" });
+        return res.status(404).json({ error: "Restaurant not found" });
       }
+
       const banners = await storage.getBanners(restaurant.id);
       res.json(banners);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get banners" });
+      console.error("Error fetching banners:", error);
+      res.status(500).json({ error: "Failed to fetch banners" });
     }
   });
 
   app.post("/api/banners", async (req, res) => {
     try {
-      const bannerData = insertBannerSchema.parse(req.body);
-      const banner = await storage.createBanner(bannerData);
+      const { title, description, imageUrl, linkUrl, restaurantId } = req.body;
+
+      if (!title || !imageUrl || !restaurantId) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const banner = await storage.createBanner({
+        title,
+        description,
+        imageUrl,
+        linkUrl,
+        restaurantId
+      });
+
       res.status(201).json(banner);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid banner data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create banner" });
+      console.error("Error creating banner:", error);
+      res.status(500).json({ error: "Failed to create banner" });
     }
   });
 
-  app.patch("/api/banners/:id", async (req, res) => {
+  app.put("/api/banners/:id", async (req, res) => {
     try {
-      const id = req.params.id;
-      const bannerData = req.body;
-      const banner = await storage.updateBanner(id, bannerData);
+      const { id } = req.params;
+      const updateData = req.body;
+
+      const banner = await storage.updateBanner(id, updateData);
       res.json(banner);
     } catch (error) {
-      res.status(500).json({ message: "Failed to update banner" });
+      console.error("Error updating banner:", error);
+      res.status(500).json({ error: "Failed to update banner" });
     }
   });
 
   app.delete("/api/banners/:id", async (req, res) => {
     try {
-      const id = req.params.id;
+      const { id } = req.params;
       await storage.deleteBanner(id);
       res.json({ success: true });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete banner" });
+      console.error("Error deleting banner:", error);
+      res.status(500).json({ error: "Failed to delete banner" });
     }
   });
 
