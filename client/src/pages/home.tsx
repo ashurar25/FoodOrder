@@ -19,10 +19,11 @@ interface CartItem {
 }
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("meatball");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [showAddToCartToast, setShowAddToCartToast] = useState(false);
 
   // Initialize restaurant and sample data
   const { data: initData, isLoading: initLoading } = useQuery({
@@ -109,6 +110,12 @@ export default function Home() {
         foodItemId: foodItem.id,
       }];
     });
+
+    // Show toast notification
+    setShowAddToCartToast(true);
+    setTimeout(() => {
+      setShowAddToCartToast(false);
+    }, 2000);
   };
 
   const removeFromCart = (foodItemId: string) => {
@@ -147,21 +154,188 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen relative">
-      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Layout */}
+      <div className="md:hidden max-w-md mx-auto bg-white shadow-2xl min-h-screen relative">
+        <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
+          <RestaurantHeader 
+            restaurant={restaurant}
+            cartItemCount={cartItemCount}
+            onCartClick={() => setIsCartOpen(true)}
+          />
+        </div>
+
+        <div className="pt-32">
+          <SearchBar 
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+        </div>
+
+        <PromotionalBanner banners={banners} />
+
+        <CategoryButtons 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
+        <div className="px-4 pb-24">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">
+              {searchQuery.trim() ? "ผลการค้นหา" : 
+               selectedCategory ? 
+                 `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
+                 "อาหารยอดนิยม"}
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {foodItemsLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                  <div className="flex">
+                    <Skeleton className="w-24 h-20" />
+                    <div className="flex-1 p-4">
+                      <Skeleton className="h-4 w-3/4 mb-2" />
+                      <Skeleton className="h-3 w-1/2 mb-2" />
+                      <Skeleton className="h-4 w-1/4" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : displayItems.length > 0 ? (
+              displayItems.map((item) => (
+                <FoodItemCard
+                  key={item.id}
+                  foodItem={item}
+                  onAddToCart={() => addToCart(item)}
+                />
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                {searchQuery.trim() ? (
+                  <div>
+                    <p className="text-lg mb-2">😔</p>
+                    <p>ไม่พบอาหารที่ค้นหา</p>
+                    <p className="text-sm">ลองค้นหาด้วยคำอื่น</p>
+                  </div>
+                ) : selectedCategory ? (
+                  <div>
+                    <p className="text-lg mb-2">🍽️</p>
+                    <p>ไม่มีอาหารในหมวดหมู่ "{categories.find(c => c.id === selectedCategory)?.name}"</p>
+                    <p className="text-sm">ลองเลือกหมวดหมู่อื่น</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-lg mb-2">🍽️</p>
+                    <p>ไม่มีอาหารในร้าน</p>
+                    <p className="text-sm">กรุณาติดต่อร้านค้า</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <BottomNavigation />
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:block">
         <RestaurantHeader 
           restaurant={restaurant}
           cartItemCount={cartItemCount}
           onCartClick={() => setIsCartOpen(true)}
         />
+        
+        <div className="desktop-container py-8">
+          <div className="mb-8">
+            <SearchBar 
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+          </div>
+
+          <PromotionalBanner banners={banners} />
+
+          <div className="mb-8">
+            <CategoryButtons 
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              {searchQuery.trim() ? "ผลการค้นหา" : 
+               selectedCategory ? 
+                 `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
+                 "อาหารยอดนิยม"}
+            </h2>
+
+            {foodItemsLoading ? (
+              <div className="food-grid">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <div className="flex">
+                      <Skeleton className="w-24 h-20" />
+                      <div className="flex-1 p-4">
+                        <Skeleton className="h-4 w-3/4 mb-2" />
+                        <Skeleton className="h-3 w-1/2 mb-2" />
+                        <Skeleton className="h-4 w-1/4" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : displayItems.length > 0 ? (
+              <div className="food-grid">
+                {displayItems.map((item) => (
+                  <FoodItemCard
+                    key={item.id}
+                    foodItem={item}
+                    onAddToCart={() => addToCart(item)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                {searchQuery.trim() ? (
+                  <div>
+                    <p className="text-2xl mb-4">😔</p>
+                    <p className="text-lg">ไม่พบอาหารที่ค้นหา</p>
+                    <p>ลองค้นหาด้วยคำอื่น</p>
+                  </div>
+                ) : selectedCategory ? (
+                  <div>
+                    <p className="text-2xl mb-4">🍽️</p>
+                    <p className="text-lg">ไม่มีอาหารในหมวดหมู่ "{categories.find(c => c.id === selectedCategory)?.name}"</p>
+                    <p>ลองเลือกหมวดหมู่อื่น</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-2xl mb-4">🍽️</p>
+                    <p className="text-lg">ไม่มีอาหารในร้าน</p>
+                    <p>กรุณาติดต่อร้านค้า</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="pt-20">
-        <SearchBar 
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
-      </div>
+      {/* Add to Cart Toast */}
+      {showAddToCartToast && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
+          <div className="flex items-center space-x-2">
+            <span>✅</span>
+            <span>เพิ่มอาหารเข้าตะกร้าแล้ว!</span>
+          </div>
+        </div>
+      )}
 
       <PromotionalBanner banners={banners} />
 

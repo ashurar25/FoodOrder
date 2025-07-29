@@ -1,4 +1,3 @@
-
 import { 
   type Restaurant, type InsertRestaurant,
   type Category, type InsertCategory,
@@ -70,7 +69,7 @@ export class FileStorage implements IStorage {
 
   private async loadData(): Promise<DatabaseData> {
     await this.ensureDataDir();
-    
+
     try {
       const data = await fs.readFile(this.dataFile, 'utf8');
       return JSON.parse(data);
@@ -110,7 +109,7 @@ export class FileStorage implements IStorage {
     if (username === 'admin') {
       return { id: 'admin-id', username: 'admin', password: 'hashed-password' };
     }
-    
+
     const data = await this.loadData();
     return data.users.find(user => user.username === username);
   }
@@ -150,7 +149,7 @@ export class FileStorage implements IStorage {
     if (index === -1) {
       throw new Error('Restaurant not found');
     }
-    
+
     data.restaurants[index] = { ...data.restaurants[index], ...restaurant };
     await this.saveData(data);
     return data.restaurants[index];
@@ -179,14 +178,14 @@ export class FileStorage implements IStorage {
 
     const data = await this.loadData();
     let result = data.foodItems.filter(item => item.restaurantId === restaurantId);
-    
+
     if (categoryId && categoryId.trim() !== '') {
       result = result.filter(item => item.categoryId === categoryId);
       console.log(`[DEBUG getFoodItems] Filtered by categoryId ${categoryId} - found ${result.length} items`);
     } else {
       console.log(`[DEBUG getFoodItems] No category filter - showing all ${result.length} items`);
     }
-    
+
     // Sort by category for better organization
     result.sort((a, b) => {
       if (a.categoryId && b.categoryId) {
@@ -194,7 +193,7 @@ export class FileStorage implements IStorage {
       }
       return a.name.localeCompare(b.name);
     });
-    
+
     return result;
   }
 
@@ -231,7 +230,7 @@ export class FileStorage implements IStorage {
     if (index === -1) {
       throw new Error('Food item not found');
     }
-    
+
     data.foodItems[index] = { ...data.foodItems[index], ...foodItem };
     await this.saveData(data);
     return data.foodItems[index];
@@ -264,7 +263,7 @@ export class FileStorage implements IStorage {
     if (index === -1) {
       throw new Error('Banner not found');
     }
-    
+
     data.banners[index] = { ...data.banners[index], ...banner };
     await this.saveData(data);
     return data.banners[index];
