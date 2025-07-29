@@ -30,7 +30,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
   }, []);
 
   return (
-    <header className="bg-gradient-to-br from-teal-500 via-emerald-500 to-green-500 text-white relative overflow-hidden shadow-xl">
+    <header className="bg-gradient-to-br from-green-300 via-emerald-400 to-teal-500 text-white relative overflow-hidden shadow-xl">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{

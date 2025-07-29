@@ -171,9 +171,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Mobile Layout */}
-      <div className="md:hidden max-w-md mx-auto bg-white shadow-2xl min-h-screen relative">
+      <div className="md:hidden max-w-md mx-auto bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl min-h-screen relative">
         <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
           <RestaurantHeader 
             restaurant={restaurant}

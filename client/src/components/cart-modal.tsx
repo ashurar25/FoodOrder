@@ -174,7 +174,7 @@ export default function CartModal({
               </div>
             </div>
 
-            <Button 
+<button
               onClick={() => {
                 if (!customerName.trim()) {
                   toast({
@@ -195,10 +195,20 @@ export default function CartModal({
                 checkoutMutation.mutate();
               }}
               disabled={checkoutMutation.isPending}
-              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-4 rounded-2xl font-semibold hover:from-primary/90 hover:to-primary/70 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 hover:from-emerald-600 hover:via-green-500 hover:to-teal-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
             >
-              {checkoutMutation.isPending ? "กำลังสั่งซื้อ..." : "ยืนยันการสั่งซื้อ"}
-            </Button>
+              {checkoutMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>กำลังสั่งซื้อ...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5" />
+                  <span>ยืนยันการสั่งซื้อ</span>
+                </>
+              )}
+            </button>
           </>
         )}
       </div>

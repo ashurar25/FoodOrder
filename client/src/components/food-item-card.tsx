@@ -50,7 +50,7 @@ export default function FoodItemCard({ foodItem, onAddToCart }: FoodItemCardProp
             <div className="ml-3 flex flex-col justify-center">
               <button 
                 onClick={onAddToCart}
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-110"
               >
                 <Plus className="w-5 h-5" />
               </button>

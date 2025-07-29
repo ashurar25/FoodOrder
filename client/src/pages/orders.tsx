@@ -52,7 +52,7 @@ export default function Orders() {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-100 p-4 mb-4">
         <Link href="/">
@@ -62,7 +62,7 @@ export default function Orders() {
           </Button>
         </Link>
         <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-2 rounded-full">
+          <div className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 p-2 rounded-full">
             <ShoppingBag className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">คำสั่งซื้อของฉัน</h1>
@@ -79,7 +79,7 @@ export default function Orders() {
             <h3 className="text-xl font-bold text-gray-800 mb-3">ยังไม่มีคำสั่งซื้อ</h3>
             <p className="text-gray-500 mb-8 px-4">เมื่อคุณสั่งอาหาร ประวัติการสั่งซื้อจะแสดงที่นี่</p>
             <Link href="/">
-              <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg transform transition-all duration-200 hover:scale-105">
+              <Button className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white px-8 py-3 rounded-full font-semibold shadow-lg transform transition-all duration-200 hover:scale-105">
                 เริ่มสั่งอาหาร
               </Button>
             </Link>
@@ -103,7 +103,7 @@ export default function Orders() {
                 <CardContent>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 font-medium">ยอดรวม</span>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    <p className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
                       ฿{parseFloat(order.total).toFixed(0)}
                     </p>
                   </div>
