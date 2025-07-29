@@ -78,11 +78,11 @@ export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalPro
             <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden">
               <img 
                 src={logoPath} 
-                alt="ซอมกอ" 
+                alt="ซ้อมคอ" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-1">ซอมกอ</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">ซ้อมคอ</h3>
             <p className="text-sm text-gray-600 mb-2">เกาหลี-ไทย ฟิวชัน</p>
             <div className="text-xs text-gray-500 space-y-1">
               <div className="flex items-center justify-center">
@@ -161,7 +161,7 @@ export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalPro
           <div className="text-center text-xs text-gray-500 border-t border-dashed border-gray-300 pt-4">
             <p className="mb-1">ขอบคุณที่ใช้บริการ</p>
             <p>*** ใบเสร็จนี้ไม่ใช่ใบกำกับภาษี ***</p>
-            <p className="mt-2">www.somgo.com</p>
+            <p className="mt-2">www.somkoh.com</p>
           </div>
         </div>
 

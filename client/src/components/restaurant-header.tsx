@@ -52,7 +52,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
             <div>
               <h1 className="text-sm font-bold text-white drop-shadow-lg">
-                {restaurant?.name || "ซอมกอ"}
+                {restaurant?.name || "ซ้อมคอ"}
               </h1>
               <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full inline-block">
                 {currentTime}
@@ -94,7 +94,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
               </div>
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
-                  {restaurant?.name || "ซอมกอ"}
+                  {restaurant?.name || "ซ้อมคอ"}
                 </h1>
                 <p className="text-base text-white/80 font-medium">
                   {restaurant?.description || "เกาหลี-ไทย ฟิวชัน"}
