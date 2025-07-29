@@ -43,11 +43,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Sample meatball items
       if (meatballCategory) {
         const meatballItems = [
-          { name: "ลูกชิ้นหมู", description: "ลูกชิ้นหมูสด เนื้อแน่น รสชาติเข้มข้น", price: "25", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นเนื้อ", description: "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน", price: "30", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นปลาหมึก", description: "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว", price: "28", imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นปลา", description: "ลูกชิ้นปลาสดใหม่ หวานหอม", price: "27", imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: meatballCategory.id, restaurantId: restaurant.id },
-          { name: "ลูกชิ้นกุ้ง", description: "ลูกชิ้นกุ้งแท้ เนื้อกุ้งแน่น", price: "35", imageUrl: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: meatballCategory.id, restaurantId: restaurant.id }
+          { name: "ลูกชิ้นหมู", description: "ลูกชิ้นหมูสด เนื้อแน่น รสชาติเข้มข้น", price: "25.00", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.7", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นเนื้อ", description: "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน", price: "30.00", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นปลาหมึก", description: "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว", price: "28.00", imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นปลา", description: "ลูกชิ้นปลาสดใหม่ หวานหอม", price: "27.00", imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: meatballCategory.id, restaurantId: restaurant.id },
+          { name: "ลูกชิ้นกุ้ง", description: "ลูกชิ้นกุ้งแท้ เนื้อกุ้งแน่น", price: "35.00", imageUrl: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: meatballCategory.id, restaurantId: restaurant.id }
         ];
 
         for (const item of meatballItems) {
@@ -73,11 +73,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Sample drink items
       if (drinkCategory) {
         const drinkItems = [
-          { name: "น้ำส้ม", description: "น้ำส้มคั้นสด เซาต์จัด", price: "15", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "ชาเย็น", description: "ชาเย็นหอมหวาน รสชาติเข้มข้น", price: "18", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "กาแฟเย็น", description: "กาแฟเย็นเข้มข้น หอมกรุ่น", price: "20", imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "น้ำแข็งใส", description: "น้ำแข็งใสเย็นชื่นใจ", price: "10", imageUrl: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: drinkCategory.id, restaurantId: restaurant.id },
-          { name: "น้ำมะนาว", description: "น้ำมะนาวสด เซาต์เปรี้ยว", price: "12", imageUrl: "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: drinkCategory.id, restaurantId: restaurant.id }
+          { name: "น้ำส้ม", description: "น้ำส้มคั้นสด เซาต์จัด", price: "15.00", imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.3", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "ชาเย็น", description: "ชาเย็นหอมหวาน รสชาติเข้มข้น", price: "18.00", imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.5", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "กาแฟเย็น", description: "กาแฟเย็นเข้มข้น หอมกรุ่น", price: "20.00", imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.6", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำแข็งใส", description: "น้ำแข็งใสเย็นชื่นใจ", price: "10.00", imageUrl: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.2", categoryId: drinkCategory.id, restaurantId: restaurant.id },
+          { name: "น้ำมะนาว", description: "น้ำมะนาวสด เซาต์เปรี้ยว", price: "12.00", imageUrl: "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200", rating: "4.4", categoryId: drinkCategory.id, restaurantId: restaurant.id }
         ];
 
         for (const item of drinkItems) {
