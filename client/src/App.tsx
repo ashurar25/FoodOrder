@@ -24,8 +24,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Router />
-        <Toaster /> {/* self-closing tag เพราะไม่มี children */}
+        <Toaster />
       </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
