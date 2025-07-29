@@ -148,16 +148,20 @@ export default function Home() {
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen relative">
-      <RestaurantHeader 
-        restaurant={restaurant}
-        cartItemCount={cartItemCount}
-        onCartClick={() => setIsCartOpen(true)}
-      />
+      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
+        <RestaurantHeader 
+          restaurant={restaurant}
+          cartItemCount={cartItemCount}
+          onCartClick={() => setIsCartOpen(true)}
+        />
+      </div>
 
-      <SearchBar 
-        value={searchQuery}
-        onChange={setSearchQuery}
-      />
+      <div className="pt-20">
+        <SearchBar 
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </div>
 
       <PromotionalBanner banners={banners} />
 
@@ -175,14 +179,7 @@ export default function Home() {
                `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
                "อาหารยอดนิยม"}
           </h2>
-          {!searchQuery.trim() && selectedCategory && (
-            <button 
-              onClick={() => setSelectedCategory("")}
-              className="text-primary text-sm font-medium"
-            >
-              ดูทั้งหมด
-            </button>
-          )}
+          
         </div>
 
         <div className="space-y-4">
@@ -219,14 +216,7 @@ export default function Home() {
                 <div>
                   <p className="text-lg mb-2">🍽️</p>
                   <p>ไม่มีอาหารในหมวดหมู่ "{categories.find(c => c.id === selectedCategory)?.name}"</p>
-                  <p className="text-sm">
-                    <button 
-                      onClick={() => setSelectedCategory("")}
-                      className="text-primary underline"
-                    >
-                      ดูอาหารทั้งหมด
-                    </button>
-                  </p>
+                  <p className="text-sm">ลองเลือกหมวดหมู่อื่น</p>
                 </div>
               ) : (
                 <div>
