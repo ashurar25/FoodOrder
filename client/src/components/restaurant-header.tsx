@@ -1,5 +1,6 @@
 
 import { ShoppingCart } from "lucide-react";
+import logoPath from "@assets/HLogo_1753815594471.png";
 import { useState, useEffect } from "react";
 import type { Restaurant } from "@shared/schema";
 
@@ -43,14 +44,14 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
         <div className="flex flex-col items-center text-center mb-2">
           <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-1 ring-1 ring-white/10">
             <img 
-              src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
+              src={logoPath} 
               alt="Restaurant Logo" 
               className="w-full h-full object-cover"
             />
           </div>
           <div>
             <h1 className="text-sm font-bold text-white drop-shadow-lg">
-              {restaurant?.name || "ร้านอาหารไทยแท้"}
+              {restaurant?.name || "ซอมกอ"}
             </h1>
           </div>
         </div>
@@ -86,17 +87,17 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden">
                 <img 
-                  src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
+                  src={logoPath} 
                   alt="Restaurant Logo" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
-                  {restaurant?.name || "ร้านอาหารไทยแท้"}
+                  {restaurant?.name || "ซอมกอ"}
                 </h1>
                 <p className="text-base text-white/80 font-medium">
-                  {restaurant?.description || "อาหารไทยต้นตำรับ"}
+                  {restaurant?.description || "เกาหลี-ไทย ฟิวชัน"}
                 </p>
               </div>
             </div>
