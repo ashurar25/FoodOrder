@@ -111,19 +111,33 @@ export default function Orders() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-gray-600 font-medium">ยอดรวม</span>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
-                      ฿{parseFloat(order.total).toFixed(0)}
-                    </p>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-gray-500">ลูกค้า:</span>
+                        <p className="font-medium text-gray-800">{order.customerName || "ชื่อลูกค้า"}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">โต๊ะ:</span>
+                        <p className="font-medium text-gray-800">{order.tableNumber || "ไม่ระบุ"}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                      <span className="text-gray-600 font-medium">ยอดรวม</span>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                        ฿{parseFloat(order.total).toFixed(0)}
+                      </p>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleShowReceipt(order)}
+                      className="w-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white py-2 px-4 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <Receipt className="w-4 h-4" />
+                      <span>ดูใบเสร็จ</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleShowReceipt(order)}
-                    className="w-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white py-2 px-4 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <Receipt className="w-4 h-4" />
-                    <span>ดูใบเสร็จ</span>
-                  </button>
                 </CardContent>
               </Card>
             ))}

@@ -109,7 +109,7 @@ export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalPro
               </div>
               <div>
                 <span className="text-gray-600">ลูกค้า:</span>
-                <span className="ml-1">{order.customerName || "ลูกค้าทั่วไป"}</span>
+                <span className="ml-1">{order.customerName || "ชื่อลูกค้า"}</span>
               </div>
               <div>
                 <span className="text-gray-600">สถานะ:</span>

@@ -44,8 +44,11 @@ export const banners = pgTable("banners", {
 export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   restaurantId: uuid("restaurant_id").references(() => restaurants.id),
+  customerName: text("customer_name"),
+  tableNumber: text("table_number"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
   status: text("status").notNull().default("pending"),
+  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -133,6 +136,10 @@ export const insertBannerSchema = createInsertSchema(banners).omit({
 export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
   createdAt: true,
+}).extend({
+  customerName: z.string().min(1, "กรุณาใส่ชื่อลูกค้า"),
+  tableNumber: z.string().optional(),
+  notes: z.string().optional()
 });
 
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({

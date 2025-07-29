@@ -39,6 +39,13 @@ export default function CartModal({
 
   const checkoutMutation = useMutation({
     mutationFn: async () => {
+      if (!customerName.trim()) {
+        throw new Error("กรุณาใส่ชื่อลูกค้า");
+      }
+      if (!tableNumber.trim()) {
+        throw new Error("กรุณาใส่หมายเลขโต๊ะ");
+      }
+
       const orderItems = items.map(item => ({
         foodItemId: item.foodItemId,
         quantity: item.quantity,

@@ -267,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Order routes
   app.post("/api/orders", async (req, res) => {
     try {
-      const { items, total } = req.body;
+      const { items, total, customerName, tableNumber, notes } = req.body;
 
       if (!items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ message: "Order items are required" });
@@ -278,12 +278,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Restaurant not found" });
       }
 
-      // Create order
-      const order = await storage.createOrder({
+      // Parse and validate order data
+      const orderData = insertOrderSchema.parse({
         restaurantId: restaurant.id,
         total: total.toString(),
-        status: "confirmed"
+        status: "confirmed",
+        customerName: req.body.customerName,
+        tableNumber: req.body.tableNumber,
+        notes: req.body.notes,
       });
+
+      // Create order
+      const order = await storage.createOrder(orderData);
 
       // Create order items
       for (const item of items) {
