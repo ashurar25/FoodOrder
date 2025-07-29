@@ -39,9 +39,24 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
       </div>
       
       {/* Mobile Layout */}
-      <div className="relative z-10 p-2 md:hidden">
-        <div className="flex items-center justify-between mb-1">
-          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-1 rounded-full">
+      <div className="relative z-10 p-1.5 md:hidden">
+        <div className="flex flex-col items-center text-center mb-2">
+          <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-1 ring-1 ring-white/10">
+            <img 
+              src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
+              alt="Restaurant Logo" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-white drop-shadow-lg">
+              {restaurant?.name || "ร้านอาหารไทยแท้"}
+            </h1>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">
             {currentTime}
           </div>
           <div className="relative">
@@ -56,24 +71,6 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
                 {cartItemCount}
               </div>
             )}
-          </div>
-        </div>
-        
-        <div className="flex flex-col items-center text-center">
-          <div className="w-10 h-10 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden mb-1 ring-1 ring-white/10">
-            <img 
-              src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
-              alt="Restaurant Logo" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <h1 className="text-base font-bold mb-0.5 text-white drop-shadow-lg">
-              {restaurant?.name || "ร้านอาหารไทยแท้"}
-            </h1>
-            <p className="text-xs text-white/80 font-medium">
-              {restaurant?.description || "อาหารไทยต้นตำรับ"}
-            </p>
           </div>
         </div>
       </div>
