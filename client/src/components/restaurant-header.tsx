@@ -38,30 +38,29 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
         }}></div>
       </div>
       
-      <div className="relative z-10 p-6">
-        {/* Top Row - Time and Cart */}
-        <div className="flex items-center justify-between mb-4">
+      {/* Mobile Layout */}
+      <div className="relative z-10 p-4 md:hidden">
+        <div className="flex items-center justify-between mb-3">
           <div className="text-sm font-medium text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
             {currentTime}
           </div>
           <div className="relative">
             <button 
-              className="bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
+              className="bg-white/10 backdrop-blur-sm rounded-full p-2 hover:bg-white/20 transition-all duration-300 shadow-lg"
               onClick={onCartClick}
             >
-              <ShoppingCart className="text-white w-6 h-6" />
+              <ShoppingCart className="text-white w-5 h-5" />
             </button>
             {cartItemCount > 0 && (
-              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold animate-bounce shadow-lg">
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold animate-bounce shadow-lg">
                 {cartItemCount}
               </div>
             )}
           </div>
         </div>
         
-        {/* Center Content - Logo and Name */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-20 h-20 rounded-full border-4 border-white/30 shadow-2xl overflow-hidden mb-4 ring-4 ring-white/10">
+          <div className="w-16 h-16 rounded-full border-3 border-white/30 shadow-2xl overflow-hidden mb-3 ring-2 ring-white/10">
             <img 
               src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
               alt="Restaurant Logo" 
@@ -69,12 +68,55 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             />
           </div>
           <div>
-            <h1 className="text-2xl font-bold mb-1 text-white drop-shadow-lg">
+            <h1 className="text-xl font-bold mb-1 text-white drop-shadow-lg">
               {restaurant?.name || "ร้านอาหารไทยแท้"}
             </h1>
             <p className="text-sm text-white/80 font-medium">
               {restaurant?.description || "อาหารไทยต้นตำรับ"}
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:block relative z-10">
+        <div className="desktop-container py-4">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-white/90 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+              {currentTime}
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-full border-2 border-white/30 shadow-lg overflow-hidden">
+                <img 
+                  src={restaurant?.logoUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200"} 
+                  alt="Restaurant Logo" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-center">
+                <h1 className="text-xl font-bold text-white drop-shadow-lg">
+                  {restaurant?.name || "ร้านอาหารไทยแท้"}
+                </h1>
+                <p className="text-sm text-white/80 font-medium">
+                  {restaurant?.description || "อาหารไทยต้นตำรับ"}
+                </p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <button 
+                className="bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
+                onClick={onCartClick}
+              >
+                <ShoppingCart className="text-white w-6 h-6" />
+              </button>
+              {cartItemCount > 0 && (
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold animate-bounce shadow-lg">
+                  {cartItemCount}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

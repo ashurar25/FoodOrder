@@ -9,6 +9,7 @@ import FoodItemCard from "@/components/food-item-card";
 import CartModal from "@/components/cart-modal";
 import BottomNavigation from "@/components/bottom-navigation";
 import BannerEditor from "@/components/banner-editor";
+import Footer from "@/components/footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Restaurant, Category, FoodItem, Banner } from "@shared/schema";
 
@@ -353,6 +354,8 @@ export default function Home() {
             )}
           </div>
         </div>
+        
+        <Footer restaurant={restaurant} />
       </div>
 
       {/* Add to Cart Toast */}

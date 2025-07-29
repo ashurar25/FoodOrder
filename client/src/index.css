@@ -69,11 +69,41 @@ body {
 }
 
 @media (min-width: 1024px) {
+  .desktop-container {
+    max-width: 1400px;
+    padding: 0 3rem;
+  }
+
+  .food-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
   .desktop-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+  }
+}
+
+@media (min-width: 1440px) {
+  .desktop-container {
+    max-width: 1600px;
+    padding: 0 4rem;
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease;
+}
+
+/* Better mobile touch targets */
+@media (max-width: 767px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
