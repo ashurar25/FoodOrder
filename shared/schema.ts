@@ -5,7 +5,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const restaurants = pgTable("restaurants", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
   logoUrl: text("logo_url"),
@@ -13,37 +13,37 @@ export const restaurants = pgTable("restaurants", {
 });
 
 export const categories = pgTable("categories", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   icon: text("icon").notNull(),
-  restaurantId: uuid("restaurant_id").references(() => restaurants.id),
+  restaurantId: text("restaurant_id").references(() => restaurants.id),
 });
 
 export const foodItems = pgTable("food_items", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrl: text("image_url"),
   rating: decimal("rating", { precision: 2, scale: 1 }).default("0.0"),
-  categoryId: uuid("category_id").references(() => categories.id),
-  restaurantId: uuid("restaurant_id").references(() => restaurants.id),
+  categoryId: text("category_id").references(() => categories.id),
+  restaurantId: text("restaurant_id").references(() => restaurants.id),
   isAvailable: boolean("is_available").default(true),
 });
 
 export const banners = pgTable("banners", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: text("id").primaryKey(),
   title: text("title").notNull(),
   subtitle: text("subtitle"),
   imageUrl: text("image_url").notNull(),
   isActive: boolean("is_active").default(true),
-  restaurantId: uuid("restaurant_id").references(() => restaurants.id),
+  restaurantId: text("restaurant_id").references(() => restaurants.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const orders = pgTable("orders", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  restaurantId: uuid("restaurant_id").references(() => restaurants.id),
+  id: text("id").primaryKey(),
+  restaurantId: text("restaurant_id").references(() => restaurants.id),
   customerName: text("customer_name"),
   tableNumber: text("table_number"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
@@ -53,9 +53,9 @@ export const orders = pgTable("orders", {
 });
 
 export const orderItems = pgTable("order_items", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  orderId: uuid("order_id").references(() => orders.id),
-  foodItemId: uuid("food_item_id").references(() => foodItems.id),
+  id: text("id").primaryKey(),
+  orderId: text("order_id").references(() => orders.id),
+  foodItemId: text("food_item_id").references(() => foodItems.id),
   quantity: integer("quantity").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
 });
@@ -139,7 +139,8 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
 }).extend({
   customerName: z.string().min(1, "กรุณาใส่ชื่อลูกค้า"),
   tableNumber: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  restaurantId: z.string().min(1) // Accept any string ID format
 });
 
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
