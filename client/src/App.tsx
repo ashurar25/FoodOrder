@@ -22,6 +22,7 @@ function Router() {
       <Route path="/admin/food" component={AdminFood} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/reports" component={AdminReports} />
+      <Route path="/admin/banners" component={AdminBanners} />
       <Route path="/admin/database" component={AdminDatabase} />
       <Route component={NotFound} />
     </Switch>

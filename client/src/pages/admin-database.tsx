@@ -70,7 +70,7 @@ export default function AdminDatabase() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       toast({
         title: "สำเร็จ",
         description: "ดาวน์โหลดข้อมูลแล้ว",
@@ -220,7 +220,7 @@ export default function AdminDatabase() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="host">Host</Label>
@@ -241,7 +241,7 @@ export default function AdminDatabase() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="database">ชื่อฐานข้อมูล</Label>
                   <Input
@@ -254,7 +254,7 @@ export default function AdminDatabase() {
                     Neon: ใช้ชื่อฐานข้อมูลที่สร้าง, Supabase: ใช้ "postgres"
                   </p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="username">ชื่อผู้ใช้</Label>
@@ -330,7 +330,7 @@ export default function AdminDatabase() {
               <Download className="w-6 h-6" />
               <span>ส่งออกข้อมูล</span>
             </Button>
-            
+
             <div>
               <input
                 type="file"
@@ -350,7 +350,7 @@ export default function AdminDatabase() {
               </Button>
             </div>
           </div>
-          
+
           <Alert className="mt-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
