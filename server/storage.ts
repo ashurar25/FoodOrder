@@ -357,6 +357,18 @@ export class FileStorage implements IStorage {
     await this.saveData(data);
   }
 
+  async updateRestaurant(id: string, updateData: any): Promise<Restaurant | null> {
+    const data = await this.loadData();
+    const index = data.restaurants.findIndex((r: Restaurant) => r.id === id);
+    if (index === -1) {
+      throw new Error("Restaurant not found");
+    }
+
+    data.restaurants[index] = { ...data.restaurants[index], ...updateData, updatedAt: new Date() };
+    await this.saveData(data);
+    return data.restaurants[index];
+  }
+
   // User methods (placeholder implementation)
   async getUser(id: string): Promise<User | undefined> {
     const data = await this.loadData();

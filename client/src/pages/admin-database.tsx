@@ -56,24 +56,39 @@ export default function AdminDatabase() {
   });
 
   const exportDataMutation = useMutation({
-    mutationFn: async () => {
-      return apiRequest("/api/admin/database/export", "POST");
+    mutationFn: async (format: 'json' | 'csv' = 'json') => {
+      return apiRequest(`/api/admin/database/export?format=${format}`, "POST");
     },
-    onSuccess: (data: any) => {
-      // Create download link
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `restaurant-data-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+    onSuccess: (data: any, format: 'json' | 'csv' = 'json') => {
+      const timestamp = new Date().toISOString().split('T')[0];
+      
+      if (format === 'csv') {
+        // Handle CSV download
+        const blob = new Blob([data.csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `restaurant-data-${timestamp}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        // Handle JSON download
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `restaurant-data-${timestamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
       toast({
         title: "สำเร็จ",
-        description: "ดาวน์โหลดข้อมูลแล้ว",
+        description: `ดาวน์โหลดข้อมูล ${format.toUpperCase()} แล้ว`,
       });
     },
   });
@@ -321,15 +336,26 @@ export default function AdminDatabase() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
-            <Button
-              onClick={() => exportDataMutation.mutate()}
-              disabled={exportDataMutation.isPending}
-              variant="outline"
-              className="h-20 flex flex-col space-y-2"
-            >
-              <Download className="w-6 h-6" />
-              <span>ส่งออกข้อมูล</span>
-            </Button>
+            <div className="space-y-2">
+              <Button
+                onClick={() => exportDataMutation.mutate('json')}
+                disabled={exportDataMutation.isPending}
+                variant="outline"
+                className="h-16 flex flex-col space-y-1 w-full"
+              >
+                <Download className="w-5 h-5" />
+                <span className="text-xs">ส่งออก JSON</span>
+              </Button>
+              <Button
+                onClick={() => exportDataMutation.mutate('csv')}
+                disabled={exportDataMutation.isPending}
+                variant="outline"
+                className="h-16 flex flex-col space-y-1 w-full"
+              >
+                <Download className="w-5 h-5" />
+                <span className="text-xs">ส่งออก CSV</span>
+              </Button>
+            </div>
 
             <div>
               <input

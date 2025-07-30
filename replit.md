@@ -121,10 +121,14 @@ The system uses the following main entities:
 
 ## Recent Changes (July 30, 2025)
 - ✓ Migrated from Replit Agent to Replit environment
-- ✓ Fixed admin panel syntax errors and layout issues
+- ✓ Fixed admin panel syntax errors and layout issues  
 - ✓ Added database management interface for external database configuration
-- ✓ Implemented data import/export functionality
-- ✓ Added admin route for database settings (/admin/database)
-- ✓ Enhanced backend with database management API endpoints
+- ✓ Implemented data import/export functionality with CSV export support
+- ✓ Added comprehensive image upload component for banners/menu items/logos
+- ✓ Created restaurant management page for editing name, description, and logo
+- ✓ Added admin route for restaurant settings (/admin/restaurant)
+- ✓ Enhanced backend with restaurant update and image upload endpoints
+- ✓ Added static image serving from server/data/images directory
+- ✓ Implemented CSV export alongside JSON export for orders data
 
 The architecture emphasizes type safety, developer experience, and maintainability while providing a responsive user interface for both customers and administrators.

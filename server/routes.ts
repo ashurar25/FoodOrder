@@ -454,8 +454,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/database/export", async (req, res) => {
     try {
+      const format = req.query.format as string || 'json';
       const data = await storage.exportData();
-      res.json(data);
+      
+      if (format === 'csv') {
+        // Convert data to CSV format
+        let csv = '';
+        
+        // Orders CSV
+        if (data.orders.length > 0) {
+          const orderHeaders = ['Order ID', 'Date', 'Customer Name', 'Table', 'Total', 'Status', 'Notes'];
+          csv += orderHeaders.join(',') + '\n';
+          
+          data.orders.forEach(order => {
+            const row = [
+              order.id,
+              new Date(order.createdAt || '').toLocaleDateString('th-TH'),
+              order.customerName || '',
+              order.tableNumber || '',
+              order.total,
+              order.status,
+              order.notes || ''
+            ].map(field => `"${String(field).replace(/"/g, '""')}"`);
+            csv += row.join(',') + '\n';
+          });
+        }
+        
+        res.json({ csv });
+      } else {
+        res.json(data);
+      }
     } catch (error) {
       res.status(500).json({ message: "Failed to export data" });
     }
@@ -468,6 +496,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, message: "Data imported successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to import data" });
+    }
+  });
+
+  // Image upload route
+  app.post("/api/upload/image", async (req, res) => {
+    try {
+      // For now, return a placeholder since we're storing data locally
+      // In a real implementation, you would handle file upload here
+      res.json({ 
+        url: "/images/placeholder.jpg",
+        message: "Image upload functionality requires a proper file storage service" 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
+
+  // Restaurant management routes
+  app.put("/api/restaurant/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      
+      const restaurant = await storage.updateRestaurant(id, updateData);
+      res.json(restaurant);
+    } catch (error) {
+      console.error("Error updating restaurant:", error);
+      res.status(500).json({ error: "Failed to update restaurant" });
     }
   });
 

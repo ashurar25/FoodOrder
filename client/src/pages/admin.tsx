@@ -130,6 +130,25 @@ export default function Admin() {
       <div className="grid gap-6 lg:grid-cols-1">
 
         {/* Database Configuration Card */}
+        <Link href="/admin/restaurant">
+          <Card className="bg-white/70 backdrop-blur-md border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+            <CardHeader className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-t-lg">
+              <CardTitle className="flex items-center justify-between text-slate-800">
+                <div className="flex items-center space-x-3">
+                  <Settings className="w-6 h-6 text-green-600" />
+                  <span>ข้อมูลร้าน</span>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-gray-600">แก้ไขชื่อร้าน คำอธิบาย และโลโก้</p>
+              <div className="mt-3 text-sm text-gray-500 group-hover:text-primary transition-colors">
+                คลิกเพื่อจัดการ →
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Link href="/admin/database">
           <Card className="bg-white/70 backdrop-blur-md border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer group">
             <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-t-lg">

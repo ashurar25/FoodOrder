@@ -8,6 +8,7 @@ import AdminReports from "@/pages/admin-reports";
 import AdminBanners from "@/pages/admin-banners";
 import AdminFood from "@/pages/admin-food";
 import AdminDatabase from "@/pages/admin-database";
+import AdminRestaurant from "@/pages/admin-restaurant";
 import Orders from "@/pages/orders";
 import NotFound from "@/pages/not-found";
 import { queryClient } from "@/lib/queryClient";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/admin/reports" component={AdminReports} />
       <Route path="/admin/banners" component={AdminBanners} />
       <Route path="/admin/database" component={AdminDatabase} />
+      <Route path="/admin/restaurant" component={AdminRestaurant} />
       <Route component={NotFound} />
     </Switch>
   );
