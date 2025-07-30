@@ -257,6 +257,26 @@
       "restaurantId": "id_kay6d35me_1753812074501",
       "total": "25",
       "status": "confirmed"
+    },
+    {
+      "id": "id_9o9u28cas_1753901628447",
+      "createdAt": "2025-07-30T18:53:48.447Z",
+      "restaurantId": "id_kay6d35me_1753812074501",
+      "customerName": "keng",
+      "tableNumber": "a1",
+      "total": "25",
+      "status": "confirmed",
+      "notes": "test"
+    },
+    {
+      "id": "id_2zvmixak1_1753901660217",
+      "createdAt": "2025-07-30T18:54:20.217Z",
+      "restaurantId": "id_kay6d35me_1753812074501",
+      "customerName": "test",
+      "tableNumber": "1",
+      "total": "75",
+      "status": "confirmed",
+      "notes": "asdasda"
     }
   ],
   "orderItems": [
@@ -300,6 +320,20 @@
       "orderId": "id_88lk0gk9i_1753816349595",
       "foodItemId": "id_2ov35kfg4_1753812074507",
       "quantity": 1,
+      "price": "25"
+    },
+    {
+      "id": "id_hwu5nugb9_1753901628450",
+      "orderId": "id_9o9u28cas_1753901628447",
+      "foodItemId": "id_2ov35kfg4_1753812074507",
+      "quantity": 1,
+      "price": "25"
+    },
+    {
+      "id": "id_9kxo1cp5u_1753901660218",
+      "orderId": "id_2zvmixak1_1753901660217",
+      "foodItemId": "id_2ov35kfg4_1753812074507",
+      "quantity": 3,
       "price": "25"
     }
   ],
