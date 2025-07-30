@@ -525,7 +525,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const restaurant = await storage.updateRestaurant(id, updateData);
       res.json(restaurant);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating restaurant:", error);
       res.status(500).json({ error: error.message || "Failed to update restaurant" });
     }

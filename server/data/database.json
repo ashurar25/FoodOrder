@@ -64,17 +64,6 @@
       "restaurantId": "id_kay6d35me_1753812074501"
     },
     {
-      "id": "id_pntoirta4_1753812074525",
-      "isAvailable": true,
-      "rating": "4.5",
-      "name": "ลูกชิ้นปลา",
-      "description": "ลูกชิ้นปลาสดใหม่ หวานหอม",
-      "price": "27.00",
-      "imageUrl": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
-      "categoryId": "id_xb6r7dw9x_1753812074502",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    },
-    {
       "id": "id_uqhtbv6ju_1753812074526",
       "isAvailable": true,
       "rating": "4.6",
@@ -93,17 +82,6 @@
       "description": "ข้าวผัดกุ้งสด หอมกรุ่น",
       "price": "45.00",
       "imageUrl": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
-      "categoryId": "id_bnez3wk89_1753812074504",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    },
-    {
-      "id": "id_yq38xbh1r_1753812074530",
-      "isAvailable": true,
-      "rating": "4.8",
-      "name": "ผัดไทย",
-      "description": "ผัดไทยแท้ รสชาติต้นตำรับ",
-      "price": "40.00",
-      "imageUrl": "https://images.unsplash.com/photo-1559314809-0f31657b9ccd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
       "categoryId": "id_bnez3wk89_1753812074504",
       "restaurantId": "id_kay6d35me_1753812074501"
     },
@@ -208,7 +186,7 @@
     },
     {
       "id": "id_de5t5j1oy_1753813360121",
-      "isActive": true,
+      "isActive": false,
       "createdAt": "2025-07-29T18:22:40.121Z",
       "title": "test",
       "imageUrl": "test",

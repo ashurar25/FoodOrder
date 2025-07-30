@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Utensils } from "lucide-react";
+import ImageUpload from "@/components/image-upload";
 import type { FoodItem, Category } from "@shared/schema";
 
 export default function AdminFood() {
@@ -136,10 +137,11 @@ export default function AdminFood() {
               value={newFoodItem.price}
               onChange={(e) => setNewFoodItem(prev => ({ ...prev, price: e.target.value }))}
             />
-            <Input
-              placeholder="URL รูปภาพ"
+            <ImageUpload
+              label="รูปภาพอาหาร"
+              placeholder="เลือกหรือใส่ URL รูปภาพอาหาร"
               value={newFoodItem.imageUrl}
-              onChange={(e) => setNewFoodItem(prev => ({ ...prev, imageUrl: e.target.value }))}
+              onChange={(url) => setNewFoodItem(prev => ({ ...prev, imageUrl: url }))}
             />
             <Select
               value={newFoodItem.categoryId}

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Edit, Trash2, Image } from "lucide-react";
+import ImageUpload from "@/components/image-upload";
 import type { Banner } from "@shared/schema";
 
 export default function AdminBanners() {
@@ -111,10 +112,11 @@ export default function AdminBanners() {
               value={newBanner.subtitle}
               onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
             />
-            <Input
-              placeholder="URL รูปภาพ"
+            <ImageUpload
+              label="รูปภาพแบนเนอร์"
+              placeholder="เลือกหรือใส่ URL รูปภาพแบนเนอร์"
               value={newBanner.imageUrl}
-              onChange={(e) => setNewBanner(prev => ({ ...prev, imageUrl: e.target.value }))}
+              onChange={(url) => setNewBanner(prev => ({ ...prev, imageUrl: url }))}
             />
             <Button onClick={handleCreateBanner} disabled={createBannerMutation.isPending}>
               <Plus className="w-4 h-4 mr-2" />
