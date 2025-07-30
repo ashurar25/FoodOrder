@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
 import AdminOrders from "@/pages/admin-orders";
+import AdminReports from "@/pages/admin-reports";
 import AdminBanners from "@/pages/admin-banners";
 import AdminFood from "@/pages/admin-food";
 import AdminDatabase from "@/pages/admin-database";
@@ -18,9 +19,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/orders" component={Orders} />
       <Route path="/admin" component={Admin} />
-      <Route path="/admin/orders" component={AdminOrders} />
-      <Route path="/admin/banners" component={AdminBanners} />
       <Route path="/admin/food" component={AdminFood} />
+      <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin/reports" component={AdminReports} />
       <Route path="/admin/database" component={AdminDatabase} />
       <Route component={NotFound} />
     </Switch>
