@@ -140,7 +140,7 @@ export default function CartModal({
             {/* Customer Information Form */}
             <div className="space-y-4 mb-6">
               <h3 className="font-semibold text-gray-800 mb-3">ข้อมูลการสั่งซื้อ</h3>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   ชื่อผู้สั่ง <span className="text-red-500">*</span>

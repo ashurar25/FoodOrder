@@ -43,7 +43,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
       <div className="relative z-10 p-1.5 md:hidden">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden ring-1 ring-white/10">
+            <div className="w-8 h-8 rounded-full border-2 border-white/30 shadow-2xl overflow-hidden ring-1 ring-white/10 bg-white hover:bg-white/90 transition-all duration-300 hover:scale-110 cursor-pointer">
               <img 
                 src={logoPath} 
                 alt="Restaurant Logo" 
@@ -85,7 +85,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden">
+              <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden bg-white hover:bg-white/90 transition-all duration-300 hover:scale-105 cursor-pointer">
                 <img 
                   src={logoPath} 
                   alt="Restaurant Logo" 
