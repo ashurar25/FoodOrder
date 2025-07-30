@@ -271,7 +271,7 @@ export default function Home() {
           cartItemCount={cartItemCount}
           onCartClick={() => setIsCartOpen(true)}
         />
-        
+
         <div className="desktop-container py-8">
           <div className="mb-8">
             <SearchBar 
@@ -348,7 +348,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        
+
         <Footer restaurant={restaurant ? {
           name: restaurant.name,
           description: restaurant.description || '',
@@ -373,7 +373,7 @@ export default function Home() {
         </div>
       )}
 
-      
+
 
       <CartModal
         isOpen={isCartOpen}
