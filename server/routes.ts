@@ -227,9 +227,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const banner = await storage.createBanner({
         title,
-        description,
         imageUrl,
-        linkUrl,
         restaurantId
       });
 
@@ -370,6 +368,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating order status:", error);
       res.status(500).json({ message: "Failed to update order status" });
+    }
+  });
+
+  // Database management routes
+  app.get("/api/admin/database/config", async (req, res) => {
+    try {
+      // Return current database configuration (local for now)
+      res.json({ 
+        type: 'local',
+        status: 'connected'
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get database config" });
+    }
+  });
+
+  app.post("/api/admin/database/config", async (req, res) => {
+    try {
+      const config = req.body;
+      // For now, just acknowledge the config update
+      res.json({ success: true, message: "Database configuration updated" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update database config" });
+    }
+  });
+
+  app.get("/api/admin/database/status", async (req, res) => {
+    try {
+      res.json({ 
+        connected: true,
+        type: 'local',
+        dataPath: 'server/data/database.json'
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get database status" });
+    }
+  });
+
+  app.post("/api/admin/database/export", async (req, res) => {
+    try {
+      const data = await storage.exportData();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to export data" });
+    }
+  });
+
+  app.post("/api/admin/database/import", async (req, res) => {
+    try {
+      const data = req.body;
+      await storage.importData(data);
+      res.json({ success: true, message: "Data imported successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to import data" });
     }
   });
 

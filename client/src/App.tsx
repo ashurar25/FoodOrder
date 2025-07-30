@@ -6,6 +6,7 @@ import Admin from "@/pages/admin";
 import AdminOrders from "@/pages/admin-orders";
 import AdminBanners from "@/pages/admin-banners";
 import AdminFood from "@/pages/admin-food";
+import AdminDatabase from "@/pages/admin-database";
 import Orders from "@/pages/orders";
 import NotFound from "@/pages/not-found";
 import { queryClient } from "@/lib/queryClient";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/banners" component={AdminBanners} />
       <Route path="/admin/food" component={AdminFood} />
+      <Route path="/admin/database" component={AdminDatabase} />
       <Route component={NotFound} />
     </Switch>
   );

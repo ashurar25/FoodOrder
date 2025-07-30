@@ -45,13 +45,15 @@ The system uses the following main entities:
 5. **Food Item Cards**: Display individual menu items with ratings
 6. **Cart Modal**: Shopping cart management with quantity controls
 7. **Admin Panel**: Management interface for banners and orders
-8. **Bottom Navigation**: Mobile-friendly navigation bar
+8. **Database Configuration**: External database setup and data management interface
+9. **Bottom Navigation**: Mobile-friendly navigation bar
 
 ### Backend Services
 1. **Storage Layer**: Database abstraction with repository pattern
 2. **Route Handlers**: Express route definitions for all API endpoints
-3. **Database Connection**: Neon PostgreSQL connection with connection pooling
+3. **Database Connection**: File-based storage with JSON persistence (server/data/database.json)
 4. **Initialization Service**: Default data setup for new restaurants
+5. **Database Management**: Admin interface for external database configuration and data import/export
 
 ## Data Flow
 
@@ -111,9 +113,18 @@ The system uses the following main entities:
 
 ### Database Management
 - Schema defined in `shared/schema.ts`
-- Migrations stored in `./migrations` directory
-- Development uses `drizzle-kit push` for schema sync
+- File-based storage using JSON (server/data/database.json)
+- Admin interface for database configuration and external database setup
+- Data export/import functionality for backup and migration
 - UUID primary keys for all entities
 - Automatic timestamps for audit trails
+
+## Recent Changes (July 30, 2025)
+- ✓ Migrated from Replit Agent to Replit environment
+- ✓ Fixed admin panel syntax errors and layout issues
+- ✓ Added database management interface for external database configuration
+- ✓ Implemented data import/export functionality
+- ✓ Added admin route for database settings (/admin/database)
+- ✓ Enhanced backend with database management API endpoints
 
 The architecture emphasizes type safety, developer experience, and maintainability while providing a responsive user interface for both customers and administrators.

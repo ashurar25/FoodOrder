@@ -54,6 +54,14 @@ export interface IStorage {
   getOrders(restaurantId: string): Promise<Order[]>;
   getOrderWithItems(orderId: string): Promise<(Order & { orderItems: (OrderItem & { foodItem: FoodItem })[] }) | undefined>;
   createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
+  updateOrderStatus(orderId: string, status: string): Promise<Order | undefined>;
+  
+  // Food item methods (additional)
+  deleteFoodItem(id: string): Promise<void>;
+  
+  // Database methods
+  exportData(): Promise<DatabaseData>;
+  importData(data: DatabaseData): Promise<void>;
 }
 
 export class FileStorage implements IStorage {
@@ -319,6 +327,16 @@ export class FileStorage implements IStorage {
     };
   }
 
+  async updateOrderStatus(orderId: string, status: string): Promise<Order | undefined> {
+    const data = await this.loadData();
+    const index = data.orders.findIndex(o => o.id === orderId);
+    if (index === -1) return undefined;
+
+    data.orders[index].status = status;
+    await this.saveData(data);
+    return data.orders[index];
+  }
+
   async createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem> {
     const data = await this.loadData();
     const newOrderItem: OrderItem = {
@@ -328,6 +346,38 @@ export class FileStorage implements IStorage {
     data.orderItems.push(newOrderItem);
     await this.saveData(data);
     return newOrderItem;
+  }
+
+  // Database management methods
+  async exportData(): Promise<DatabaseData> {
+    return await this.loadData();
+  }
+
+  async importData(data: DatabaseData): Promise<void> {
+    await this.saveData(data);
+  }
+
+  // User methods (placeholder implementation)
+  async getUser(id: string): Promise<User | undefined> {
+    const data = await this.loadData();
+    return data.users.find(user => user.id === id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const data = await this.loadData();
+    return data.users.find(user => user.username === username);
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const data = await this.loadData();
+    const newUser: User = {
+      id: this.generateId(),
+      createdAt: new Date(),
+      ...user
+    };
+    data.users.push(newUser);
+    await this.saveData(data);
+    return newUser;
   }
 }
 
