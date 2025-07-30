@@ -331,47 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/orders/:id", async (req, res) => {
-    try {
-      const id = req.params.id;
-      const order = await storage.getOrderWithItems(id);
-      if (!order) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-      res.json(order);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to get order" });
-    }
-  });
-
-  app.put("/api/orders/:id/status", async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { status } = req.body;
-
-      if (!status) {
-        return res.status(400).json({ message: "Status is required" });
-      }
-
-      // Validate status
-      const validStatuses = ['pending', 'preparing', 'confirmed', 'cancelled'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({ message: "Invalid status" });
-      }
-
-      const updatedOrder = await storage.updateOrderStatus(id, status);
-      if (!updatedOrder) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-
-      res.json(updatedOrder);
-    } catch (error) {
-      console.error("Error updating order status:", error);
-      res.status(500).json({ message: "Failed to update order status" });
-    }
-  });
-
-  // Export orders to CSV
+  // Export orders to CSV - must come before the /:id route
   app.get("/api/orders/export", async (req, res) => {
     try {
       const restaurant = await storage.getRestaurant();
@@ -416,6 +376,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to export orders" });
     }
   });
+
+  app.get("/api/orders/:id", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const order = await storage.getOrderWithItems(id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get order" });
+    }
+  });
+
+  app.put("/api/orders/:id/status", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { status } = req.body;
+
+      if (!status) {
+        return res.status(400).json({ message: "Status is required" });
+      }
+
+      // Validate status
+      const validStatuses = ['pending', 'preparing', 'confirmed', 'cancelled'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      const updatedOrder = await storage.updateOrderStatus(id, status);
+      if (!updatedOrder) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      res.json(updatedOrder);
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      res.status(500).json({ message: "Failed to update order status" });
+    }
+  });
+
+
 
   // Database management routes
   app.get("/api/admin/database/config", async (req, res) => {
