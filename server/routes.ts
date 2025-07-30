@@ -506,32 +506,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Image upload route
   app.post("/api/upload/image", async (req, res) => {
     try {
-      const { imageData, fileName } = req.body;
-      
-      if (!imageData || !fileName) {
-        return res.status(400).json({ message: "Image data and filename required" });
-      }
-      
-      // Create images directory if it doesn't exist
-      const imagesDir = path.join(process.cwd(), 'server', 'data', 'images');
-      await fs.mkdir(imagesDir, { recursive: true });
-      
-      // Save image file (for base64 data)
-      if (imageData.startsWith('data:')) {
-        const base64Data = imageData.split(',')[1];
-        const buffer = Buffer.from(base64Data, 'base64');
-        const filePath = path.join(imagesDir, fileName);
-        await fs.writeFile(filePath, buffer);
+      // Handle URL input (JSON format)
+      if (req.headers['content-type']?.includes('application/json')) {
+        const { imageData, fileName } = req.body;
         
-        res.json({ 
-          url: `/api/images/${fileName}`,
-          message: "Image uploaded successfully" 
-        });
+        if (!imageData || !fileName) {
+          return res.status(400).json({ message: "Image data and filename required" });
+        }
+        
+        // Create images directory if it doesn't exist
+        const imagesDir = path.join(process.cwd(), 'server', 'data', 'images');
+        await fs.mkdir(imagesDir, { recursive: true });
+        
+        // Save image file (for base64 data)
+        if (imageData.startsWith('data:')) {
+          const base64Data = imageData.split(',')[1];
+          const buffer = Buffer.from(base64Data, 'base64');
+          const filePath = path.join(imagesDir, fileName);
+          await fs.writeFile(filePath, buffer);
+          
+          res.json({ 
+            url: `/api/images/${fileName}`,
+            message: "Image uploaded successfully" 
+          });
+        } else {
+          // If it's a URL, just return it
+          res.json({ 
+            url: imageData,
+            message: "Image URL saved" 
+          });
+        }
       } else {
-        // If it's a URL, just return it
-        res.json({ 
-          url: imageData,
-          message: "Image URL saved" 
+        // Handle file upload (FormData format) - not implemented yet
+        // For now, return a message that file upload needs implementation
+        res.status(400).json({ 
+          message: "File upload not yet implemented. Please use URL input instead." 
         });
       }
     } catch (error) {

@@ -52,35 +52,59 @@ export default function ImageUpload({
     setUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('image', file);
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64Data = e.target?.result as string;
+        const fileName = `${Date.now()}_${file.name}`;
+        
+        try {
+          const response = await fetch('/api/upload/image', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              imageData: base64Data,
+              fileName: fileName,
+            }),
+          });
 
-      const response = await fetch('/api/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+          if (!response.ok) {
+            throw new Error('การอัพโหลดล้มเหลว');
+          }
 
-      if (!response.ok) {
-        throw new Error('การอัพโหลดล้มเหลว');
-      }
-
-      const result = await response.json();
-      const imageUrl = result.url;
+          const result = await response.json();
+          const imageUrl = result.url;
+          
+          setPreview(imageUrl);
+          onChange(imageUrl);
+          
+          toast({
+            title: "สำเร็จ",
+            description: "อัพโหลดรูปภาพแล้ว",
+          });
+          
+        } catch (error) {
+          console.error('Upload error:', error);
+          toast({
+            title: "ข้อผิดพลาด",
+            description: "ไม่สามารถอัพโหลดรูปภาพได้",
+            variant: "destructive",
+          });
+        } finally {
+          setUploading(false);
+        }
+      };
       
-      setPreview(imageUrl);
-      onChange(imageUrl);
-      
-      toast({
-        title: "สำเร็จ",
-        description: "อัพโหลดรูปภาพแล้ว",
-      });
+      reader.readAsDataURL(file);
     } catch (error) {
+      console.error('File read error:', error);
       toast({
         title: "ข้อผิดพลาด",
-        description: "ไม่สามารถอัพโหลดรูปภาพได้",
+        description: "ไม่สามารถอ่านไฟล์ได้",
         variant: "destructive",
       });
-    } finally {
       setUploading(false);
     }
   };
