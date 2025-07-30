@@ -9,17 +9,40 @@ import { useState } from "react";
 import ReceiptModal from "@/components/receipt-modal";
 import type { Order } from "@shared/schema";
 
+interface OrderWithItems extends Order {
+  items?: Array<{
+    id: string;
+    foodItemId: string;
+    quantity: number;
+    price: string;
+    name?: string;
+  }>;
+}
+
 export default function Orders() {
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
   
-  const { data: orders = [], isLoading } = useQuery<Order[]>({
+  const { data: orders = [], isLoading } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
   });
 
-  const handleShowReceipt = (order: Order) => {
-    setSelectedOrder(order);
-    setShowReceipt(true);
+  const handleShowReceipt = async (order: OrderWithItems) => {
+    try {
+      // Fetch complete order details with items
+      const response = await fetch(`/api/orders/${order.id}`);
+      if (response.ok) {
+        const orderWithItems = await response.json();
+        setSelectedOrder(orderWithItems);
+      } else {
+        setSelectedOrder(order);
+      }
+      setShowReceipt(true);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      setSelectedOrder(order);
+      setShowReceipt(true);
+    }
   };
 
   const formatDateTime = (dateString: string) => {

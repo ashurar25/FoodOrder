@@ -280,11 +280,18 @@ export default function Admin() {
         {/* Order Management */}
         <Card>
           <CardHeader>
-            <CardTitle>รายการสั่งซื้อล่าสุด</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              <span>รายการสั่งซื้อล่าสุด</span>
+              <Link href="/admin/orders">
+                <Button size="sm" className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600">
+                  จัดการทั้งหมด
+                </Button>
+              </Link>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-80 overflow-y-auto">
-              {orders.map((order) => (
+              {orders.slice(0, 5).map((order) => (
                 <div key={order.id} className="p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -308,6 +315,15 @@ export default function Admin() {
               ))}
               {orders.length === 0 && (
                 <p className="text-center text-gray-500 py-4">ยังไม่มีคำสั่งซื้อ</p>
+              )}
+              {orders.length > 5 && (
+                <div className="text-center pt-2">
+                  <Link href="/admin/orders">
+                    <Button variant="outline" size="sm">
+                      ดูทั้งหมด ({orders.length})
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
           </CardContent>
