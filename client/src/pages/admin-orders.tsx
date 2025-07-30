@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Calendar, ShoppingBag, Eye, Check, X, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, ShoppingBag, Eye, Check, X, Clock, Download, FileSpreadsheet } from "lucide-react";
 import { useState } from "react";
 import type { Order } from "@shared/schema";
 
@@ -24,6 +25,8 @@ interface OrderWithItems extends Order {
 export default function AdminOrders() {
   const { toast } = useToast();
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
 
   const { data: orders = [], isLoading, refetch } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
@@ -48,6 +51,38 @@ export default function AdminOrders() {
       });
     },
   });
+
+  const handleExportOrders = () => {
+    window.open('/api/orders/export', '_blank');
+    toast({
+      title: "ส่งออกข้อมูลสำเร็จ",
+      description: "ไฟล์ CSV ของคำสั่งซื้อได้ถูกดาวน์โหลดแล้ว",
+    });
+  };
+
+  const handleViewOrderDetails = async (order: OrderWithItems) => {
+    try {
+      const response = await fetch(`/api/orders/${order.id}`);
+      if (response.ok) {
+        const orderWithItems = await response.json();
+        setSelectedOrder(orderWithItems);
+        setShowOrderDetails(true);
+      } else {
+        toast({
+          title: "ข้อผิดพลาด",
+          description: "ไม่สามารถโหลดรายละเอียดคำสั่งซื้อได้",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+        variant: "destructive",
+      });
+    }
+  };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -139,18 +174,28 @@ export default function AdminOrders() {
             </div>
           </div>
           
-          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="กรองตามสถานะ" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">ทั้งหมด ({orders.length})</SelectItem>
-              <SelectItem value="pending">รอดำเนินการ ({orderStats.pending})</SelectItem>
-              <SelectItem value="preparing">กำลังเตรียม ({orderStats.preparing})</SelectItem>
-              <SelectItem value="confirmed">สำเร็จ ({orderStats.confirmed})</SelectItem>
-              <SelectItem value="cancelled">ยกเลิก ({orderStats.cancelled})</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex space-x-3">
+            <Button
+              onClick={handleExportOrders}
+              className="bg-green-500 hover:bg-green-600 text-white"
+            >
+              <FileSpreadsheet className="w-4 h-4 mr-2" />
+              ส่งออก CSV
+            </Button>
+            
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="กรองตามสถานะ" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">ทั้งหมด ({orders.length})</SelectItem>
+                <SelectItem value="pending">รอดำเนินการ ({orderStats.pending})</SelectItem>
+                <SelectItem value="preparing">กำลังเตรียม ({orderStats.preparing})</SelectItem>
+                <SelectItem value="confirmed">สำเร็จ ({orderStats.confirmed})</SelectItem>
+                <SelectItem value="cancelled">ยกเลิก ({orderStats.cancelled})</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -289,7 +334,7 @@ export default function AdminOrders() {
                         size="sm"
                         variant="outline"
                         className="flex-1"
-                        onClick={() => window.open(`/api/orders/${order.id}`, '_blank')}
+                        onClick={() => handleViewOrderDetails(order)}
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         ดูรายละเอียด
@@ -302,6 +347,90 @@ export default function AdminOrders() {
           </div>
         )}
       </div>
+
+      {/* Order Details Modal */}
+      <Dialog open={showOrderDetails} onOpenChange={setShowOrderDetails}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <ShoppingBag className="w-5 h-5" />
+              <span>รายละเอียดคำสั่งซื้อ #{selectedOrder?.id?.slice(-8)}</span>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedOrder && (
+            <div className="space-y-6">
+              {/* Order Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">ชื่อลูกค้า</label>
+                  <p className="text-lg font-semibold">{selectedOrder.customerName || "ไม่ระบุชื่อ"}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">หมายเลขโต๊ะ</label>
+                  <p className="text-lg font-semibold">{selectedOrder.tableNumber || "ไม่ระบุ"}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">เวลาสั่ง</label>
+                  <p className="text-lg font-semibold">
+                    {formatDateTime(selectedOrder.createdAt?.toString())}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">สถานะ</label>
+                  <div className="mt-1">
+                    {getStatusBadge(selectedOrder.status)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes */}
+              {selectedOrder.notes && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500">หมายเหตุ</label>
+                  <div className="mt-1 p-3 bg-gray-50 rounded-lg">
+                    <p>{selectedOrder.notes}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Items */}
+              <div>
+                <label className="text-sm font-medium text-gray-500">รายการอาหาร</label>
+                <div className="mt-2 space-y-3">
+                  {selectedOrder.orderItems?.map((item: any) => (
+                    <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.foodItem?.name || "ไม่ระบุชื่อ"}</p>
+                        <p className="text-sm text-gray-500">
+                          ฿{parseFloat(item.price).toFixed(0)} x {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">
+                          ฿{(parseFloat(item.price) * item.quantity).toFixed(0)}
+                        </p>
+                      </div>
+                    </div>
+                  )) || (
+                    <p className="text-gray-500 italic">ไม่มีรายการอาหาร</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="border-t pt-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xl font-semibold">ยอดรวมทั้งหมด</span>
+                  <span className="text-2xl font-bold text-primary">
+                    ฿{parseFloat(selectedOrder.total).toFixed(0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

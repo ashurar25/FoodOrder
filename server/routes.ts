@@ -371,6 +371,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Export orders to CSV
+  app.get("/api/orders/export", async (req, res) => {
+    try {
+      const restaurant = await storage.getRestaurant();
+      if (!restaurant) {
+        return res.status(404).json({ message: "Restaurant not found" });
+      }
+
+      const orders = await storage.getOrders(restaurant.id);
+      
+      // Create CSV header
+      const csvHeader = [
+        'Order ID',
+        'Date',
+        'Customer Name',
+        'Table Number',
+        'Total Amount',
+        'Status',
+        'Notes'
+      ].join(',');
+
+      // Create CSV rows
+      const csvRows = orders.map(order => {
+        const date = order.createdAt ? new Date(order.createdAt).toLocaleString('th-TH') : '';
+        return [
+          order.id,
+          `"${date}"`,
+          `"${order.customerName || ''}"`,
+          `"${order.tableNumber || ''}"`,
+          order.total,
+          order.status,
+          `"${order.notes || ''}"`
+        ].join(',');
+      });
+
+      const csvContent = [csvHeader, ...csvRows].join('\n');
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="orders-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send('\ufeff' + csvContent); // Add BOM for Excel UTF-8 support
+    } catch (error) {
+      console.error("Error exporting orders:", error);
+      res.status(500).json({ message: "Failed to export orders" });
+    }
+  });
+
   // Database management routes
   app.get("/api/admin/database/config", async (req, res) => {
     try {
