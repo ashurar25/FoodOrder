@@ -108,26 +108,30 @@ export default function AdminReports() {
 
   // Top selling items
   const topSellingItems = useMemo(() => {
-    const itemStats: Record<string, { name: string; quantity: number; revenue: number; orders: number }> = {};
+    const itemStats: Record<string, { name: string; quantity: number; revenue: number; orders: number; price: number; categoryName: string }> = {};
     
     filteredOrders
       .filter(order => order.status === 'confirmed' && order.orderItems)
       .forEach(order => {
         order.orderItems!.forEach(item => {
           const foodItem = foodItems.find(f => f.id === item.foodItemId);
-          const itemName = foodItem?.name || 'Unknown Item';
+          const itemName = foodItem?.name || 'สินค้าไม่ทราบชื่อ';
+          const itemPrice = parseFloat(item.price);
+          const categoryName = foodItem ? 'อาหาร' : 'ไม่ระบุหมวดหมู่';
           
           if (!itemStats[item.foodItemId]) {
             itemStats[item.foodItemId] = {
               name: itemName,
               quantity: 0,
               revenue: 0,
-              orders: 0
+              orders: 0,
+              price: itemPrice,
+              categoryName
             };
           }
           
           itemStats[item.foodItemId].quantity += item.quantity;
-          itemStats[item.foodItemId].revenue += parseFloat(item.price) * item.quantity;
+          itemStats[item.foodItemId].revenue += itemPrice * item.quantity;
           itemStats[item.foodItemId].orders += 1;
         });
       });
@@ -135,7 +139,39 @@ export default function AdminReports() {
     return Object.entries(itemStats)
       .map(([id, stats]) => ({ id, ...stats }))
       .sort((a, b) => b.quantity - a.quantity)
-      .slice(0, 10);
+      .slice(0, 15);
+  }, [filteredOrders, foodItems]);
+
+  // Sales by category
+  const salesByCategory = useMemo(() => {
+    const categoryStats: Record<string, { name: string; quantity: number; revenue: number; items: number }> = {};
+    
+    filteredOrders
+      .filter(order => order.status === 'confirmed' && order.orderItems)
+      .forEach(order => {
+        order.orderItems!.forEach(item => {
+          const foodItem = foodItems.find(f => f.id === item.foodItemId);
+          const categoryId = foodItem?.categoryId || 'unknown';
+          const categoryName = categoryId === 'unknown' ? 'ไม่ระบุหมวดหมู่' : 'หมวดหมู่อาหาร';
+          
+          if (!categoryStats[categoryId]) {
+            categoryStats[categoryId] = {
+              name: categoryName,
+              quantity: 0,
+              revenue: 0,
+              items: 0
+            };
+          }
+          
+          categoryStats[categoryId].quantity += item.quantity;
+          categoryStats[categoryId].revenue += parseFloat(item.price) * item.quantity;
+          categoryStats[categoryId].items += 1;
+        });
+      });
+
+    return Object.entries(categoryStats)
+      .map(([id, stats]) => ({ id, ...stats }))
+      .sort((a, b) => b.revenue - a.revenue);
   }, [filteredOrders, foodItems]);
 
   // Daily sales data
@@ -353,31 +389,85 @@ export default function AdminReports() {
           </CardContent>
         </Card>
 
+        {/* Sales by Category */}
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <ShoppingBag className="w-5 h-5" />
+              <span>ยอดขายตามหมวดหมู่</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {salesByCategory.length > 0 ? (
+                salesByCategory.map((category, index) => (
+                  <div key={category.id} className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-800">{category.name}</h4>
+                      <Badge variant="secondary">อันดับ {index + 1}</Badge>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div className="text-center">
+                        <p className="font-bold text-blue-600">{category.quantity}</p>
+                        <p className="text-gray-500">ชิ้น</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-bold text-green-600">฿{category.revenue.toFixed(0)}</p>
+                        <p className="text-gray-500">รายได้</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-bold text-orange-600">{category.items}</p>
+                        <p className="text-gray-500">ออเดอร์</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-8 col-span-2">ไม่มีข้อมูลยอดขายตามหมวดหมู่</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Top Selling Items */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5" />
-              <span>สินค้าขายดี (Top 10)</span>
+              <span>สินค้าขายดี (Top 15)</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {topSellingItems.length > 0 ? (
                 topSellingItems.map((item, index) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
+                  <div key={item.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+                    <div className="flex items-center space-x-4">
+                      <Badge 
+                        variant={index < 3 ? "default" : "outline"} 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          index === 0 ? 'bg-yellow-500 text-white' : 
+                          index === 1 ? 'bg-gray-400 text-white' : 
+                          index === 2 ? 'bg-orange-600 text-white' : ''
+                        }`}
+                      >
                         {index + 1}
                       </Badge>
                       <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-gray-500">{item.orders} ออเดอร์</p>
+                        <p className="font-semibold text-gray-800">{item.name}</p>
+                        <div className="flex space-x-4 text-sm text-gray-600">
+                          <span>฿{item.price.toFixed(0)} ต่อชิ้น</span>
+                          <span>•</span>
+                          <span>{item.orders} ออเดอร์</span>
+                          <span>•</span>
+                          <span>{item.categoryName}</span>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-lg">x{item.quantity}</p>
-                      <p className="text-sm text-green-600">฿{item.revenue.toFixed(0)}</p>
+                      <p className="font-bold text-xl text-blue-600">x{item.quantity}</p>
+                      <p className="text-sm text-green-600 font-semibold">฿{item.revenue.toFixed(0)}</p>
+                      <p className="text-xs text-gray-500">รายได้รวม</p>
                     </div>
                   </div>
                 ))

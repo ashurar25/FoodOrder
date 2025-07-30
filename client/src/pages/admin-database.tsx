@@ -184,6 +184,42 @@ export default function AdminDatabase() {
                     กรุณากรอกข้อมูลการเชื่อมต่อฐานข้อมูล PostgreSQL ภายนอก
                   </AlertDescription>
                 </Alert>
+
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-2">คำแนะนำการเชื่อมต่อ</h4>
+                  <div className="space-y-3 text-sm text-blue-700">
+                    <div>
+                      <strong>Neon Database:</strong>
+                      <ul className="ml-4 mt-1 space-y-1 list-disc">
+                        <li>Host: [project-name].us-east-2.aws.neon.tech</li>
+                        <li>Port: 5432</li>
+                        <li>Database: [database-name]</li>
+                        <li>Username: [your-username]</li>
+                        <li>Password: [your-password]</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>Supabase:</strong>
+                      <ul className="ml-4 mt-1 space-y-1 list-disc">
+                        <li>Host: db.[project-ref].supabase.co</li>
+                        <li>Port: 5432</li>
+                        <li>Database: postgres</li>
+                        <li>Username: postgres</li>
+                        <li>Password: [your-password]</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>Railway:</strong>
+                      <ul className="ml-4 mt-1 space-y-1 list-disc">
+                        <li>Host: [service].railway.app</li>
+                        <li>Port: [assigned-port]</li>
+                        <li>Database: railway</li>
+                        <li>Username: postgres</li>
+                        <li>Password: [generated-password]</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -207,33 +243,61 @@ export default function AdminDatabase() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="database">Database Name</Label>
+                  <Label htmlFor="database">ชื่อฐานข้อมูล</Label>
                   <Input
                     id="database"
-                    placeholder="restaurant_db"
+                    placeholder="restaurant_db หรือ postgres"
                     value={config.database || ''}
                     onChange={(e) => setConfig(prev => ({ ...prev, database: e.target.value }))}
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Neon: ใช้ชื่อฐานข้อมูลที่สร้าง, Supabase: ใช้ "postgres"
+                  </p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">ชื่อผู้ใช้</Label>
                     <Input
                       id="username"
+                      placeholder="postgres หรือ username ของคุณ"
                       value={config.username || ''}
                       onChange={(e) => setConfig(prev => ({ ...prev, username: e.target.value }))}
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      โดยทั่วไปจะเป็น "postgres"
+                    </p>
                   </div>
                   <div>
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">รหัสผ่าน</Label>
                     <Input
                       id="password"
                       type="password"
+                      placeholder="รหัสผ่านของฐานข้อมูล"
                       value={config.password || ''}
                       onChange={(e) => setConfig(prev => ({ ...prev, password: e.target.value }))}
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      รหัสผ่านที่ได้จากเจ้าให้บริการ
+                    </p>
                   </div>
+                </div>
+
+                <div>
+                  <Label>การตั้งค่าเพิ่มเติม</Label>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="ssl"
+                      checked={config.ssl || false}
+                      onChange={(e) => setConfig(prev => ({ ...prev, ssl: e.target.checked }))}
+                      className="rounded"
+                    />
+                    <Label htmlFor="ssl" className="text-sm">เปิดใช้งาน SSL (แนะนำสำหรับ production)</Label>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    ฐานข้อมูลส่วนใหญ่ต้องการ SSL สำหรับการเชื่อมต่อภายนอก
+                  </p>
                 </div>
               </div>
             )}

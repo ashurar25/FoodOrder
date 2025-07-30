@@ -27,7 +27,7 @@ export default function AdminBanners() {
   const createBannerMutation = useMutation({
     mutationFn: async (bannerData: typeof newBanner) => {
       const restaurant = await fetch("/api/restaurant").then(r => r.json());
-      return apiRequest("POST", "/api/banners", {
+      return apiRequest("/api/banners", "POST", {
         ...bannerData,
         restaurantId: restaurant.id,
       });
@@ -50,7 +50,7 @@ export default function AdminBanners() {
   });
 
   const deleteBannerMutation = useMutation({
-    mutationFn: (bannerId: string) => apiRequest("DELETE", `/api/banners/${bannerId}`),
+    mutationFn: (bannerId: string) => apiRequest(`/api/banners/${bannerId}`, "DELETE"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
       toast({
