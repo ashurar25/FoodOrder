@@ -106,6 +106,17 @@ export class FileStorage implements IStorage {
     return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
   }
 
+  private generateOrderId(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+  }
+
   // User methods
   async getUser(id: string): Promise<User | undefined> {
     const data = await this.loadData();
@@ -290,7 +301,7 @@ export class FileStorage implements IStorage {
   async createOrder(order: InsertOrder): Promise<Order> {
     const data = await this.loadData();
     const newOrder: Order = {
-      id: this.generateId(),
+      id: this.generateOrderId(),
       createdAt: new Date(),
       ...order
     };
