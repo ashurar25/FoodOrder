@@ -1,5 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import fs from 'fs/promises';
+import path from 'path';
 import { storage } from "./storage";
 import { insertRestaurantSchema, insertCategorySchema, insertFoodItemSchema, insertBannerSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
 import { z } from "zod";
@@ -504,13 +506,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Image upload route
   app.post("/api/upload/image", async (req, res) => {
     try {
-      // For now, return a placeholder since we're storing data locally
-      // In a real implementation, you would handle file upload here
-      res.json({ 
-        url: "/images/placeholder.jpg",
-        message: "Image upload functionality requires a proper file storage service" 
-      });
+      const { imageData, fileName } = req.body;
+      
+      if (!imageData || !fileName) {
+        return res.status(400).json({ message: "Image data and filename required" });
+      }
+      
+      // Create images directory if it doesn't exist
+      const imagesDir = path.join(process.cwd(), 'server', 'data', 'images');
+      await fs.mkdir(imagesDir, { recursive: true });
+      
+      // Save image file (for base64 data)
+      if (imageData.startsWith('data:')) {
+        const base64Data = imageData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        const filePath = path.join(imagesDir, fileName);
+        await fs.writeFile(filePath, buffer);
+        
+        res.json({ 
+          url: `/api/images/${fileName}`,
+          message: "Image uploaded successfully" 
+        });
+      } else {
+        // If it's a URL, just return it
+        res.json({ 
+          url: imageData,
+          message: "Image URL saved" 
+        });
+      }
     } catch (error) {
+      console.error("Image upload error:", error);
       res.status(500).json({ message: "Failed to upload image" });
     }
   });
@@ -528,6 +553,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating restaurant:", error);
       res.status(500).json({ error: error.message || "Failed to update restaurant" });
+    }
+  });
+
+  // Serve images from data/images directory
+  app.get("/api/images/:filename", async (req, res) => {
+    try {
+      const { filename } = req.params;
+      const filePath = path.join(process.cwd(), 'server', 'data', 'images', filename);
+      
+      // Check if file exists
+      await fs.access(filePath);
+      
+      // Set appropriate content type
+      const ext = path.extname(filename).toLowerCase();
+      const contentTypeMap: { [key: string]: string } = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp'
+      };
+      const contentType = contentTypeMap[ext] || 'application/octet-stream';
+      
+      res.set('Content-Type', contentType);
+      const fileData = await fs.readFile(filePath);
+      res.send(fileData);
+    } catch (error) {
+      res.status(404).json({ message: "Image not found" });
     }
   });
 

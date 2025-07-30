@@ -1,8 +1,0 @@
-# Images Directory
-
-This directory is used to store uploaded images for:
-- Restaurant logos
-- Food item images  
-- Banner images
-
-Images are served statically via the Express server.

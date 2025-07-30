@@ -130,5 +130,8 @@ The system uses the following main entities:
 - ✓ Enhanced backend with restaurant update and image upload endpoints
 - ✓ Added static image serving from server/data/images directory
 - ✓ Implemented CSV export alongside JSON export for orders data
+- ✓ Confirmed all data storage in server/data folder structure
+- ✓ Fixed banner deletion functionality and image upload for food items
+- ✓ Enhanced image upload system with proper file handling and serving
 
 The architecture emphasizes type safety, developer experience, and maintainability while providing a responsive user interface for both customers and administrators.
