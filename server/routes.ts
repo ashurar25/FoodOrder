@@ -273,6 +273,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Order items are required" });
       }
 
+      if (!customerName || !customerName.trim()) {
+        return res.status(400).json({ message: "Customer name is required" });
+      }
+
       const restaurant = await storage.getRestaurant();
       if (!restaurant) {
         return res.status(404).json({ message: "Restaurant not found" });
@@ -283,9 +287,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         restaurantId: restaurant.id,
         total: total.toString(),
         status: "confirmed",
-        customerName: req.body.customerName,
-        tableNumber: req.body.tableNumber,
-        notes: req.body.notes,
+        customerName: customerName.trim(),
+        tableNumber: tableNumber?.trim() || null,
+        notes: notes?.trim() || null,
       });
 
       // Create order
@@ -305,6 +309,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const completeOrder = await storage.getOrderWithItems(order.id);
       res.status(201).json(completeOrder);
     } catch (error) {
+      console.error("Order creation error:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid order data", 
+          errors: error.errors 
+        });
+      }
       res.status(500).json({ message: "Failed to create order" });
     }
   });

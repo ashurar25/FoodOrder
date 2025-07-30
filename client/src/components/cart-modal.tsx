@@ -42,9 +42,6 @@ export default function CartModal({
       if (!customerName.trim()) {
         throw new Error("กรุณาใส่ชื่อลูกค้า");
       }
-      if (!tableNumber.trim()) {
-        throw new Error("กรุณาใส่หมายเลขโต๊ะ");
-      }
 
       const orderItems = items.map(item => ({
         foodItemId: item.foodItemId,
@@ -56,14 +53,16 @@ export default function CartModal({
         items: orderItems,
         total,
         customerName: customerName.trim(),
-        tableNumber: tableNumber.trim(),
+        tableNumber: tableNumber.trim() || undefined,
         notes: orderNotes.trim() || undefined,
       });
     },
     onSuccess: () => {
       toast({
         title: "สำเร็จ!",
-        description: `สั่งซื้อเรียบร้อยแล้ว โต๊ะ ${tableNumber}`,
+        description: tableNumber.trim() 
+          ? `สั่งซื้อเรียบร้อยแล้ว โต๊ะ ${tableNumber}` 
+          : "สั่งซื้อเรียบร้อยแล้ว",
       });
       // Clear form
       setCustomerName("");
@@ -156,7 +155,7 @@ export default function CartModal({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  หมายเลขโต๊ะ <span className="text-red-500">*</span>
+                  หมายเลขโต๊ะ (ไม่บังคับ)
                 </label>
                 <input
                   type="text"
@@ -187,14 +186,6 @@ export default function CartModal({
                   toast({
                     title: "ข้อผิดพลาด",
                     description: "กรุณากรอกชื่อผู้สั่ง",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                if (!tableNumber.trim()) {
-                  toast({
-                    title: "ข้อผิดพลาด", 
-                    description: "กรุณากรอกหมายเลขโต๊ะ",
                     variant: "destructive",
                   });
                   return;
