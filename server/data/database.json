@@ -199,6 +199,14 @@
       "title": "test",
       "imageUrl": "test",
       "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_orso3a8w9_1753905716053",
+      "isActive": true,
+      "createdAt": "2025-07-30T20:01:56.053Z",
+      "title": "Test Banner",
+      "imageUrl": "test.jpg",
+      "restaurantId": "id_kay6d35me_1753812074501"
     }
   ],
   "orders": [
