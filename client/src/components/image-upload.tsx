@@ -39,11 +39,11 @@ export default function ImageUpload({
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 2MB for base64 encoding)
+    if (file.size > 2 * 1024 * 1024) {
       toast({
         title: "ข้อผิดพลาด",
-        description: "ขนาดไฟล์ต้องไม่เกิน 5MB",
+        description: "ขนาดไฟล์ต้องไม่เกิน 2MB",
         variant: "destructive",
       });
       return;
