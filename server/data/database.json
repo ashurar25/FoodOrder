@@ -3,9 +3,10 @@
     {
       "id": "id_kay6d35me_1753812074501",
       "createdAt": "2025-07-29T18:01:14.501Z",
-      "name": "ร้านอาหารไทยแท้",
-      "description": "อาหารไทยต้นตำรับ",
-      "logoUrl": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
+      "name": "ร้านอาหารไทยใหม่",
+      "description": "คำอธิบายใหม่",
+      "logoUrl": "test-logo.jpg",
+      "updatedAt": "2025-07-30T19:44:15.052Z"
     }
   ],
   "categories": [

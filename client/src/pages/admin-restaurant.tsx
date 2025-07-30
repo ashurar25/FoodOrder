@@ -38,7 +38,10 @@ export default function AdminRestaurant() {
 
   const updateRestaurantMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return apiRequest(`/api/restaurant/${restaurant?.id}`, "PUT", data);
+      if (!restaurant?.id) {
+        throw new Error("ไม่พบข้อมูลร้าน");
+      }
+      return apiRequest(`/api/restaurant/${restaurant.id}`, "PUT", data);
     },
     onSuccess: () => {
       toast({
@@ -48,6 +51,7 @@ export default function AdminRestaurant() {
       queryClient.invalidateQueries({ queryKey: ["/api/restaurant"] });
     },
     onError: (error: any) => {
+      console.error("Restaurant update error:", error);
       toast({
         title: "เกิดข้อผิดพลาด",
         description: error.message || "ไม่สามารถอัปเดตข้อมูลได้",
@@ -62,6 +66,14 @@ export default function AdminRestaurant() {
       toast({
         title: "เกิดข้อผิดพลาด",
         description: "กรุณากรอกชื่อร้าน",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!restaurant?.id) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่พบข้อมูลร้าน",
         variant: "destructive",
       });
       return;
@@ -132,12 +144,12 @@ export default function AdminRestaurant() {
 
             <Button
               type="submit"
-              disabled={updateRestaurantMutation.isPending}
+              disabled={updateRestaurantMutation.isPending || !restaurant?.id}
               className="w-full"
             >
               {updateRestaurantMutation.isPending && <Save className="w-4 h-4 mr-2 animate-spin" />}
               {!updateRestaurantMutation.isPending && <Save className="w-4 h-4 mr-2" />}
-              บันทึกข้อมูล
+              {updateRestaurantMutation.isPending ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
             </Button>
           </form>
         </CardContent>

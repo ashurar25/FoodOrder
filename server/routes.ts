@@ -519,11 +519,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const updateData = req.body;
       
+      console.log("Updating restaurant:", id, updateData);
+      
       const restaurant = await storage.updateRestaurant(id, updateData);
       res.json(restaurant);
     } catch (error) {
       console.error("Error updating restaurant:", error);
-      res.status(500).json({ error: "Failed to update restaurant" });
+      res.status(500).json({ error: error.message || "Failed to update restaurant" });
     }
   });
 
