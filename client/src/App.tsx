@@ -4,6 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
 import AdminOrders from "@/pages/admin-orders";
+import AdminBanners from "@/pages/admin-banners";
+import AdminFood from "@/pages/admin-food";
 import Orders from "@/pages/orders";
 import NotFound from "@/pages/not-found";
 import { queryClient } from "@/lib/queryClient";
@@ -16,6 +18,8 @@ function Router() {
       <Route path="/orders" component={Orders} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin/banners" component={AdminBanners} />
+      <Route path="/admin/food" component={AdminFood} />
       <Route component={NotFound} />
     </Switch>
   );
