@@ -335,7 +335,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   return order;
 }
 
-  async resetOrders(restaurantId: string): Promise<void> {
+export async function resetOrders(restaurantId: string): Promise<void> {
     const db = await readDatabase();
     // Remove all orders for the restaurant
     db.orders = db.orders.filter(order => order.restaurantId !== restaurantId);
