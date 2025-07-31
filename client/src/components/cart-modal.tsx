@@ -84,22 +84,31 @@ export default function CartModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center">
-      <div className="bg-white rounded-t-3xl w-full max-w-md p-6 max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">ตะกร้าสินค้า</h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
+      <div className="bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 backdrop-blur-xl rounded-t-3xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto shadow-2xl border-t-2 border-purple-200/50">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">ตะกร้าสินค้า</h2>
+          </div>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-red-500 transition-all duration-300 hover:scale-110 hover:rotate-90 p-2 rounded-full hover:bg-red-50"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {items.length === 0 ? (
-          <div className="text-center py-8">
-            <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">ตะกร้าของคุณว่างเปล่า</p>
+          <div className="text-center py-12">
+            <div className="relative">
+              <ShoppingBag className="w-20 h-20 text-gray-300 mx-auto mb-4 animate-pulse" />
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-gradient-to-r from-purple-200/20 to-pink-200/20 rounded-full animate-ping"></div>
+            </div>
+            <p className="text-gray-500 text-lg">ตะกร้าของคุณว่างเปล่า</p>
+            <p className="text-gray-400 text-sm mt-2">เลือกอาหารที่คุณชอบเพื่อเริ่มสั่งซื้อ</p>
           </div>
         ) : (
           <>

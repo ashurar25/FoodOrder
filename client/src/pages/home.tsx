@@ -11,6 +11,7 @@ import BottomNavigation from "@/components/bottom-navigation";
 import BannerEditor from "@/components/banner-editor";
 import Footer from "@/components/footer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FoodCardSkeleton, CategorySkeleton, BannerSkeleton, RestaurantHeaderSkeleton } from "@/components/loading-skeleton";
 import type { Restaurant, Category, FoodItem, Banner } from "@shared/schema";
 
 interface CartItem {
@@ -171,9 +172,16 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 relative">
+      {/* Floating background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-purple-300/30 rounded-full floating-particles"></div>
+        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-pink-300/40 rounded-full floating-particles" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-red-300/20 rounded-full floating-particles" style={{animationDelay: '4s'}}></div>
+      </div>
+      
       {/* Mobile Layout */}
-      <div className="md:hidden max-w-md mx-auto bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl min-h-screen relative">
+      <div className="md:hidden max-w-md mx-auto bg-white/40 backdrop-blur-sm shadow-2xl min-h-screen relative">
         <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
           <RestaurantHeader 
             restaurant={restaurant}
@@ -204,36 +212,37 @@ export default function Home() {
         />
 
         <div className="px-4 pb-24">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold gradient-text">
               {searchQuery.trim() ? "ผลการค้นหา" : 
                selectedCategory ? 
                  `${categories.find(c => c.id === selectedCategory)?.name || 'หมวดหมู่ที่เลือก'}` : 
                  "อาหารยอดนิยม"}
             </h2>
+            <div className="text-sm text-gray-500 bg-white/50 backdrop-blur px-3 py-1 rounded-full">
+              {displayItems.length} รายการ
+            </div>
           </div>
 
           <div className="space-y-4">
             {foodItemsLoading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  <div className="flex">
-                    <Skeleton className="w-24 h-20" />
-                    <div className="flex-1 p-4">
-                      <Skeleton className="h-4 w-3/4 mb-2" />
-                      <Skeleton className="h-3 w-1/2 mb-2" />
-                      <Skeleton className="h-4 w-1/4" />
-                    </div>
-                  </div>
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{animationDelay: `${i * 100}ms`}}>
+                  <FoodCardSkeleton />
                 </div>
               ))
             ) : displayItems.length > 0 ? (
-              displayItems.map((item) => (
-                <FoodItemCard
-                  key={item.id}
-                  foodItem={item}
-                  onAddToCart={() => addToCart(item)}
-                />
+              displayItems.map((item, index) => (
+                <div 
+                  key={item.id} 
+                  className="float-gentle"
+                  style={{animationDelay: `${index * 200}ms`}}
+                >
+                  <FoodItemCard
+                    foodItem={item}
+                    onAddToCart={() => addToCart(item)}
+                  />
+                </div>
               ))
             ) : (
               <div className="text-center py-8 text-gray-500">

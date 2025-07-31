@@ -11,25 +11,41 @@ export default function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-2 shadow-lg">
-      <div className="flex justify-around items-center">
-        {navItems.map((item) => {
-          const isActive = location === item.href;
-          const Icon = item.icon;
-          
-          return (
-            <Link key={item.href} href={item.href}>
-              <button className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
-                isActive 
-                  ? "text-primary bg-primary/10 transform scale-105" 
-                  : "text-gray-400 hover:text-primary hover:bg-gray-50"
-              }`}>
-                <Icon className={`w-5 h-5 mb-1 ${isActive ? 'animate-pulse' : ''}`} />
-                <span className="text-xs font-medium">{item.label}</span>
-              </button>
-            </Link>
-          );
-        })}
+    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4">
+      <div className="bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl px-6 py-3 shadow-2xl">
+        <div className="flex justify-around items-center">
+          {navItems.map((item) => {
+            const isActive = location === item.href;
+            const Icon = item.icon;
+            
+            return (
+              <Link key={item.href} href={item.href}>
+                <button className={`relative flex flex-col items-center py-3 px-4 rounded-2xl transition-all duration-500 group ${
+                  isActive 
+                    ? "text-white transform scale-110" 
+                    : "text-gray-400 hover:text-white hover:scale-105"
+                }`}>
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-2xl shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 rounded-2xl animate-pulse opacity-75"></div>
+                    </div>
+                  )}
+                  <div className="relative z-10">
+                    <Icon className={`w-6 h-6 mb-1 transition-all duration-300 ${
+                      isActive ? 'animate-bounce' : 'group-hover:scale-110'
+                    }`} />
+                    <span className="text-xs font-bold">{item.label}</span>
+                  </div>
+                  
+                  {/* Hover glow effect */}
+                  {!isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  )}
+                </button>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

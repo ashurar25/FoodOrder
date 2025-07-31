@@ -30,21 +30,34 @@ export default function PromotionalBanner({ banners }: PromotionalBannerProps) {
   const banner = banners[currentBanner];
 
   return (
-    <div className="px-4 mb-6">
-      <div className="relative rounded-2xl overflow-hidden shadow-lg animate-float">
+    <div className="px-4 mb-8">
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl group hover:scale-105 transition-all duration-500">
         <img 
           src={banner.imageUrl} 
           alt={banner.title}
-          className="w-full h-40 object-cover"
+          className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent">
-          <div className="absolute bottom-4 left-4 text-white">
-            <h3 className="text-2xl font-bold">{banner.title}</h3>
-            {banner.subtitle && (
-              <p className="text-sm opacity-90">{banner.subtitle}</p>
-            )}
-          </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-pink-900/40 to-transparent">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
         </div>
+        
+        {/* Animated overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        {/* Glowing border */}
+        <div className="absolute inset-0 rounded-3xl ring-2 ring-white/20 group-hover:ring-white/40 transition-all duration-500"></div>
+        
+        <div className="absolute bottom-6 left-6 text-white">
+          <h3 className="text-3xl font-bold drop-shadow-2xl mb-2 group-hover:animate-pulse">{banner.title}</h3>
+          {banner.subtitle && (
+            <p className="text-base opacity-90 drop-shadow-lg">{banner.subtitle}</p>
+          )}
+        </div>
+        
+        {/* Sparkle effect */}
+        <div className="absolute top-4 right-4 w-4 h-4 bg-white/30 rounded-full animate-ping"></div>
+        <div className="absolute top-8 right-8 w-2 h-2 bg-yellow-300/50 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-6 right-12 w-1 h-1 bg-white/60 rounded-full animate-bounce" style={{animationDelay: '2s'}}></div>
         {banners.length > 1 && (
           <div className="absolute bottom-4 right-4 flex space-x-2">
             {banners.map((_, index) => (
