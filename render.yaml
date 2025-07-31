@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: restaurant-ordering-system
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/index.js
+    healthCheckPath: /api/restaurant
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+    disk:
+      name: restaurant-data
+      mountPath: /opt/render/project/src/server/data
+      sizeGB: 1
