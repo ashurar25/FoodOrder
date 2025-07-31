@@ -70,8 +70,6 @@ export async function initDatabase() {
       db.restaurants = [defaultRestaurant];
       console.log('Created default restaurant:', defaultRestaurant);
 
-      const restaurantId = defaultRestaurant.id;
-
       // Create default categories
       const categories = [
         { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`, name: 'ลูกชิ้น', icon: '🍲', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
