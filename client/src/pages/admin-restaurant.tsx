@@ -22,164 +22,9 @@ export default function AdminRestaurant() {
     receiptImageUrl: ""
   });
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">กำลังโหลด...</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="mb-6">
-        <Link href="/admin">
-          <Button variant="ghost" className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            กลับไปหน้าแอดมิน
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Store className="w-6 h-6 mr-2 text-blue-500" />
-          จัดการข้อมูลร้าน
-        </h1>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>ข้อมูลร้าน</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Restaurant Name */}
-            <div>
-              <Label htmlFor="name">ชื่อร้าน</Label>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="ชื่อร้านอาหาร"
-                className="mt-1"
-              />
-            </div>
-
-            {/* Restaurant Description */}
-            <div>
-              <Label htmlFor="description">คำอธิบาย</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="คำอธิบายร้าน"
-                className="mt-1"
-                rows={3}
-              />
-            </div>
-
-            {/* Logo Upload */}
-            <div>
-              <ImageUpload
-                label="โลโก้ร้าน"
-                value={formData.logoUrl}
-                onChange={(url) => handleInputChange('logoUrl', url)}
-                placeholder="เลือกโลโก้ร้าน..."
-              />
-            </div>
-
-            {/* Receipt Image Upload */}
-            <div>
-              <ImageUpload
-                label="รูปภาพประกอบใบเสร็จ (JPG หรือ PNG)"
-                value={formData.receiptImageUrl}
-                onChange={(url) => handleInputChange('receiptImageUrl', url)}
-                placeholder="เลือกรูปภาพประกอบใบเสร็จ..."
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                รูปภาพนี้จะปรากฏในใบเสร็จร่วมกับโลโก้ร้าน
-              </p>
-            </div>
-
-            {/* Submit Button */}
-            <div className="pt-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-500 hover:bg-blue-600"
-                disabled={updateRestaurantMutation.isPending}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {updateRestaurantMutation.isPending ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
   const { data: restaurant, isLoading } = useQuery<Restaurant>({
     queryKey: ["/api/restaurant"],
   });
-
-  const updateRestaurantMutation = useMutation({
-    mutationFn: async (data: Partial<Restaurant>) => {
-      if (!restaurant?.id) throw new Error('Restaurant ID not found');
-      
-      const response = await fetch(`/api/restaurant/${restaurant.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update restaurant');
-      }
-      
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/restaurant"] });
-      toast({
-        title: "สำเร็จ",
-        description: "อัพเดตข้อมูลร้านแล้ว",
-      });
-    },
-    onError: (error: any) => {
-      console.error('Update error:', error);
-      toast({
-        title: "ข้อผิดพลาด",
-        description: "ไม่สามารถอัพเดตข้อมูลร้านได้",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Update form data when restaurant data is loaded
-  React.useEffect(() => {
-    if (restaurant) {
-      setFormData({
-        name: restaurant.name || "",
-        description: restaurant.description || "",
-        logoUrl: restaurant.logoUrl || "",
-        receiptImageUrl: restaurant.receiptImageUrl || ""
-      });
-    }
-  }, [restaurant]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    updateRestaurantMutation.mutate(formData);
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
 
   const updateRestaurantMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -204,6 +49,18 @@ export default function AdminRestaurant() {
       });
     },
   });
+
+  // Update form data when restaurant data is loaded
+  React.useEffect(() => {
+    if (restaurant) {
+      setFormData({
+        name: restaurant.name || "",
+        description: restaurant.description || "",
+        logoUrl: restaurant.logoUrl || "",
+        receiptImageUrl: restaurant.receiptImageUrl || ""
+      });
+    }
+  }, [restaurant]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

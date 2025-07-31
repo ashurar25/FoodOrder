@@ -110,7 +110,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(restaurant);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get restaurant" });
+      console.error('Error fetching restaurant:', error);
+      res.status(500).json({ error: 'Failed to fetch restaurant' });
     }
   });
 
@@ -356,7 +357,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const orders = await storage.getOrders(restaurant.id);
-      
+
       // Create CSV header
       const csvHeader = [
         'Order ID',
@@ -474,16 +475,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const format = req.query.format as string || 'json';
       const data = await storage.exportData();
-      
+
       if (format === 'csv') {
         // Convert data to CSV format
         let csv = '';
-        
+
         // Orders CSV
         if (data.orders.length > 0) {
           const orderHeaders = ['Order ID', 'Date', 'Customer Name', 'Table', 'Total', 'Status', 'Notes'];
           csv += orderHeaders.join(',') + '\n';
-          
+
           data.orders.forEach(order => {
             const row = [
               order.id,
@@ -497,7 +498,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             csv += row.join(',') + '\n';
           });
         }
-        
+
         res.json({ csv });
       } else {
         res.json(data);
@@ -521,14 +522,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/user", async (req, res) => {
     try {
       const { firebaseUid, email, displayName, photoURL } = req.body;
-      
+
       if (!firebaseUid || !email) {
         return res.status(400).json({ message: "Firebase UID and email are required" });
       }
 
       // Check if user already exists
       let user = await storage.getUserByFirebaseUid(firebaseUid);
-      
+
       if (user) {
         // Update existing user's last login time and other info
         user = await storage.updateUser(user.id, {
@@ -559,7 +560,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { firebaseUid } = req.params;
       const user = await storage.getUserByFirebaseUid(firebaseUid);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -577,22 +578,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Handle URL input (JSON format)
       if (req.headers['content-type']?.includes('application/json')) {
         const { imageData, fileName } = req.body;
-        
+
         if (!imageData || !fileName) {
           return res.status(400).json({ message: "Image data and filename required" });
         }
-        
+
         // Create images directory if it doesn't exist
         const imagesDir = path.join(process.cwd(), 'server', 'data', 'images');
         await fs.mkdir(imagesDir, { recursive: true });
-        
+
         // Save image file (for base64 data)
         if (imageData.startsWith('data:')) {
           const base64Data = imageData.split(',')[1];
           const buffer = Buffer.from(base64Data, 'base64');
           const filePath = path.join(imagesDir, fileName);
           await fs.writeFile(filePath, buffer);
-          
+
           res.json({ 
             url: `/api/images/${fileName}`,
             message: "Image uploaded successfully" 
@@ -622,9 +623,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updateData = req.body;
-      
+
       console.log("Updating restaurant:", id, updateData);
-      
+
       const restaurant = await storage.updateRestaurant(id, updateData);
       res.json(restaurant);
     } catch (error: any) {
@@ -638,10 +639,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { filename } = req.params;
       const filePath = path.join(process.cwd(), 'server', 'data', 'images', filename);
-      
+
       // Check if file exists
       await fs.access(filePath);
-      
+
       // Set appropriate content type
       const ext = path.extname(filename).toLowerCase();
       const contentTypeMap: { [key: string]: string } = {
@@ -652,12 +653,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '.webp': 'image/webp'
       };
       const contentType = contentTypeMap[ext] || 'application/octet-stream';
-      
+
       res.set('Content-Type', contentType);
       const fileData = await fs.readFile(filePath);
       res.send(fileData);
     } catch (error) {
       res.status(404).json({ message: "Image not found" });
+    }
+  });
+
+  // Import/Export routes
+  app.get('/api/export/:format', async (req, res) => {
+    try {
+      const { format } = req.params;
+      const data = await storage.exportData();
+
+      if (format === 'csv') {
+        // Convert to CSV format (simplified)
+        const csvData = `Name,Description,Created\n${data.restaurant?.name || 'N/A'},${data.restaurant?.description || 'N/A'},${data.restaurant?.createdAt || 'N/A'}`;
+        res.json({ csv: csvData });
+      } else {
+        res.json(data);
+      }
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      res.status(500).json({ error: 'Failed to export data' });
+    }
+  });
+
+  app.post('/api/import', async (req, res) => {
+    try {
+      const importData = req.body;
+      await storage.importData(importData);
+      res.json({ success: true, message: 'Data imported successfully' });
+    } catch (error) {
+      console.error('Error importing data:', error);
+      res.status(500).json({ error: 'Failed to import data' });
     }
   });
 

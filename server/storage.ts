@@ -1,4 +1,3 @@
-
 import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -48,11 +47,26 @@ async function writeDatabase(data: any) {
 export async function initDatabase() {
   try {
     const db = await readDatabase();
-    
-    if (db.restaurants.length === 0) {
+
+    // Create default restaurant if none exists
+    if (!db.restaurants || db.restaurants.length === 0) {
+      const restaurantId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+      const defaultRestaurant = {
+        id: restaurantId,
+        name: 'ซ้อมคอ',
+        description: 'เกาหลี-ไทย ฟิวชัน',
+        logoUrl: '',
+        receiptImageUrl: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      db.restaurants = [defaultRestaurant];
+      console.log('Created default restaurant:', defaultRestaurant);
+
       // Create default restaurant
       const restaurantId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-      
+
       const restaurant = {
         id: restaurantId,
         name: 'ซ้อมคอ',
@@ -183,11 +197,11 @@ export async function createCategory(data: any) {
 export async function getFoodItems(restaurantId: string, categoryId?: string) {
   const db = await readDatabase();
   let items = db.foodItems.filter((f: any) => f.restaurantId === restaurantId);
-  
+
   if (categoryId && categoryId !== 'all') {
     items = items.filter((f: any) => f.categoryId === categoryId);
   }
-  
+
   return items;
 }
 
@@ -306,7 +320,7 @@ export async function createOrderItem(data: any) {
 export async function getOrders(restaurantId: string) {
   const db = await readDatabase();
   const orders = db.orders.filter((o: any) => o.restaurantId === restaurantId);
-  
+
   // Add order items to each order
   return orders.map((order: any) => ({
     ...order,
@@ -340,7 +354,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
 export async function exportData() {
   const db = await readDatabase();
   const restaurant = db.restaurants[0] || null;
-  
+
   return {
     restaurant,
     categories: restaurant ? db.categories.filter((c: any) => c.restaurantId === restaurant.id) : [],

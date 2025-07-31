@@ -106,6 +106,7 @@ export default function AdminDatabase() {
 
   const importDataMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log('Importing data:', data);
       return apiRequest("/api/admin/database/import", "POST", data);
     },
     onSuccess: () => {
