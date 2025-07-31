@@ -23,13 +23,13 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-6 pr-8 shadow-xl backdrop-blur-sm transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-6 pr-8 shadow-xl backdrop-blur-md transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-l-4 border-green-400 text-green-800",
+        default: "bg-gradient-to-r from-white/95 via-green-50/95 to-emerald-50/95 border-l-4 border-green-400 text-green-800 dark:from-green-900/95 dark:via-emerald-900/95 dark:to-teal-900/95 dark:text-green-100",
         destructive:
-          "bg-gradient-to-r from-red-50 via-pink-50 to-rose-50 border-l-4 border-red-400 text-red-800",
+          "bg-gradient-to-r from-white/95 via-red-50/95 to-pink-50/95 border-l-4 border-red-400 text-red-800 dark:from-red-900/95 dark:via-pink-900/95 dark:to-rose-900/95 dark:text-red-100",
       },
     },
     defaultVariants: {

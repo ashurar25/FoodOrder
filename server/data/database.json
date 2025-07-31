@@ -175,50 +175,7 @@
       "restaurantId": "id_kay6d35me_1753812074501"
     }
   ],
-  "banners": [
-    {
-      "id": "id_27udebcra_1753812074566",
-      "isActive": false,
-      "createdAt": "2025-07-29T18:01:14.566Z",
-      "title": "10 ไข่ ฟรี 1",
-      "subtitle": "โปรโมชั่นพิเศษ",
-      "imageUrl": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    },
-    {
-      "id": "id_de5t5j1oy_1753813360121",
-      "isActive": false,
-      "createdAt": "2025-07-29T18:22:40.121Z",
-      "title": "test",
-      "imageUrl": "test",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    },
-    {
-      "id": "id_srrznzrmf_1753813365529",
-      "isActive": true,
-      "createdAt": "2025-07-29T18:22:45.529Z",
-      "title": "Updated Banner",
-      "imageUrl": "/images/test.png",
-      "restaurantId": "id_kay6d35me_1753812074501",
-      "subtitle": "Updated subtitle"
-    },
-    {
-      "id": "id_orso3a8w9_1753905716053",
-      "isActive": false,
-      "createdAt": "2025-07-30T20:01:56.053Z",
-      "title": "Test Banner",
-      "imageUrl": "test.jpg",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    },
-    {
-      "id": "id_bfx9ebtow_1753907705387",
-      "isActive": true,
-      "createdAt": "2025-07-30T20:35:05.387Z",
-      "title": "tes2",
-      "imageUrl": "/api/images/1753907698507_logo.jpg",
-      "restaurantId": "id_kay6d35me_1753812074501"
-    }
-  ],
+  "banners": [],
   "orders": [
     {
       "id": "id_z2g3uuvo6_1753812837618",
