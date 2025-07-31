@@ -31,7 +31,7 @@ export default function AdminRestaurant() {
       if (!restaurant?.id) {
         throw new Error("ไม่พบข้อมูลร้าน");
       }
-      return apiRequest(`/api/restaurant/${restaurant.id}`, "PUT", data);
+      return apiRequest("PUT", `/api/restaurant/${restaurant.id}`, data);
     },
     onSuccess: () => {
       toast({
