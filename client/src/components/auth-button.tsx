@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signInWithGoogle, signOutUser } from '@/lib/auth';
+import { isFirebaseConfigured } from '@/lib/firebase';
 
 export function AuthButton() {
   const { user, loading } = useAuth();
@@ -45,6 +46,11 @@ export function AuthButton() {
         </Button>
       </div>
     );
+  }
+
+  // If Firebase is not configured, don't show the auth button
+  if (!isFirebaseConfigured()) {
+    return null;
   }
 
   return (
