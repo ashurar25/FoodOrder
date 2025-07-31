@@ -1,415 +1,201 @@
-import { 
-  type Restaurant, type InsertRestaurant,
-  type Category, type InsertCategory,
-  type FoodItem, type InsertFoodItem,
-  type Banner, type InsertBanner,
-  type Order, type InsertOrder,
-  type OrderItem, type InsertOrderItem,
-  type User, type InsertUser
-} from "@shared/schema";
-import fs from 'fs/promises';
-import path from 'path';
+import { db } from './db';
+import { restaurants, categories, foodItems, banners, orders, orderItems } from '../shared/schema';
+import { eq, and, desc } from 'drizzle-orm';
+import { v4 as uuidv4 } from 'uuid';
 
-const DATA_DIR = path.join(process.cwd(), 'server', 'data');
+// Initialize database with default data if empty
+export async function initDatabase() {
+  try {
+    // Check if restaurant exists
+    const existingRestaurant = await db.select().from(restaurants).limit(1);
 
-interface DatabaseData {
-  restaurants: Restaurant[];
-  categories: Category[];
-  foodItems: FoodItem[];
-  banners: Banner[];
-  orders: Order[];
-  orderItems: OrderItem[];
-  users: User[];
-}
+    if (existingRestaurant.length === 0) {
+      // Create default restaurant
+      const restaurantId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
 
-export interface IStorage {
-  // User methods
-  getUser(id: string): Promise<User | undefined>;
-  getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: string, user: Partial<InsertUser>): Promise<User>;
-
-  // Restaurant methods
-  getRestaurant(): Promise<Restaurant | undefined>;
-  createRestaurant(restaurant: InsertRestaurant): Promise<Restaurant>;
-  updateRestaurant(id: string, restaurant: Partial<InsertRestaurant>): Promise<Restaurant>;
-
-  // Category methods
-  getCategories(restaurantId: string): Promise<Category[]>;
-  createCategory(category: InsertCategory): Promise<Category>;
-
-  // Food item methods
-  getFoodItems(restaurantId: string, categoryId?: string): Promise<FoodItem[]>;
-  searchFoodItems(restaurantId: string, query: string): Promise<FoodItem[]>;
-  createFoodItem(foodItem: InsertFoodItem): Promise<FoodItem>;
-  updateFoodItem(id: string, foodItem: Partial<InsertFoodItem>): Promise<FoodItem>;
-
-  // Banner methods
-  getBanners(restaurantId: string): Promise<Banner[]>;
-  createBanner(banner: InsertBanner): Promise<Banner>;
-  updateBanner(id: string, banner: Partial<InsertBanner>): Promise<Banner>;
-  deleteBanner(id: string): Promise<void>;
-
-  // Order methods
-  createOrder(order: InsertOrder): Promise<Order>;
-  getOrders(restaurantId: string): Promise<Order[]>;
-  getOrderWithItems(orderId: string): Promise<(Order & { orderItems: (OrderItem & { foodItem: FoodItem })[] }) | undefined>;
-  createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
-  updateOrderStatus(orderId: string, status: string): Promise<Order | undefined>;
-  
-  // Food item methods (additional)
-  deleteFoodItem(id: string): Promise<void>;
-  
-  // Database methods
-  exportData(): Promise<DatabaseData>;
-  importData(data: DatabaseData): Promise<void>;
-}
-
-export class FileStorage implements IStorage {
-  private dataFile = path.join(DATA_DIR, 'database.json');
-
-  private async ensureDataDir(): Promise<void> {
-    try {
-      await fs.access(DATA_DIR);
-    } catch {
-      await fs.mkdir(DATA_DIR, { recursive: true });
-    }
-  }
-
-  private async loadData(): Promise<DatabaseData> {
-    await this.ensureDataDir();
-
-    try {
-      const data = await fs.readFile(this.dataFile, 'utf8');
-      return JSON.parse(data);
-    } catch {
-      // Initialize empty database
-      const emptyData: DatabaseData = {
-        restaurants: [],
-        categories: [],
-        foodItems: [],
-        banners: [],
-        orders: [],
-        orderItems: [],
-        users: []
-      };
-      await this.saveData(emptyData);
-      return emptyData;
-    }
-  }
-
-  private async saveData(data: DatabaseData): Promise<void> {
-    await this.ensureDataDir();
-    await fs.writeFile(this.dataFile, JSON.stringify(data, null, 2));
-  }
-
-  private generateId(): string {
-    return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-  }
-
-  private generateOrderId(): string {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${year}${month}${day}-${hours}${minutes}${seconds}`;
-  }
-
-  // User methods
-  async getUser(id: string): Promise<User | undefined> {
-    const data = await this.loadData();
-    return data.users.find(user => user.id === id);
-  }
-
-  async getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined> {
-    const data = await this.loadData();
-    return data.users.find(user => user.firebaseUid === firebaseUid);
-  }
-
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const data = await this.loadData();
-    return data.users.find(user => user.email === email);
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const data = await this.loadData();
-    const user: User = {
-      id: this.generateId(),
-      createdAt: new Date(),
-      lastLoginAt: null,
-      ...insertUser
-    };
-    data.users.push(user);
-    await this.saveData(data);
-    return user;
-  }
-
-  async updateUser(id: string, user: Partial<InsertUser>): Promise<User> {
-    const data = await this.loadData();
-    const index = data.users.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('User not found');
-    }
-
-    data.users[index] = { 
-      ...data.users[index], 
-      ...user,
-      lastLoginAt: new Date()
-    };
-    await this.saveData(data);
-    return data.users[index];
-  }
-
-  // Restaurant methods
-  async getRestaurant(): Promise<Restaurant | undefined> {
-    const data = await this.loadData();
-    return data.restaurants[0];
-  }
-
-  async createRestaurant(restaurant: InsertRestaurant): Promise<Restaurant> {
-    const data = await this.loadData();
-    const newRestaurant: Restaurant = {
-      id: this.generateId(),
-      createdAt: new Date(),
-      name: restaurant.name,
-      description: restaurant.description ?? null,
-      logoUrl: restaurant.logoUrl ?? null,
-      receiptImageUrl: restaurant.receiptImageUrl ?? null
-    };
-    data.restaurants.push(newRestaurant);
-    await this.saveData(data);
-    return newRestaurant;
-  }
-
-  async updateRestaurant(id: string, restaurant: Partial<InsertRestaurant>): Promise<Restaurant> {
-    const data = await this.loadData();
-    const index = data.restaurants.findIndex(r => r.id === id);
-    if (index === -1) {
-      throw new Error('Restaurant not found');
-    }
-
-    data.restaurants[index] = { ...data.restaurants[index], ...restaurant };
-    await this.saveData(data);
-    return data.restaurants[index];
-  }
-
-  // Category methods
-  async getCategories(restaurantId: string): Promise<Category[]> {
-    const data = await this.loadData();
-    return data.categories.filter(category => category.restaurantId === restaurantId);
-  }
-
-  async createCategory(category: InsertCategory): Promise<Category> {
-    const data = await this.loadData();
-    const newCategory: Category = {
-      id: this.generateId(),
-      name: category.name,
-      icon: category.icon,
-      restaurantId: category.restaurantId ?? null
-    };
-    data.categories.push(newCategory);
-    await this.saveData(data);
-    return newCategory;
-  }
-
-  // Food item methods
-  async getFoodItems(restaurantId: string, categoryId?: string): Promise<FoodItem[]> {
-    console.log(`[DEBUG getFoodItems] restaurantId: ${restaurantId}, categoryId: ${categoryId}`);
-
-    const data = await this.loadData();
-    let result = data.foodItems.filter(item => item.restaurantId === restaurantId);
-
-    if (categoryId && categoryId.trim() !== '') {
-      result = result.filter(item => item.categoryId === categoryId);
-      console.log(`[DEBUG getFoodItems] Filtered by categoryId ${categoryId} - found ${result.length} items`);
-    } else {
-      console.log(`[DEBUG getFoodItems] No category filter - showing all ${result.length} items`);
-    }
-
-    // Sort by category for better organization
-    result.sort((a, b) => {
-      if (a.categoryId && b.categoryId) {
-        return a.categoryId.localeCompare(b.categoryId);
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-    return result;
-  }
-
-  async searchFoodItems(restaurantId: string, query: string): Promise<FoodItem[]> {
-    const data = await this.loadData();
-    return data.foodItems.filter(item => 
-      item.restaurantId === restaurantId && 
-      item.name.toLowerCase().includes(query.toLowerCase())
-    );
-  }
-
-  async createFoodItem(foodItem: InsertFoodItem): Promise<FoodItem> {
-    const data = await this.loadData();
-    const newFoodItem: FoodItem = {
-      id: this.generateId(),
-      name: foodItem.name,
-      description: foodItem.description ?? null,
-      price: foodItem.price,
-      imageUrl: foodItem.imageUrl ?? null,
-      rating: foodItem.rating ?? "0.0",
-      categoryId: foodItem.categoryId ?? null,
-      restaurantId: foodItem.restaurantId ?? null,
-      isAvailable: foodItem.isAvailable ?? true
-    };
-    data.foodItems.push(newFoodItem);
-    await this.saveData(data);
-    return newFoodItem;
-  }
-
-  async deleteFoodItem(id: string): Promise<void> {
-    const data = await this.loadData();
-    data.foodItems = data.foodItems.filter(item => item.id !== id);
-    await this.saveData(data);
-  }
-
-  async updateFoodItem(id: string, foodItem: Partial<InsertFoodItem>): Promise<FoodItem> {
-    const data = await this.loadData();
-    const index = data.foodItems.findIndex(item => item.id === id);
-    if (index === -1) {
-      throw new Error('Food item not found');
-    }
-
-    data.foodItems[index] = { ...data.foodItems[index], ...foodItem };
-    await this.saveData(data);
-    return data.foodItems[index];
-  }
-
-  // Banner methods
-  async getBanners(restaurantId: string): Promise<Banner[]> {
-    const data = await this.loadData();
-    return data.banners
-      .filter(banner => banner.restaurantId === restaurantId && banner.isActive)
-      .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-  }
-
-  async createBanner(banner: InsertBanner): Promise<Banner> {
-    const data = await this.loadData();
-    const newBanner: Banner = {
-      id: this.generateId(),
-      title: banner.title,
-      subtitle: banner.subtitle ?? null,
-      imageUrl: banner.imageUrl,
-      isActive: banner.isActive ?? true,
-      restaurantId: banner.restaurantId ?? null,
-      createdAt: new Date()
-    };
-    data.banners.push(newBanner);
-    await this.saveData(data);
-    return newBanner;
-  }
-
-  async updateBanner(id: string, banner: Partial<InsertBanner>): Promise<Banner> {
-    const data = await this.loadData();
-    const index = data.banners.findIndex(b => b.id === id);
-    if (index === -1) {
-      throw new Error('Banner not found');
-    }
-
-    data.banners[index] = { ...data.banners[index], ...banner };
-    await this.saveData(data);
-    return data.banners[index];
-  }
-
-  async deleteBanner(id: string): Promise<void> {
-    const data = await this.loadData();
-    const index = data.banners.findIndex(b => b.id === id);
-    if (index !== -1) {
-      data.banners[index].isActive = false;
-      await this.saveData(data);
-    }
-  }
-
-  // Order methods
-  async createOrder(order: InsertOrder): Promise<Order> {
-    const data = await this.loadData();
-    const newOrder: Order = {
-      id: this.generateOrderId(),
-      restaurantId: order.restaurantId ?? null,
-      customerName: order.customerName ?? null,
-      tableNumber: order.tableNumber ?? null,
-      total: order.total,
-      status: order.status ?? "pending",
-      notes: order.notes ?? null,
-      createdAt: new Date()
-    };
-    data.orders.push(newOrder);
-    await this.saveData(data);
-    return newOrder;
-  }
-
-  async getOrders(restaurantId: string): Promise<Order[]> {
-    const data = await this.loadData();
-    return data.orders
-      .filter(order => order.restaurantId === restaurantId)
-      .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-  }
-
-  async getOrderWithItems(orderId: string): Promise<(Order & { orderItems: (OrderItem & { foodItem: FoodItem })[] }) | undefined> {
-    const data = await this.loadData();
-    const order = data.orders.find(o => o.id === orderId);
-    if (!order) return undefined;
-
-    const orderItems = data.orderItems
-      .filter(item => item.orderId === orderId)
-      .map(orderItem => {
-        const foodItem = data.foodItems.find(fi => fi.id === orderItem.foodItemId);
-        return {
-          ...orderItem,
-          foodItem: foodItem!
-        };
+      await db.insert(restaurants).values({
+        id: restaurantId,
+        name: 'ซ้อมคอ',
+        description: 'เกาหลี-ไทย ฟิวชัน',
+        logoUrl: '/api/images/1753907698507_logo.jpg',
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
 
-    return {
-      ...order,
-      orderItems
-    };
+      // Create default categories
+      const categoryIds = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`, name: 'ลาบ/ส้มตำ' },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 1}`, name: 'ข้าวผัด/เส้น' },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 2}`, name: 'ทอด/ย่าง' },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 3}`, name: 'เครื่องดื่ม' }
+      ];
+
+      for (const cat of categoryIds) {
+        await db.insert(categories).values({
+          id: cat.id,
+          restaurantId: restaurantId,
+          name: cat.name,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+
+      console.log('Database initialized with default data');
+    }
+
+    return await db.select().from(restaurants).limit(1);
+  } catch (error) {
+    console.error('Error initializing database:', error);
+    throw error;
   }
-
-  async updateOrderStatus(orderId: string, status: string): Promise<Order | undefined> {
-    const data = await this.loadData();
-    const index = data.orders.findIndex(o => o.id === orderId);
-    if (index === -1) return undefined;
-
-    data.orders[index].status = status;
-    await this.saveData(data);
-    return data.orders[index];
-  }
-
-  async createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem> {
-    const data = await this.loadData();
-    const newOrderItem: OrderItem = {
-      id: this.generateId(),
-      orderId: orderItem.orderId ?? null,
-      foodItemId: orderItem.foodItemId ?? null,
-      quantity: orderItem.quantity,
-      price: orderItem.price
-    };
-    data.orderItems.push(newOrderItem);
-    await this.saveData(data);
-    return newOrderItem;
-  }
-
-  // Database management methods
-  async exportData(): Promise<DatabaseData> {
-    return await this.loadData();
-  }
-
-  async importData(data: DatabaseData): Promise<void> {
-    await this.saveData(data);
-  }
-
-
 }
 
-export const storage = new FileStorage();
+// Restaurant operations
+export async function getRestaurant() {
+  const result = await db.select().from(restaurants).limit(1);
+  return result[0] || null;
+}
+
+export async function updateRestaurant(data: any) {
+  const restaurant = await getRestaurant();
+  if (!restaurant) {
+    throw new Error('Restaurant not found');
+  }
+
+  await db.update(restaurants)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(restaurants.id, restaurant.id));
+
+  return await getRestaurant();
+}
+
+// Category operations
+export async function getCategories(restaurantId: string) {
+  return await db.select().from(categories)
+    .where(eq(categories.restaurantId, restaurantId))
+    .orderBy(categories.createdAt);
+}
+
+// Food items operations
+export async function getFoodItems(restaurantId: string, categoryId?: string) {
+  let query = db.select().from(foodItems)
+    .where(eq(foodItems.restaurantId, restaurantId));
+
+  if (categoryId && categoryId !== 'all') {
+    query = query.where(and(
+      eq(foodItems.restaurantId, restaurantId),
+      eq(foodItems.categoryId, categoryId)
+    ));
+  }
+
+  return await query.orderBy(foodItems.createdAt);
+}
+
+export async function createFoodItem(data: any) {
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const foodItem = {
+    id,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(foodItems).values(foodItem);
+  return foodItem;
+}
+
+export async function updateFoodItem(id: string, data: any) {
+  await db.update(foodItems)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(foodItems.id, id));
+
+  const result = await db.select().from(foodItems).where(eq(foodItems.id, id));
+  return result[0];
+}
+
+export async function deleteFoodItem(id: string) {
+  await db.delete(foodItems).where(eq(foodItems.id, id));
+}
+
+// Banner operations
+export async function getBanners(restaurantId: string) {
+  return await db.select().from(banners)
+    .where(eq(banners.restaurantId, restaurantId))
+    .orderBy(banners.createdAt);
+}
+
+export async function createBanner(data: any) {
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const banner = {
+    id,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(banners).values(banner);
+  return banner;
+}
+
+export async function updateBanner(id: string, data: any) {
+  await db.update(banners)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(banners.id, id));
+
+  const result = await db.select().from(banners).where(eq(banners.id, id));
+  return result[0];
+}
+
+export async function deleteBanner(id: string) {
+  await db.delete(banners).where(eq(banners.id, id));
+}
+
+// Order operations
+export async function createOrder(data: any) {
+  const orderId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const order = {
+    id: orderId,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(orders).values(order);
+
+  // Insert order items
+  if (data.items && Array.isArray(data.items)) {
+    for (const item of data.items) {
+      await db.insert(orderItems).values({
+        id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        orderId: orderId,
+        foodItemId: item.foodItemId,
+        quantity: item.quantity,
+        price: item.price,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+  }
+
+  return order;
+}
+
+export async function getOrders(restaurantId: string) {
+  const ordersData = await db.select().from(orders)
+    .where(eq(orders.restaurantId, restaurantId))
+    .orderBy(desc(orders.createdAt));
+
+  // Get order items for each order
+  const ordersWithItems = [];
+  for (const order of ordersData) {
+    const items = await db.select().from(orderItems)
+      .where(eq(orderItems.orderId, order.id));
+
+    ordersWithItems.push({
+      ...order,
+      items
+    });
+  }
+
+  return ordersWithItems;
+}
