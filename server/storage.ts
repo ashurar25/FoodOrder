@@ -55,17 +55,11 @@ export async function initDatabase() {
         id: restaurantId,
         name: 'ซ้อมคอ',
         description: 'เกาหลี-ไทย ฟิวชัน',
-        logoUrl: '',
-        receiptImageUrl: '',
+        logoUrl: '/api/images/HLogo_1753815594471.png',
+        receiptImageUrl: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-
-      // Update the default restaurant with proper data
-      defaultRestaurant.name = 'ซ้อมคอ';
-      defaultRestaurant.description = 'เกาหลี-ไทย ฟิวชัน';
-      defaultRestaurant.logoUrl = '/api/images/HLogo_1753815594471.png';
-      defaultRestaurant.receiptImageUrl = null;
 
       db.restaurants = [defaultRestaurant];
       console.log('Created default restaurant:', defaultRestaurant);
