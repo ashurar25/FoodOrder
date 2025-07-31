@@ -27,6 +27,12 @@ interface ThemeConfig {
   background: string;
   animatedBackground: string[];
   gradientText: string[];
+  headerGradient: string;
+  buttonColors: {
+    primary: string;
+    hover: string;
+    accent: string;
+  };
 }
 
 const themes: ThemeConfig[] = [
@@ -56,7 +62,13 @@ const themes: ThemeConfig[] = [
       "rgba(38, 208, 206, 0.3)",
       "rgba(16, 185, 129, 0.3)"
     ],
-    gradientText: ["#52e5a4", "#26d0ce", "#10b981", "#059669"]
+    gradientText: ["#52e5a4", "#26d0ce", "#10b981", "#059669"],
+    headerGradient: "linear-gradient(135deg, #10b981 0%, #059669 50%, #065f46 100%)",
+    buttonColors: {
+      primary: "#10b981",
+      hover: "#059669",
+      accent: "#52e5a4"
+    }
   },
   {
     id: "purple",
@@ -84,7 +96,13 @@ const themes: ThemeConfig[] = [
       "rgba(255, 119, 198, 0.3)",
       "rgba(120, 219, 255, 0.3)"
     ],
-    gradientText: ["#667eea", "#764ba2", "#f093fb", "#f5576c"]
+    gradientText: ["#667eea", "#764ba2", "#f093fb", "#f5576c"],
+    headerGradient: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)",
+    buttonColors: {
+      primary: "#8b5cf6",
+      hover: "#7c3aed",
+      accent: "#a855f7"
+    }
   },
   {
     id: "blue",
@@ -112,7 +130,13 @@ const themes: ThemeConfig[] = [
       "rgba(30, 64, 175, 0.3)",
       "rgba(96, 165, 250, 0.3)"
     ],
-    gradientText: ["#3b82f6", "#1e40af", "#60a5fa", "#2563eb"]
+    gradientText: ["#3b82f6", "#1e40af", "#60a5fa", "#2563eb"],
+    headerGradient: "linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1e3a8a 100%)",
+    buttonColors: {
+      primary: "#3b82f6",
+      hover: "#2563eb",
+      accent: "#60a5fa"
+    }
   }
 ];
 
@@ -155,7 +179,7 @@ export default function ThemeSwitcher({ className }: ThemeSwitcherProps) {
       `;
     }
 
-    // Update gradient text
+    // Update gradient text, header and button styles
     const style = document.createElement('style');
     style.textContent = `
       .gradient-text {
@@ -165,6 +189,52 @@ export default function ThemeSwitcher({ className }: ThemeSwitcherProps) {
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
+      }
+      
+      /* Header styling */
+      header {
+        background: ${theme.headerGradient} !important;
+      }
+      
+      /* Button styling */
+      .btn-primary {
+        background-color: ${theme.buttonColors.primary} !important;
+        border-color: ${theme.buttonColors.primary} !important;
+      }
+      
+      .btn-primary:hover {
+        background-color: ${theme.buttonColors.hover} !important;
+        border-color: ${theme.buttonColors.hover} !important;
+      }
+      
+      /* Category buttons */
+      button[data-active="true"] {
+        background-color: ${theme.buttonColors.primary} !important;
+        color: white !important;
+      }
+      
+      button[data-active="false"]:hover {
+        background-color: ${theme.buttonColors.accent} !important;
+        color: white !important;
+      }
+      
+      /* Add to cart buttons */
+      .add-to-cart-btn {
+        background: linear-gradient(135deg, ${theme.buttonColors.primary} 0%, ${theme.buttonColors.hover} 100%) !important;
+      }
+      
+      .add-to-cart-btn:hover {
+        background: linear-gradient(135deg, ${theme.buttonColors.hover} 0%, ${theme.buttonColors.primary} 100%) !important;
+        transform: translateY(-1px);
+      }
+      
+      /* Cart button in header */
+      .cart-button {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+      }
+      
+      .cart-button:hover {
+        background-color: rgba(255, 255, 255, 0.3) !important;
       }
     `;
     

@@ -31,7 +31,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
   }, []);
 
   return (
-    <header className="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white relative overflow-hidden shadow-2xl">
+    <header className="theme-header bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white relative overflow-hidden shadow-2xl">
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 animate-pulse" style={{
@@ -71,7 +71,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
           <div className="flex items-center space-x-2">
             <div className="relative">
               <button 
-                className="bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
+                className="cart-button bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
                 onClick={onCartClick}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
@@ -117,7 +117,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <button 
-                  className="bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
+                  className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
                   onClick={onCartClick}
                 >
                   <ShoppingCart className="text-white w-6 h-6" />

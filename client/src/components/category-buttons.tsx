@@ -23,10 +23,10 @@ export default function CategoryButtons({ categories, selectedCategory, onCatego
           >
             {/* Background Animation */}
             <div className="absolute inset-0 bg-gradient-to-br from-teal-400/20 via-emerald-400/20 to-green-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
+
             {/* Shimmer Effect */}
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
-            
+
             <div className="relative z-10">
               <div className={`text-3xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 filter ${
                 selectedCategory === category.id 
@@ -43,12 +43,12 @@ export default function CategoryButtons({ categories, selectedCategory, onCatego
                 {category.name}
               </span>
             </div>
-            
+
             {/* Selected Indicator */}
             {selectedCategory === category.id && (
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white animate-ping"></div>
             )}
-            
+
             {/* Glow Effect */}
             <div className={`absolute inset-0 rounded-3xl transition-all duration-300 ${
               selectedCategory === category.id 

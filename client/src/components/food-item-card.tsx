@@ -67,7 +67,7 @@ export default function FoodItemCard({ foodItem, onAddToCart }: FoodItemCardProp
               <button 
                 onClick={handleAddToCart}
                 disabled={isAdding}
-                className={`relative bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white rounded-full w-14 h-14 flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-110 touch-target group ${
+                className={`add-to-cart-btn relative bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white rounded-full w-14 h-14 flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-110 touch-target group ${
                   isAdding ? "animate-pulse scale-110" : ""
                 }`}
               >
