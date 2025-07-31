@@ -338,10 +338,10 @@ export async function updateOrderStatus(orderId: string, status: string) {
 export async function resetOrders(restaurantId: string): Promise<void> {
     const db = await readDatabase();
     // Remove all orders for the restaurant
-    db.orders = db.orders.filter(order => order.restaurantId !== restaurantId);
+    db.orders = db.orders.filter((order: any) => order.restaurantId !== restaurantId);
     // Remove all order items associated with deleted orders
-    const remainingOrderIds = db.orders.map(order => order.id);
-    db.orderItems = db.orderItems.filter(item => remainingOrderIds.includes(item.orderId));
+    const remainingOrderIds = db.orders.map((order: any) => order.id);
+    db.orderItems = db.orderItems.filter((item: any) => remainingOrderIds.includes(item.orderId));
     await writeDatabase(db);
   }
 
@@ -376,6 +376,19 @@ export async function updateUser(id: string, data: any) {
   return { id, ...data };
 }
 
+// Theme settings management
+export async function getThemeSettings() {
+  const db = await readDatabase();
+  return db.themeSettings || { themeId: 'mint' };
+}
+
+export async function saveThemeSettings(themeId: string) {
+  const db = await readDatabase();
+  db.themeSettings = { themeId, updatedAt: new Date().toISOString() };
+  await writeDatabase(db);
+  return db.themeSettings;
+}
+
 // Export all functions as storage object for compatibility
 export const storage = {
   initDatabase,
@@ -403,5 +416,7 @@ export const storage = {
   importData,
   getUserByFirebaseUid,
   createUser,
-  updateUser
+  updateUser,
+  getThemeSettings,
+  saveThemeSettings
 };

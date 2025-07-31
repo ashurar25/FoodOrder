@@ -6,6 +6,11 @@ import { storage } from "./storage";
 import { insertRestaurantSchema, insertCategorySchema, insertFoodItemSchema, insertBannerSchema, insertOrderSchema, insertOrderItemSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Database configuration
+const USE_DATABASE = process.env.DATABASE_URL ? true : false;
+let db: any = null;
+let orders: any = null;
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize restaurant and default data
   app.post("/api/init", async (req, res) => {
@@ -38,9 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const createdCategories = await storage.getCategories(restaurant.id);
 
       // Find categories by name
-      const meatballCategory = createdCategories.find(c => c.name === "ลูกชิ้น");
-      const foodCategory = createdCategories.find(c => c.name === "อาหาร");
-      const drinkCategory = createdCategories.find(c => c.name === "เครื่องดื่ม");
+      const meatballCategory = createdCategories.find((c: any) => c.name === "ลูกชิ้น");
+      const foodCategory = createdCategories.find((c: any) => c.name === "อาหาร");
+      const drinkCategory = createdCategories.find((c: any) => c.name === "เครื่องดื่ม");
 
       // Sample meatball items
       if (meatballCategory) {
@@ -370,7 +375,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ].join(',');
 
       // Create CSV rows
-      const csvRows = orders.map(order => {
+      const csvRows = orders.map((order: any) => {
         const date = order.createdAt ? new Date(order.createdAt).toLocaleString('th-TH') : '';
         return [
           order.id,
@@ -505,7 +510,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const orderHeaders = ['Order ID', 'Date', 'Customer Name', 'Table', 'Total', 'Status', 'Notes'];
           csv += orderHeaders.join(',') + '\n';
 
-          data.orders.forEach(order => {
+          data.orders.forEach((order: any) => {
             const row = [
               order.id,
               new Date(order.createdAt || '').toLocaleDateString('th-TH'),
@@ -548,7 +553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if user already exists
-      let user = await storage.getUserByFirebaseUid(firebaseUid);
+      let user: any = await storage.getUserByFirebaseUid(firebaseUid);
 
       if (user) {
         // Update existing user's last login time and other info
@@ -696,7 +701,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(data);
       }
     } catch (error) {
-```
       console.error('Error exporting data:', error);
       res.status(500).json({ error: 'Failed to export data' });
     }
@@ -739,66 +743,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // Create and return HTTP server
+  const server = createServer(app);
+  return server;
 }
 
-const USE_DATABASE = false;
-
-async function readDataFromFile() {
-  const filePath = path.join(process.cwd(), 'server', 'data', 'database.json');
-  try {
-    const data = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error: any) {
-    console.warn('Failed to read data from file, returning default data', error.message);
-    return {
-      restaurant: null,
-      categories: [],
-      foodItems: [],
-      banners: [],
-      orders: [],
-      themeSettings: { themeId: 'mint' } // Initialize themeSettings
-    };
-  }
-}
-
-async function writeDataToFile(data: any) {
-  const filePath = path.join(process.cwd(), 'server', 'data', 'database.json');
-  try {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-  } catch (error) {
-    console.error('Failed to write data to file:', error);
-  }
-}
-
-async function getThemeSettings() {
-  if (USE_DATABASE) {
-    // For database implementation later
-    return { themeId: 'mint' };
-  } else {
-    const data = readDataFromFile();
-    return data.themeSettings || { themeId: 'mint' };
-  }
-}
-
-async function saveThemeSettings(themeId: string) {
-  if (USE_DATABASE) {
-    // For database implementation later
-    return { themeId };
-  } else {
-    const data = readDataFromFile();
-    data.themeSettings = { themeId, updatedAt: new Date().toISOString() };
-    writeDataToFile(data);
-    return data.themeSettings;
-  }
-}
-
-async function getOrders() {
-  if (USE_DATABASE) {
-    // @ts-ignore
-    return await db.select().from(orders);
-  } else {
-    return readDataFromFile().orders;
-  }
-}
+export default { registerRoutes };
