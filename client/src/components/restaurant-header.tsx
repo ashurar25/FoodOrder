@@ -3,6 +3,7 @@ import { ShoppingCart } from "lucide-react";
 import logoPath from "@assets/HLogo_1753815594471.png";
 import { useState, useEffect } from "react";
 import type { Restaurant } from "@shared/schema";
+import { AuthButton } from "@/components/auth-button";
 
 interface RestaurantHeaderProps {
   restaurant?: Restaurant;
@@ -60,18 +61,23 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
           </div>
           
-          <div className="relative">
-            <button 
-              className="bg-white/10 backdrop-blur-sm rounded-full p-2 hover:bg-white/20 transition-all duration-300 shadow-lg touch-target"
-              onClick={onCartClick}
-            >
-              <ShoppingCart className="text-white w-5 h-5" />
-            </button>
-            {cartItemCount > 0 && (
-              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg animate-pulse">
-                {cartItemCount}
-              </div>
-            )}
+          <div className="flex items-center space-x-2">
+            <div className="scale-75">
+              <AuthButton />
+            </div>
+            <div className="relative">
+              <button 
+                className="bg-white/10 backdrop-blur-sm rounded-full p-2 hover:bg-white/20 transition-all duration-300 shadow-lg touch-target"
+                onClick={onCartClick}
+              >
+                <ShoppingCart className="text-white w-5 h-5" />
+              </button>
+              {cartItemCount > 0 && (
+                <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg animate-pulse">
+                  {cartItemCount}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -102,18 +108,21 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
               </div>
             </div>
 
-            <div className="relative">
-              <button 
-                className="bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
-                onClick={onCartClick}
-              >
-                <ShoppingCart className="text-white w-6 h-6" />
-              </button>
-              {cartItemCount > 0 && (
-                <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold animate-bounce shadow-lg">
-                  {cartItemCount}
-                </div>
-              )}
+            <div className="flex items-center space-x-4">
+              <AuthButton />
+              <div className="relative">
+                <button 
+                  className="bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
+                  onClick={onCartClick}
+                >
+                  <ShoppingCart className="text-white w-6 h-6" />
+                </button>
+                {cartItemCount > 0 && (
+                  <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold animate-bounce shadow-lg">
+                    {cartItemCount}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

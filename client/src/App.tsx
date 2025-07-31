@@ -12,7 +12,8 @@ import AdminRestaurant from "@/pages/admin-restaurant";
 import Orders from "@/pages/orders";
 import NotFound from "@/pages/not-found";
 import { queryClient } from "@/lib/queryClient";
-import { TooltipProvider } from "@/components/ui/tooltip"; // เพิ่ม import ถ้ายังไม่ได้ใส่
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 function Router() {
   return (
@@ -34,10 +35,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router />
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Router />
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
