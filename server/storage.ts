@@ -1,49 +1,123 @@
-import { db } from './db';
-import { restaurants, categories, foodItems, banners, orders, orderItems } from '../shared/schema';
-import { eq, and, desc, like, or } from 'drizzle-orm';
+
+import fs from 'fs/promises';
+import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+
+// Path to data directory
+const DATA_DIR = path.join(process.cwd(), 'server', 'data');
+const DB_FILE = path.join(DATA_DIR, 'database.json');
+
+// Default database structure
+const defaultData = {
+  restaurants: [],
+  categories: [],
+  foodItems: [],
+  banners: [],
+  orders: [],
+  orderItems: []
+};
+
+// Ensure data directory exists
+async function ensureDataDir() {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+  } catch (error) {
+    // Directory already exists
+  }
+}
+
+// Read database from JSON file
+async function readDatabase() {
+  try {
+    await ensureDataDir();
+    const data = await fs.readFile(DB_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    // File doesn't exist, return default data
+    return { ...defaultData };
+  }
+}
+
+// Write database to JSON file
+async function writeDatabase(data: any) {
+  await ensureDataDir();
+  await fs.writeFile(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+}
 
 // Initialize database with default data if empty
 export async function initDatabase() {
   try {
-    // Check if restaurant exists
-    const existingRestaurant = await db.select().from(restaurants).limit(1);
-
-    if (existingRestaurant.length === 0) {
+    const db = await readDatabase();
+    
+    if (db.restaurants.length === 0) {
       // Create default restaurant
       const restaurantId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-
-      await db.insert(restaurants).values({
+      
+      const restaurant = {
         id: restaurantId,
         name: 'ซ้อมคอ',
         description: 'เกาหลี-ไทย ฟิวชัน',
-        logoUrl: '/api/images/1753907698507_logo.jpg',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+        logoUrl: '/api/images/HLogo_1753815594471.png',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      db.restaurants.push(restaurant);
 
       // Create default categories
-      const categoryIds = [
-        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`, name: 'ลาบ/ส้มตำ' },
-        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 1}`, name: 'ข้าวผัด/เส้น' },
-        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 2}`, name: 'ทอด/ย่าง' },
-        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 3}`, name: 'เครื่องดื่ม' }
+      const categories = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`, name: 'ลูกชิ้น', icon: '🍲', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 1}`, name: 'อาหาร', icon: '🍛', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 2}`, name: 'เครื่องดื่ม', icon: '🥤', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
       ];
 
-      for (const cat of categoryIds) {
-        await db.insert(categories).values({
-          id: cat.id,
-          restaurantId: restaurantId,
-          name: cat.name,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
-      }
+      db.categories.push(...categories);
 
-      console.log('Database initialized with default data');
+      // Sample meatball items (ลูกชิ้น)
+      const meatballCategory = categories[0];
+      const meatballItems = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 10}`, name: 'ลูกชิ้นหมู', description: 'ลูกชิ้นหมูสด เนื้อแน่น รสชาติเข้มข้น', price: '25.00', imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.7', categoryId: meatballCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 11}`, name: 'ลูกชิ้นเนื้อ', description: 'ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน', price: '30.00', imageUrl: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.4', categoryId: meatballCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 12}`, name: 'ลูกชิ้นปลาหมึก', description: 'ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว', price: '28.00', imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.2', categoryId: meatballCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 13}`, name: 'ลูกชิ้นปลา', description: 'ลูกชิ้นปลาสดใหม่ หวานหอม', price: '27.00', imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.5', categoryId: meatballCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 14}`, name: 'ลูกชิ้นกุ้ง', description: 'ลูกชิ้นกุ้งแท้ เนื้อกุ้งแน่น', price: '35.00', imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.6', categoryId: meatballCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      ];
+
+      // Sample food items (อาหาร)
+      const foodCategory = categories[1];
+      const foodItems = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 20}`, name: 'ข้าวผัดกุ้ง', description: 'ข้าวผัดกุ้งสด หอมกรุ่น', price: '45.00', imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.6', categoryId: foodCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 21}`, name: 'ผัดไทย', description: 'ผัดไทยแท้ รสชาติต้นตำรับ', price: '40.00', imageUrl: 'https://images.unsplash.com/photo-1559314809-0f31657b9ccd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.8', categoryId: foodCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 22}`, name: 'ต้มยำกุ้ง', description: 'ต้มยำกุ้งน้ำข้น รสเข้มข้น', price: '55.00', imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.9', categoryId: foodCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 23}`, name: 'แกงเขียวหวานไก่', description: 'แกงเขียวหวานไก่ เผ็ดร้อน', price: '50.00', imageUrl: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.5', categoryId: foodCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 24}`, name: 'ส้มตำไทย', description: 'ส้มตำไทยแซ่บ เผ็ดจี๊ดจ๊าด', price: '35.00', imageUrl: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.7', categoryId: foodCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      ];
+
+      // Sample drink items (เครื่องดื่ม)
+      const drinkCategory = categories[2];
+      const drinkItems = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 30}`, name: 'น้ำส้ม', description: 'น้ำส้มคั้นสด เซาต์จัด', price: '15.00', imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.3', categoryId: drinkCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 31}`, name: 'ชาเย็น', description: 'ชาเย็นหอมหวาน รสชาติเข้มข้น', price: '18.00', imageUrl: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.5', categoryId: drinkCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 32}`, name: 'กาแฟเย็น', description: 'กาแฟเย็นเข้มข้น หอมกรุ่น', price: '20.00', imageUrl: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.6', categoryId: drinkCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 33}`, name: 'น้ำแข็งใส', description: 'น้ำแข็งใสเย็นชื่นใจ', price: '10.00', imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.2', categoryId: drinkCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 34}`, name: 'น้ำมะนาว', description: 'น้ำมะนาวสด เซาต์เปรี้ยว', price: '12.00', imageUrl: 'https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200', rating: '4.4', categoryId: drinkCategory.id, restaurantId, isAvailable: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      ];
+
+      db.foodItems.push(...meatballItems, ...foodItems, ...drinkItems);
+
+      // Create sample banners
+      const sampleBanners = [
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 40}`, title: '10 ไข่ ฟรี 1', subtitle: 'โปรโมชั่นพิเศษ', imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now() + 41}`, title: 'ลดราคาพิเศษ 20%', subtitle: 'สำหรับอาหารทุกจาน', imageUrl: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200', restaurantId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      ];
+
+      db.banners.push(...sampleBanners);
+
+      await writeDatabase(db);
+      console.log('Database initialized with sample data');
     }
 
-    return await db.select().from(restaurants).limit(1);
+    return db.restaurants[0] || null;
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;
@@ -52,264 +126,243 @@ export async function initDatabase() {
 
 // Restaurant operations
 export async function getRestaurant() {
-  const result = await db.select().from(restaurants).limit(1);
-  return result[0] || null;
+  const db = await readDatabase();
+  return db.restaurants[0] || null;
 }
 
-export async function updateRestaurant(data: any) {
-  const restaurant = await getRestaurant();
-  if (!restaurant) {
-    throw new Error('Restaurant not found');
-  }
-
-  await db.update(restaurants)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(restaurants.id, restaurant.id));
-
-  return await getRestaurant();
-}
-
-// Category operations
-export async function getCategories(restaurantId: string) {
-  return await db.select().from(categories)
-    .where(eq(categories.restaurantId, restaurantId))
-    .orderBy(categories.createdAt);
-}
-
-// Food items operations
-export async function getFoodItems(restaurantId: string, categoryId?: string) {
-  let query = db.select().from(foodItems)
-    .where(eq(foodItems.restaurantId, restaurantId));
-
-  if (categoryId && categoryId !== 'all') {
-    query = query.where(and(
-      eq(foodItems.restaurantId, restaurantId),
-      eq(foodItems.categoryId, categoryId)
-    ));
-  }
-
-  return await query.orderBy(foodItems.createdAt);
-}
-
-export async function createFoodItem(data: any) {
-  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-  const foodItem = {
-    id,
-    ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  await db.insert(foodItems).values(foodItem);
-  return foodItem;
-}
-
-export async function updateFoodItem(id: string, data: any) {
-  await db.update(foodItems)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(foodItems.id, id));
-
-  const result = await db.select().from(foodItems).where(eq(foodItems.id, id));
-  return result[0];
-}
-
-export async function deleteFoodItem(id: string) {
-  await db.delete(foodItems).where(eq(foodItems.id, id));
-}
-
-// Banner operations
-export async function getBanners(restaurantId: string) {
-  return await db.select().from(banners)
-    .where(eq(banners.restaurantId, restaurantId))
-    .orderBy(banners.createdAt);
-}
-
-export async function createBanner(data: any) {
-  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-  const banner = {
-    id,
-    ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  await db.insert(banners).values(banner);
-  return banner;
-}
-
-export async function updateBanner(id: string, data: any) {
-  await db.update(banners)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(banners.id, id));
-
-  const result = await db.select().from(banners).where(eq(banners.id, id));
-  return result[0];
-}
-
-export async function deleteBanner(id: string) {
-  await db.delete(banners).where(eq(banners.id, id));
-}
-
-// Order operations
-export async function createOrder(data: any) {
-  const orderId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-  const order = {
-    id: orderId,
-    ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  await db.insert(orders).values(order);
-
-  // Insert order items
-  if (data.items && Array.isArray(data.items)) {
-    for (const item of data.items) {
-      await db.insert(orderItems).values({
-        id: `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        orderId: orderId,
-        foodItemId: item.foodItemId,
-        quantity: item.quantity,
-        price: item.price,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
-    }
-  }
-
-  return order;
-}
-
-export async function getOrders(restaurantId: string) {
-  const ordersData = await db.select().from(orders)
-    .where(eq(orders.restaurantId, restaurantId))
-    .orderBy(desc(orders.createdAt));
-
-  // Get order items for each order
-  const ordersWithItems = [];
-  for (const order of ordersData) {
-    const items = await db.select().from(orderItems)
-      .where(eq(orderItems.orderId, order.id));
-
-    ordersWithItems.push({
-      ...order,
-      items
-    });
-  }
-
-  return ordersWithItems;
-}
-
-// Additional functions needed by routes.ts
 export async function createRestaurant(data: any) {
+  const db = await readDatabase();
   const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
   const restaurant = {
     id,
     ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
-  await db.insert(restaurants).values(restaurant);
+  db.restaurants.push(restaurant);
+  await writeDatabase(db);
   return restaurant;
 }
 
+export async function updateRestaurant(id: string, data: any) {
+  const db = await readDatabase();
+  const restaurant = db.restaurants.find((r: any) => r.id === id);
+  if (!restaurant) {
+    throw new Error('Restaurant not found');
+  }
+
+  Object.assign(restaurant, data, { updatedAt: new Date().toISOString() });
+  await writeDatabase(db);
+  return restaurant;
+}
+
+// Category operations
+export async function getCategories(restaurantId: string) {
+  const db = await readDatabase();
+  return db.categories.filter((c: any) => c.restaurantId === restaurantId);
+}
+
 export async function createCategory(data: any) {
+  const db = await readDatabase();
   const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
   const category = {
     id,
     ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
-  await db.insert(categories).values(category);
+  db.categories.push(category);
+  await writeDatabase(db);
   return category;
 }
 
+// Food items operations
+export async function getFoodItems(restaurantId: string, categoryId?: string) {
+  const db = await readDatabase();
+  let items = db.foodItems.filter((f: any) => f.restaurantId === restaurantId);
+  
+  if (categoryId && categoryId !== 'all') {
+    items = items.filter((f: any) => f.categoryId === categoryId);
+  }
+  
+  return items;
+}
+
 export async function searchFoodItems(restaurantId: string, query: string) {
-  return await db.select().from(foodItems)
-    .where(and(
-      eq(foodItems.restaurantId, restaurantId),
-      or(
-        like(foodItems.name, `%${query}%`),
-        like(foodItems.description, `%${query}%`)
-      )
-    ))
-    .orderBy(foodItems.createdAt);
+  const db = await readDatabase();
+  return db.foodItems.filter((f: any) => 
+    f.restaurantId === restaurantId && 
+    (f.name.toLowerCase().includes(query.toLowerCase()) || 
+     f.description.toLowerCase().includes(query.toLowerCase()))
+  );
+}
+
+export async function createFoodItem(data: any) {
+  const db = await readDatabase();
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const foodItem = {
+    id,
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  db.foodItems.push(foodItem);
+  await writeDatabase(db);
+  return foodItem;
+}
+
+export async function updateFoodItem(id: string, data: any) {
+  const db = await readDatabase();
+  const foodItem = db.foodItems.find((f: any) => f.id === id);
+  if (!foodItem) {
+    throw new Error('Food item not found');
+  }
+
+  Object.assign(foodItem, data, { updatedAt: new Date().toISOString() });
+  await writeDatabase(db);
+  return foodItem;
+}
+
+export async function deleteFoodItem(id: string) {
+  const db = await readDatabase();
+  db.foodItems = db.foodItems.filter((f: any) => f.id !== id);
+  await writeDatabase(db);
+}
+
+// Banner operations
+export async function getBanners(restaurantId: string) {
+  const db = await readDatabase();
+  return db.banners.filter((b: any) => b.restaurantId === restaurantId);
+}
+
+export async function createBanner(data: any) {
+  const db = await readDatabase();
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const banner = {
+    id,
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  db.banners.push(banner);
+  await writeDatabase(db);
+  return banner;
+}
+
+export async function updateBanner(id: string, data: any) {
+  const db = await readDatabase();
+  const banner = db.banners.find((b: any) => b.id === id);
+  if (!banner) {
+    throw new Error('Banner not found');
+  }
+
+  Object.assign(banner, data, { updatedAt: new Date().toISOString() });
+  await writeDatabase(db);
+  return banner;
+}
+
+export async function deleteBanner(id: string) {
+  const db = await readDatabase();
+  db.banners = db.banners.filter((b: any) => b.id !== id);
+  await writeDatabase(db);
+}
+
+// Order operations
+export async function createOrder(data: any) {
+  const db = await readDatabase();
+  const orderId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const order = {
+    id: orderId,
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  db.orders.push(order);
+  await writeDatabase(db);
+  return order;
 }
 
 export async function createOrderItem(data: any) {
+  const db = await readDatabase();
   const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const orderItem = {
     id,
     ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
-  await db.insert(orderItems).values(orderItem);
+  db.orderItems.push(orderItem);
+  await writeDatabase(db);
   return orderItem;
 }
 
+export async function getOrders(restaurantId: string) {
+  const db = await readDatabase();
+  const orders = db.orders.filter((o: any) => o.restaurantId === restaurantId);
+  
+  // Add order items to each order
+  return orders.map((order: any) => ({
+    ...order,
+    items: db.orderItems.filter((item: any) => item.orderId === order.id)
+  }));
+}
+
 export async function getOrderWithItems(orderId: string) {
-  const order = await db.select().from(orders).where(eq(orders.id, orderId));
-  if (!order[0]) return null;
+  const db = await readDatabase();
+  const order = db.orders.find((o: any) => o.id === orderId);
+  if (!order) return null;
 
-  const items = await db.select().from(orderItems)
-    .where(eq(orderItems.orderId, orderId));
-
-  return {
-    ...order[0],
-    items
-  };
+  const items = db.orderItems.filter((item: any) => item.orderId === orderId);
+  return { ...order, items };
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
-  await db.update(orders)
-    .set({ status, updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
+  const db = await readDatabase();
+  const order = db.orders.find((o: any) => o.id === orderId);
+  if (!order) {
+    throw new Error('Order not found');
+  }
 
-  return await db.select().from(orders).where(eq(orders.id, orderId));
+  order.status = status;
+  order.updatedAt = new Date().toISOString();
+  await writeDatabase(db);
+  return order;
 }
 
+// Data management
 export async function exportData() {
-  const restaurantData = await getRestaurant();
-  const categoriesData = restaurantData ? await getCategories(restaurantData.id) : [];
-  const foodItemsData = restaurantData ? await getFoodItems(restaurantData.id) : [];
-  const bannersData = restaurantData ? await getBanners(restaurantData.id) : [];
-  const ordersData = restaurantData ? await getOrders(restaurantData.id) : [];
-
+  const db = await readDatabase();
+  const restaurant = db.restaurants[0] || null;
+  
   return {
-    restaurant: restaurantData,
-    categories: categoriesData,
-    foodItems: foodItemsData,
-    banners: bannersData,
-    orders: ordersData
+    restaurant,
+    categories: restaurant ? db.categories.filter((c: any) => c.restaurantId === restaurant.id) : [],
+    foodItems: restaurant ? db.foodItems.filter((f: any) => f.restaurantId === restaurant.id) : [],
+    banners: restaurant ? db.banners.filter((b: any) => b.restaurantId === restaurant.id) : [],
+    orders: restaurant ? db.orders.filter((o: any) => o.restaurantId === restaurant.id) : []
   };
 }
 
 export async function importData(data: any) {
-  // Implementation for importing data would go here
-  // This is a placeholder for now
-  console.log('Import data functionality not yet implemented');
+  await writeDatabase(data);
 }
 
+// User management (placeholder)
 export async function getUserByFirebaseUid(firebaseUid: string) {
-  // User functionality would require users table in schema
-  // Return null for now
   return null;
 }
 
 export async function createUser(data: any) {
-  // User functionality would require users table in schema
-  // Return placeholder for now
   return { id: 'placeholder', ...data };
 }
 
 export async function updateUser(id: string, data: any) {
-  // User functionality would require users table in schema
-  // Return placeholder for now
   return { id, ...data };
 }
 
