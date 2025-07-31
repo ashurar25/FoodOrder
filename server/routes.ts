@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import fs from 'fs/promises';
 import path from 'path';
 import { storage } from "./storage";
-import { insertRestaurantSchema, insertCategorySchema, insertFoodItemSchema, insertBannerSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
+import { insertRestaurantSchema, insertCategorySchema, insertFoodItemSchema, insertBannerSchema, insertOrderSchema, insertOrderItemSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -514,6 +514,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, message: "Data imported successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to import data" });
+    }
+  });
+
+  // User authentication routes
+  app.post("/api/auth/user", async (req, res) => {
+    try {
+      const { firebaseUid, email, displayName, photoURL } = req.body;
+      
+      if (!firebaseUid || !email) {
+        return res.status(400).json({ message: "Firebase UID and email are required" });
+      }
+
+      // Check if user already exists
+      let user = await storage.getUserByFirebaseUid(firebaseUid);
+      
+      if (user) {
+        // Update existing user's last login time and other info
+        user = await storage.updateUser(user.id, {
+          email,
+          displayName: displayName || null,
+          photoURL: photoURL || null,
+        });
+      } else {
+        // Create new user
+        user = await storage.createUser({
+          firebaseUid,
+          email,
+          displayName: displayName || null,
+          photoURL: photoURL || null,
+          providerId: "google.com",
+          isAdmin: false
+        });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error("Auth user error:", error);
+      res.status(500).json({ message: "Failed to authenticate user" });
+    }
+  });
+
+  app.get("/api/auth/user/:firebaseUid", async (req, res) => {
+    try {
+      const { firebaseUid } = req.params;
+      const user = await storage.getUserByFirebaseUid(firebaseUid);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error("Get user error:", error);
+      res.status(500).json({ message: "Failed to get user" });
     }
   });
 

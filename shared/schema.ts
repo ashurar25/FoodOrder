@@ -61,6 +61,18 @@ export const orderItems = pgTable("order_items", {
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
 });
 
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  firebaseUid: text("firebase_uid").unique().notNull(),
+  email: text("email").notNull(),
+  displayName: text("display_name"),
+  photoURL: text("photo_url"),
+  providerId: text("provider_id").default("google.com"),
+  isAdmin: boolean("is_admin").default(false),
+  lastLoginAt: timestamp("last_login_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const restaurantsRelations = relations(restaurants, ({ many }) => ({
   categories: many(categories),
@@ -167,17 +179,16 @@ export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 
-// User schema (keeping existing)
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export const usersRelations = relations(users, ({ many }) => ({
+  orders: many(orders),
+}));
+
+// User insert schema
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  lastLoginAt: true,
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-});
-
-export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;

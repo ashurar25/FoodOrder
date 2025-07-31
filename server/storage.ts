@@ -25,8 +25,10 @@ interface DatabaseData {
 export interface IStorage {
   // User methods
   getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, user: Partial<InsertUser>): Promise<User>;
 
   // Restaurant methods
   getRestaurant(): Promise<Restaurant | undefined>;
@@ -123,25 +125,43 @@ export class FileStorage implements IStorage {
     return data.users.find(user => user.id === id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    // For demo purposes, return a mock admin user
-    if (username === 'admin') {
-      return { id: 'admin-id', username: 'admin', password: 'hashed-password' };
-    }
-
+  async getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined> {
     const data = await this.loadData();
-    return data.users.find(user => user.username === username);
+    return data.users.find(user => user.firebaseUid === firebaseUid);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const data = await this.loadData();
+    return data.users.find(user => user.email === email);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const data = await this.loadData();
     const user: User = {
       id: this.generateId(),
+      createdAt: new Date(),
+      lastLoginAt: null,
       ...insertUser
     };
     data.users.push(user);
     await this.saveData(data);
     return user;
+  }
+
+  async updateUser(id: string, user: Partial<InsertUser>): Promise<User> {
+    const data = await this.loadData();
+    const index = data.users.findIndex(u => u.id === id);
+    if (index === -1) {
+      throw new Error('User not found');
+    }
+
+    data.users[index] = { 
+      ...data.users[index], 
+      ...user,
+      lastLoginAt: new Date()
+    };
+    await this.saveData(data);
+    return data.users[index];
   }
 
   // Restaurant methods
