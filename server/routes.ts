@@ -696,6 +696,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(data);
       }
     } catch (error) {
+```
       console.error('Error exporting data:', error);
       res.status(500).json({ error: 'Failed to export data' });
     }
@@ -712,6 +713,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Theme settings endpoints
+  app.get('/api/theme-settings', async (req, res) => {
+    try {
+      const settings = await storage.getThemeSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('Error getting theme settings:', error);
+      res.status(500).json({ error: 'Failed to get theme settings' });
+    }
+  });
+
+  app.post('/api/theme-settings', async (req, res) => {
+    try {
+      const { themeId } = req.body;
+      if (!themeId) {
+        return res.status(400).json({ error: 'Theme ID is required' });
+      }
+
+      const settings = await storage.saveThemeSettings(themeId);
+      res.json(settings);
+    } catch (error) {
+      console.error('Error saving theme settings:', error);
+      res.status(500).json({ error: 'Failed to save theme settings' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+const USE_DATABASE = false;
+
+async function readDataFromFile() {
+  const filePath = path.join(process.cwd(), 'server', 'data', 'database.json');
+  try {
+    const data = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error: any) {
+    console.warn('Failed to read data from file, returning default data', error.message);
+    return {
+      restaurant: null,
+      categories: [],
+      foodItems: [],
+      banners: [],
+      orders: [],
+      themeSettings: { themeId: 'mint' } // Initialize themeSettings
+    };
+  }
+}
+
+async function writeDataToFile(data: any) {
+  const filePath = path.join(process.cwd(), 'server', 'data', 'database.json');
+  try {
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error('Failed to write data to file:', error);
+  }
+}
+
+async function getThemeSettings() {
+  if (USE_DATABASE) {
+    // For database implementation later
+    return { themeId: 'mint' };
+  } else {
+    const data = readDataFromFile();
+    return data.themeSettings || { themeId: 'mint' };
+  }
+}
+
+async function saveThemeSettings(themeId: string) {
+  if (USE_DATABASE) {
+    // For database implementation later
+    return { themeId };
+  } else {
+    const data = readDataFromFile();
+    data.themeSettings = { themeId, updatedAt: new Date().toISOString() };
+    writeDataToFile(data);
+    return data.themeSettings;
+  }
+}
+
+async function getOrders() {
+  if (USE_DATABASE) {
+    // @ts-ignore
+    return await db.select().from(orders);
+  } else {
+    return readDataFromFile().orders;
+  }
 }

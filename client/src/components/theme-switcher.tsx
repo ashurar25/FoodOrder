@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 interface ThemeConfig {
   id: string;
@@ -146,12 +147,36 @@ interface ThemeSwitcherProps {
 
 export default function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   const [currentTheme, setCurrentTheme] = useState<string>("mint");
+  const { toast } = useToast();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "mint";
-    setCurrentTheme(savedTheme);
-    applyTheme(savedTheme);
+    // Load theme from server
+    loadThemeFromServer();
   }, []);
+
+  const loadThemeFromServer = async () => {
+    try {
+      const response = await fetch('/api/theme-settings');
+      if (response.ok) {
+        const settings = await response.json();
+        const themeId = settings.themeId || "mint";
+        setCurrentTheme(themeId);
+        applyTheme(themeId);
+        localStorage.setItem("theme", themeId);
+      } else {
+        // Fallback to localStorage
+        const savedTheme = localStorage.getItem("theme") || "mint";
+        setCurrentTheme(savedTheme);
+        applyTheme(savedTheme);
+      }
+    } catch (error) {
+      console.error('Error loading theme:', error);
+      // Fallback to localStorage
+      const savedTheme = localStorage.getItem("theme") || "mint";
+      setCurrentTheme(savedTheme);
+      applyTheme(savedTheme);
+    }
+  };
 
   const applyTheme = (themeId: string) => {
     const theme = themes.find(t => t.id === themeId);
@@ -259,10 +284,42 @@ export default function ThemeSwitcher({ className }: ThemeSwitcherProps) {
     document.head.appendChild(style);
   };
 
-  const handleThemeChange = (themeId: string) => {
-    setCurrentTheme(themeId);
-    applyTheme(themeId);
-    localStorage.setItem("theme", themeId);
+  const handleThemeChange = async (themeId: string) => {
+    try {
+      // Save to server
+      const response = await fetch('/api/theme-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ themeId }),
+      });
+
+      if (response.ok) {
+        setCurrentTheme(themeId);
+        applyTheme(themeId);
+        localStorage.setItem("theme", themeId);
+        
+        toast({
+          title: "สำเร็จ",
+          description: "บันทึกการตั้งค่าสีธีมแล้ว",
+        });
+      } else {
+        throw new Error('Failed to save theme');
+      }
+    } catch (error) {
+      console.error('Error saving theme:', error);
+      // Still apply locally even if server save fails
+      setCurrentTheme(themeId);
+      applyTheme(themeId);
+      localStorage.setItem("theme", themeId);
+      
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถบันทึกการตั้งค่าลงเซิร์ฟเวอร์ได้ แต่จะใช้งานในครั้งนี้",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

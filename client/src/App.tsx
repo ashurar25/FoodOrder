@@ -15,6 +15,7 @@ import { queryClient } from "@/lib/queryClient";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { useEffect } from 'react';
 
 function Router() {
   return (
