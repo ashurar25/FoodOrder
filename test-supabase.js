@@ -1,6 +1,8 @@
 
-const { neon } = require('@neondatabase/serverless');
-require('dotenv').config();
+import { neon } from '@neondatabase/serverless';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function testSupabaseConnection() {
   try {
