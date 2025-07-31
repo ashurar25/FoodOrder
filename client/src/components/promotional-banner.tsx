@@ -20,7 +20,7 @@ export default function PromotionalBanner({ banners }: PromotionalBannerProps) {
   if (banners.length === 0) {
     return (
       <div className="px-4 mb-6">
-        <div className="relative rounded-2xl overflow-hidden shadow-lg animate-float bg-gradient-to-r from-primary/20 to-primary/10 h-40 flex items-center justify-center">
+        <div className="relative rounded-2xl overflow-hidden shadow-lg animate-float bg-gradient-to-r from-primary/20 to-primary/10 aspect-square flex items-center justify-center">
           <p className="text-gray-500">ไม่มีแบนเนอร์โปรโมชั่น</p>
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function PromotionalBanner({ banners }: PromotionalBannerProps) {
         <img 
           src={banner.imageUrl} 
           alt={banner.title}
-          className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-pink-900/40 to-transparent">
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
