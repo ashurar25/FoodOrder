@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Utensils, Image, ShoppingCart, BarChart3, Settings } from "lucide-react";
+import ThemeSwitcher from "@/components/theme-switcher";
+import AnimatedBackground from "@/components/animated-background";
 import type { Banner, Order, FoodItem } from "@shared/schema";
 
 export default function Admin() {
@@ -32,6 +34,7 @@ export default function Admin() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 min-h-screen bg-soft-mint">
+      <AnimatedBackground />
       <div className="mb-6">
         <Link href="/">
           <Button variant="ghost" className="mb-4">
@@ -126,6 +129,9 @@ export default function Admin() {
           </Card>
         </Link>
       </div>
+
+      {/* Theme Switcher */}
+      <ThemeSwitcher className="mb-6" />
 
       <div className="grid gap-6 lg:grid-cols-1">
 
