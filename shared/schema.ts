@@ -131,6 +131,8 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
 export const insertRestaurantSchema = createInsertSchema(restaurants).omit({
   id: true,
   createdAt: true,
+}).extend({
+  receiptImageUrl: z.string().optional()
 });
 
 export const insertCategorySchema = createInsertSchema(categories).omit({

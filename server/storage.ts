@@ -58,6 +58,7 @@ export async function initDatabase() {
         name: 'ซ้อมคอ',
         description: 'เกาหลี-ไทย ฟิวชัน',
         logoUrl: '/api/images/HLogo_1753815594471.png',
+        receiptImageUrl: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

@@ -36,20 +36,31 @@ export default function AdminDatabase() {
   });
 
   const updateConfigMutation = useMutation({
-    mutationFn: async (newConfig: DatabaseConfig) => {
-      return apiRequest("/api/admin/database/config", "POST", newConfig);
+    mutationFn: async (config: any) => {
+      const response = await fetch('/api/admin/database/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Failed to update config: ${errorData}`);
+      }
+      return response.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/database/config'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/database/status'] });
       toast({
         title: "สำเร็จ",
-        description: "อัปเดตการตั้งค่าฐานข้อมูลแล้ว",
+        description: "อัพเดตการตั้งค่าฐานข้อมูลแล้ว",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/database"] });
     },
     onError: (error: any) => {
+      console.error('Database config error:', error);
       toast({
-        title: "เกิดข้อผิดพลาด",
-        description: error.message || "ไม่สามารถอัปเดตการตั้งค่าได้",
+        title: "ข้อผิดพลาด",
+        description: error.message || "ไม่สามารถอัพเดตการตั้งค่าฐานข้อมูลได้",
         variant: "destructive",
       });
     },
@@ -61,7 +72,7 @@ export default function AdminDatabase() {
     },
     onSuccess: (data: any, format: 'json' | 'csv' = 'json') => {
       const timestamp = new Date().toISOString().split('T')[0];
-      
+
       if (format === 'csv') {
         // Handle CSV download
         const blob = new Blob([data.csv], { type: 'text/csv' });
@@ -85,7 +96,7 @@ export default function AdminDatabase() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
-      
+
       toast({
         title: "สำเร็จ",
         description: `ดาวน์โหลดข้อมูล ${format.toUpperCase()} แล้ว`,
