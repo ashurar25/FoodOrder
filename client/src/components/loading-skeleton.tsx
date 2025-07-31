@@ -34,12 +34,12 @@ export function CategorySkeleton() {
 
 export function BannerSkeleton() {
   return (
-    <div className="px-4 mb-8">
-      <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-        <div className="w-full h-48 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 loading-shimmer"></div>
-        <div className="absolute bottom-6 left-6 space-y-2">
-          <div className="h-6 w-32 bg-white/30 rounded loading-shimmer"></div>
-          <div className="h-4 w-24 bg-white/20 rounded loading-shimmer"></div>
+    <div className="px-3 md:px-4 mb-4 md:mb-6">
+      <div className="relative rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
+        <div className="w-full h-32 sm:h-40 md:h-48 lg:h-56 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 loading-shimmer"></div>
+        <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 space-y-1 md:space-y-2">
+          <div className="h-4 md:h-5 w-24 md:w-32 bg-white/30 rounded loading-shimmer"></div>
+          <div className="h-3 md:h-4 w-16 md:w-24 bg-white/20 rounded loading-shimmer"></div>
         </div>
       </div>
     </div>
