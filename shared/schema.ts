@@ -9,6 +9,7 @@ export const restaurants = pgTable("restaurants", {
   name: text("name").notNull(),
   description: text("description"),
   logoUrl: text("logo_url"),
+  receiptImageUrl: text("receipt_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

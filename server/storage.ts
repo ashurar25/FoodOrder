@@ -155,7 +155,10 @@ export class FileStorage implements IStorage {
     const newRestaurant: Restaurant = {
       id: this.generateId(),
       createdAt: new Date(),
-      ...restaurant
+      name: restaurant.name,
+      description: restaurant.description ?? null,
+      logoUrl: restaurant.logoUrl ?? null,
+      receiptImageUrl: restaurant.receiptImageUrl ?? null
     };
     data.restaurants.push(newRestaurant);
     await this.saveData(data);
@@ -184,7 +187,9 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     const newCategory: Category = {
       id: this.generateId(),
-      ...category
+      name: category.name,
+      icon: category.icon,
+      restaurantId: category.restaurantId ?? null
     };
     data.categories.push(newCategory);
     await this.saveData(data);
@@ -228,9 +233,14 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     const newFoodItem: FoodItem = {
       id: this.generateId(),
-      isAvailable: true,
-      rating: "0.0",
-      ...foodItem
+      name: foodItem.name,
+      description: foodItem.description ?? null,
+      price: foodItem.price,
+      imageUrl: foodItem.imageUrl ?? null,
+      rating: foodItem.rating ?? "0.0",
+      categoryId: foodItem.categoryId ?? null,
+      restaurantId: foodItem.restaurantId ?? null,
+      isAvailable: foodItem.isAvailable ?? true
     };
     data.foodItems.push(newFoodItem);
     await this.saveData(data);
@@ -267,9 +277,12 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     const newBanner: Banner = {
       id: this.generateId(),
-      isActive: true,
-      createdAt: new Date(),
-      ...banner
+      title: banner.title,
+      subtitle: banner.subtitle ?? null,
+      imageUrl: banner.imageUrl,
+      isActive: banner.isActive ?? true,
+      restaurantId: banner.restaurantId ?? null,
+      createdAt: new Date()
     };
     data.banners.push(newBanner);
     await this.saveData(data);
@@ -302,8 +315,13 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     const newOrder: Order = {
       id: this.generateOrderId(),
-      createdAt: new Date(),
-      ...order
+      restaurantId: order.restaurantId ?? null,
+      customerName: order.customerName ?? null,
+      tableNumber: order.tableNumber ?? null,
+      total: order.total,
+      status: order.status ?? "pending",
+      notes: order.notes ?? null,
+      createdAt: new Date()
     };
     data.orders.push(newOrder);
     await this.saveData(data);
@@ -352,7 +370,10 @@ export class FileStorage implements IStorage {
     const data = await this.loadData();
     const newOrderItem: OrderItem = {
       id: this.generateId(),
-      ...orderItem
+      orderId: orderItem.orderId ?? null,
+      foodItemId: orderItem.foodItemId ?? null,
+      quantity: orderItem.quantity,
+      price: orderItem.price
     };
     data.orderItems.push(newOrderItem);
     await this.saveData(data);
@@ -368,40 +389,7 @@ export class FileStorage implements IStorage {
     await this.saveData(data);
   }
 
-  async updateRestaurant(id: string, updateData: any): Promise<Restaurant | null> {
-    const data = await this.loadData();
-    const index = data.restaurants.findIndex((r: Restaurant) => r.id === id);
-    if (index === -1) {
-      throw new Error("Restaurant not found");
-    }
 
-    data.restaurants[index] = { ...data.restaurants[index], ...updateData, updatedAt: new Date() };
-    await this.saveData(data);
-    return data.restaurants[index];
-  }
-
-  // User methods (placeholder implementation)
-  async getUser(id: string): Promise<User | undefined> {
-    const data = await this.loadData();
-    return data.users.find(user => user.id === id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const data = await this.loadData();
-    return data.users.find(user => user.username === username);
-  }
-
-  async createUser(user: InsertUser): Promise<User> {
-    const data = await this.loadData();
-    const newUser: User = {
-      id: this.generateId(),
-      createdAt: new Date(),
-      ...user
-    };
-    data.users.push(newUser);
-    await this.saveData(data);
-    return newUser;
-  }
 }
 
 export const storage = new FileStorage();

@@ -114,6 +114,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/restaurant/:id", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const updateData = insertRestaurantSchema.partial().parse(req.body);
+      const restaurant = await storage.updateRestaurant(id, updateData);
+      res.json(restaurant);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid restaurant data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update restaurant" });
+    }
+  });
+
   // Category routes
   app.get("/api/categories", async (req, res) => {
     try {

@@ -18,7 +18,8 @@ export default function AdminRestaurant() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    logoUrl: ""
+    logoUrl: "",
+    receiptImageUrl: ""
   });
 
   const { data: restaurant, isLoading } = useQuery<Restaurant>({
@@ -31,7 +32,8 @@ export default function AdminRestaurant() {
       setFormData({
         name: restaurant.name || "",
         description: restaurant.description || "",
-        logoUrl: restaurant.logoUrl || ""
+        logoUrl: restaurant.logoUrl || "",
+        receiptImageUrl: restaurant.receiptImageUrl || ""
       });
     }
   }, [restaurant]);
@@ -140,6 +142,13 @@ export default function AdminRestaurant() {
               placeholder="เลือกหรือใส่ URL โลโก้ร้าน"
               value={formData.logoUrl}
               onChange={(url) => setFormData(prev => ({ ...prev, logoUrl: url }))}
+            />
+
+            <ImageUpload
+              label="รูปภาพประกอบใบเสร็จ (JPG หรือ PNG)"
+              placeholder="เลือกรูปภาพที่จะแสดงข้างโลโก้ในใบเสร็จ"
+              value={formData.receiptImageUrl}
+              onChange={(url) => setFormData(prev => ({ ...prev, receiptImageUrl: url }))}
             />
 
             <Button

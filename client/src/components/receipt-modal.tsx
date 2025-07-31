@@ -1,5 +1,7 @@
 import { X, Calendar, Clock, MapPin, Phone, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import type { Restaurant } from "@shared/schema";
 import logoPath from "@assets/HLogo_1753815594471.png";
 
 interface OrderItem {
@@ -50,6 +52,10 @@ function formatDateTime(date: Date | string | null): string {
 export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
   if (!isOpen || !order) return null;
 
+  const { data: restaurant } = useQuery<Restaurant>({
+    queryKey: ["/api/restaurant"],
+  });
+
   const printReceipt = () => {
     window.print();
   };
@@ -75,15 +81,27 @@ export default function ReceiptModal({ isOpen, onClose, order }: ReceiptModalPro
         <div className="p-6 receipt-content">
           {/* Restaurant Info */}
           <div className="text-center mb-6 border-b border-dashed border-gray-300 pb-4">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden">
-              <img 
-                src={logoPath} 
-                alt="ซ้อมคอ" 
-                className="w-full h-full object-cover"
-              />
+            {/* Logo and Receipt Image Container */}
+            <div className="flex items-center justify-center gap-4 mb-3">
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <img 
+                  src={(restaurant?.logoUrl && restaurant.logoUrl.startsWith('/api/images/')) ? restaurant.logoUrl : logoPath} 
+                  alt={restaurant?.name || "ร้านอาหาร"} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {restaurant?.receiptImageUrl && (
+                <div className="w-16 h-16 rounded-lg overflow-hidden">
+                  <img 
+                    src={restaurant.receiptImageUrl} 
+                    alt="รูปประกอบใบเสร็จ" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-1">ซ้อมคอ</h3>
-            <p className="text-sm text-gray-600 mb-2">เกาหลี-ไทย ฟิวชัน</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">{restaurant?.name || "ซ้อมคอ"}</h3>
+            <p className="text-sm text-gray-600 mb-2">{restaurant?.description || "เกาหลี-ไทย ฟิวชัน"}</p>
             <div className="text-xs text-gray-500 space-y-1">
               <div className="flex items-center justify-center">
                 <MapPin className="w-3 h-3 mr-1" />
