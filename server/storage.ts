@@ -61,23 +61,16 @@ export async function initDatabase() {
         updatedAt: new Date().toISOString()
       };
 
+      // Update the default restaurant with proper data
+      defaultRestaurant.name = 'ซ้อมคอ';
+      defaultRestaurant.description = 'เกาหลี-ไทย ฟิวชัน';
+      defaultRestaurant.logoUrl = '/api/images/HLogo_1753815594471.png';
+      defaultRestaurant.receiptImageUrl = null;
+
       db.restaurants = [defaultRestaurant];
       console.log('Created default restaurant:', defaultRestaurant);
 
-      // Create default restaurant
-      const restaurantId = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
-
-      const restaurant = {
-        id: restaurantId,
-        name: 'ซ้อมคอ',
-        description: 'เกาหลี-ไทย ฟิวชัน',
-        logoUrl: '/api/images/HLogo_1753815594471.png',
-        receiptImageUrl: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      db.restaurants.push(restaurant);
+      const restaurantId = defaultRestaurant.id;
 
       // Create default categories
       const categories = [
