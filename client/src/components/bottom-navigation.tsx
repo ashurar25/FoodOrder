@@ -26,8 +26,8 @@ export default function BottomNavigation() {
                     : "text-gray-400 hover:text-white hover:scale-105"
                 }`}>
                   {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-2xl shadow-lg">
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 rounded-2xl animate-pulse opacity-75"></div>
+                    <div className="absolute inset-0 nav-active-bg rounded-2xl shadow-lg">
+                      <div className="absolute inset-0 nav-active-pulse rounded-2xl animate-pulse opacity-75"></div>
                     </div>
                   )}
                   <div className="relative z-10">
@@ -39,7 +39,7 @@ export default function BottomNavigation() {
                   
                   {/* Hover glow effect */}
                   {!isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 nav-hover-bg rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   )}
                 </button>
               </Link>

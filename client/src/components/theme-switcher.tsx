@@ -236,6 +236,19 @@ export default function ThemeSwitcher({ className }: ThemeSwitcherProps) {
       .cart-button:hover {
         background-color: rgba(255, 255, 255, 0.3) !important;
       }
+      
+      /* Bottom navigation styling */
+      .nav-active-bg {
+        background: linear-gradient(135deg, ${theme.buttonColors.primary} 0%, ${theme.buttonColors.hover} 100%) !important;
+      }
+      
+      .nav-active-pulse {
+        background: linear-gradient(135deg, ${theme.buttonColors.accent} 0%, ${theme.buttonColors.primary} 100%) !important;
+      }
+      
+      .nav-hover-bg {
+        background: linear-gradient(135deg, ${theme.buttonColors.primary}20 0%, ${theme.buttonColors.accent}20 100%) !important;
+      }
     `;
     
     // Remove previous theme style
