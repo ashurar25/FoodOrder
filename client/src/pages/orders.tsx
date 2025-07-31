@@ -1,12 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, ShoppingBag, Receipt, Download } from "lucide-react";
+import { ArrowLeft, Calendar, ShoppingBag, Receipt, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ReceiptModal from "@/components/receipt-modal";
 import type { Order } from "@shared/schema";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface OrderWithItems extends Order {
   items?: Array<{
@@ -21,9 +22,39 @@ interface OrderWithItems extends Order {
 export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetCode, setResetCode] = useState("");
+  const queryClient = useQueryClient();
 
   const { data: orders = [], isLoading } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
+  });
+
+  const resetOrdersMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/orders", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ resetCode: resetCode }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to reset orders");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      setShowResetDialog(false);
+      setResetCode("");
+    },
+    onError: (error) => {
+      console.error("Error resetting orders:", error);
+      alert("Failed to reset orders. Please check the reset code.");
+    },
   });
 
   const handleShowReceipt = async (order: OrderWithItems) => {
@@ -68,6 +99,14 @@ export default function Orders() {
     }
   };
 
+  const handleResetOrders = async () => {
+    try {
+      await resetOrdersMutation.mutateAsync();
+    } catch (error) {
+       console.error("Error resetting orders:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-md mx-auto p-4 min-h-screen bg-soft-mint">
@@ -95,16 +134,74 @@ export default function Orders() {
         </Link>
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">คำสั่งซื้อของฉัน</h1>
+          <div className="flex space-x-3">
           <Button
-            onClick={() => {
-              window.open('/api/orders/export', '_blank');
-            }}
-            className="bg-green-500 hover:bg-green-600 text-white"
+            onClick={() => window.open('/api/orders/export', '_blank')}
+            variant="outline"
             size="sm"
+            className="bg-white/80 backdrop-blur-sm"
           >
             <Download className="w-4 h-4 mr-2" />
             ส่งออก
           </Button>
+
+          {orders.length > 0 && (
+            <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="bg-red-500 hover:bg-red-600"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  รีเซ็ตประวัติ
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>ยืนยันการลบประวัติคำสั่งซื้อ</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    การดำเนินการนี้จะลบประวัติคำสั่งซื้อทั้งหมดและไม่สามารถกู้คืนได้
+                  </p>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      กรุณาใส่รหัสลบเพื่อยืนยัน:
+                    </label>
+                    <input
+                      type="text"
+                      value={resetCode}
+                      onChange={(e) => setResetCode(e.target.value)}
+                      placeholder="ใส่รหัสลบ"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowResetDialog(false);
+                        setResetCode("");
+                      }}
+                      className="flex-1"
+                    >
+                      ยกเลิก
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={handleResetOrders}
+                      disabled={resetOrdersMutation.isPending || !resetCode}
+                      className="flex-1"
+                    >
+                      {resetOrdersMutation.isPending ? "กำลังลบ..." : "ยืนยันลบ"}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
         </div>
       </div>
 

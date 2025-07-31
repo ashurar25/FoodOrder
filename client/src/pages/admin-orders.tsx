@@ -27,6 +27,8 @@ export default function AdminOrders() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetCode, setResetCode] = useState("");
 
   const { data: orders = [], isLoading, refetch } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
@@ -51,6 +53,40 @@ export default function AdminOrders() {
       });
     },
   });
+
+  const resetOrdersMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("DELETE", "/api/orders", { resetCode });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      setShowResetDialog(false);
+      setResetCode("");
+      toast({
+        title: "สำเร็จ",
+        description: "ลบประวัติคำสั่งซื้อทั้งหมดแล้ว",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "รหัสลบไม่ถูกต้อง",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleResetOrders = () => {
+    if (resetCode === "kenginol") {
+      resetOrdersMutation.mutate();
+    } else {
+      toast({
+        title: "ข้อผิดพลาด",
+        description: "รหัสลบไม่ถูกต้อง",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleExportOrders = () => {
     window.open('/api/orders/export', '_blank');
@@ -182,6 +218,62 @@ export default function AdminOrders() {
               <FileSpreadsheet className="w-4 h-4 mr-2" />
               ส่งออก CSV
             </Button>
+
+            {orders.length > 0 && (
+              <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    รีเซ็ตประวัติ
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>ยืนยันการลบประวัติคำสั่งซื้อทั้งหมด</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      การดำเนินการนี้จะลบประวัติคำสั่งซื้อทั้งหมดและไม่สามารถกู้คืนได้
+                    </p>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        กรุณาใส่รหัสลบเพื่อยืนยัน:
+                      </label>
+                      <input
+                        type="text"
+                        value={resetCode}
+                        onChange={(e) => setResetCode(e.target.value)}
+                        placeholder="ใส่รหัสลบ"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      />
+                    </div>
+                    <div className="flex space-x-3 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowResetDialog(false);
+                          setResetCode("");
+                        }}
+                        className="flex-1"
+                      >
+                        ยกเลิก
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={handleResetOrders}
+                        disabled={resetOrdersMutation.isPending || !resetCode}
+                        className="flex-1"
+                      >
+                        {resetOrdersMutation.isPending ? "กำลังลบ..." : "ยืนยันลบ"}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
             
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className="w-48">

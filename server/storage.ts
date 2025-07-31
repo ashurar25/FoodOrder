@@ -335,6 +335,16 @@ export async function updateOrderStatus(orderId: string, status: string) {
   return order;
 }
 
+  async resetOrders(restaurantId: string): Promise<void> {
+    const db = await readDatabase();
+    // Remove all orders for the restaurant
+    db.orders = db.orders.filter(order => order.restaurantId !== restaurantId);
+    // Remove all order items associated with deleted orders
+    const remainingOrderIds = db.orders.map(order => order.id);
+    db.orderItems = db.orderItems.filter(item => remainingOrderIds.includes(item.orderId));
+    await writeDatabase(db);
+  }
+
 // Data management
 export async function exportData() {
   const db = await readDatabase();
@@ -388,6 +398,7 @@ export const storage = {
   getOrders,
   getOrderWithItems,
   updateOrderStatus,
+  resetOrders,
   exportData,
   importData,
   getUserByFirebaseUid,

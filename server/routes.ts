@@ -434,7 +434,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset all orders with confirmation code
+  app.delete("/api/orders", async (req, res) => {
+    try {
+      const { resetCode } = req.body;
 
+      if (resetCode !== "kenginol") {
+        return res.status(403).json({ message: "Invalid reset code" });
+      }
+
+      const restaurant = await storage.getRestaurant();
+      if (!restaurant) {
+        return res.status(404).json({ message: "Restaurant not found" });
+      }
+
+      await storage.resetOrders(restaurant.id);
+      res.json({ success: true, message: "All orders have been deleted" });
+    } catch (error) {
+      console.error("Error resetting orders:", error);
+      res.status(500).json({ message: "Failed to reset orders" });
+    }
+  });
 
   // Database management routes
   app.get("/api/admin/database/config", async (req, res) => {
