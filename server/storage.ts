@@ -1,6 +1,6 @@
 import { db } from './db';
 import { restaurants, categories, foodItems, banners, orders, orderItems } from '../shared/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, like, or } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
 
 // Initialize database with default data if empty
@@ -199,3 +199,145 @@ export async function getOrders(restaurantId: string) {
 
   return ordersWithItems;
 }
+
+// Additional functions needed by routes.ts
+export async function createRestaurant(data: any) {
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const restaurant = {
+    id,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(restaurants).values(restaurant);
+  return restaurant;
+}
+
+export async function createCategory(data: any) {
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}`;
+  const category = {
+    id,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(categories).values(category);
+  return category;
+}
+
+export async function searchFoodItems(restaurantId: string, query: string) {
+  return await db.select().from(foodItems)
+    .where(and(
+      eq(foodItems.restaurantId, restaurantId),
+      or(
+        like(foodItems.name, `%${query}%`),
+        like(foodItems.description, `%${query}%`)
+      )
+    ))
+    .orderBy(foodItems.createdAt);
+}
+
+export async function createOrderItem(data: any) {
+  const id = `id_${uuidv4().replace(/-/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const orderItem = {
+    id,
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  await db.insert(orderItems).values(orderItem);
+  return orderItem;
+}
+
+export async function getOrderWithItems(orderId: string) {
+  const order = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (!order[0]) return null;
+
+  const items = await db.select().from(orderItems)
+    .where(eq(orderItems.orderId, orderId));
+
+  return {
+    ...order[0],
+    items
+  };
+}
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  await db.update(orders)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+
+  return await db.select().from(orders).where(eq(orders.id, orderId));
+}
+
+export async function exportData() {
+  const restaurantData = await getRestaurant();
+  const categoriesData = restaurantData ? await getCategories(restaurantData.id) : [];
+  const foodItemsData = restaurantData ? await getFoodItems(restaurantData.id) : [];
+  const bannersData = restaurantData ? await getBanners(restaurantData.id) : [];
+  const ordersData = restaurantData ? await getOrders(restaurantData.id) : [];
+
+  return {
+    restaurant: restaurantData,
+    categories: categoriesData,
+    foodItems: foodItemsData,
+    banners: bannersData,
+    orders: ordersData
+  };
+}
+
+export async function importData(data: any) {
+  // Implementation for importing data would go here
+  // This is a placeholder for now
+  console.log('Import data functionality not yet implemented');
+}
+
+export async function getUserByFirebaseUid(firebaseUid: string) {
+  // User functionality would require users table in schema
+  // Return null for now
+  return null;
+}
+
+export async function createUser(data: any) {
+  // User functionality would require users table in schema
+  // Return placeholder for now
+  return { id: 'placeholder', ...data };
+}
+
+export async function updateUser(id: string, data: any) {
+  // User functionality would require users table in schema
+  // Return placeholder for now
+  return { id, ...data };
+}
+
+// Export all functions as storage object for compatibility
+export const storage = {
+  initDatabase,
+  getRestaurant,
+  createRestaurant,
+  updateRestaurant,
+  getCategories,
+  createCategory,
+  getFoodItems,
+  searchFoodItems,
+  createFoodItem,
+  updateFoodItem,
+  deleteFoodItem,
+  getBanners,
+  createBanner,
+  updateBanner,
+  deleteBanner,
+  createOrder,
+  createOrderItem,
+  getOrders,
+  getOrderWithItems,
+  updateOrderStatus,
+  exportData,
+  importData,
+  getUserByFirebaseUid,
+  createUser,
+  updateUser
+};
