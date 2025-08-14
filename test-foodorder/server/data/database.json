@@ -1,0 +1,195 @@
+{
+  "restaurants": [
+    {
+      "id": "id_kay6d35me_1753812074501",
+      "createdAt": "2025-07-29T18:01:14.501Z",
+      "name": "ร้านอาหารไทยใหม่",
+      "description": "คำอธิบายใหม่",
+      "logoUrl": "test-logo.jpg",
+      "updatedAt": "2025-07-31T18:44:08.494Z",
+      "receiptImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1024px-QR_code_for_mobile_English_Wikipedia.svg.png"
+    }
+  ],
+  "categories": [
+    {
+      "id": "id_xb6r7dw9x_1753812074502",
+      "name": "ลูกชิ้น",
+      "icon": "🍲",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_bnez3wk89_1753812074504",
+      "name": "อาหาร",
+      "icon": "🍛",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_kxvxt82jz_1753812074505",
+      "name": "เครื่องดื่ม",
+      "icon": "🥤",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    }
+  ],
+  "foodItems": [
+    {
+      "id": "id_2ov35kfg4_1753812074507",
+      "isAvailable": true,
+      "rating": "4.7",
+      "name": "ลูกชิ้นหมู",
+      "description": "ลูกชิ้นหมูสด เนื้อแน่น รสชาติเข้มข้น",
+      "price": "25.00",
+      "imageUrl": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_xb6r7dw9x_1753812074502",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_rcuhms5vv_1753812074507",
+      "isAvailable": true,
+      "rating": "4.4",
+      "name": "ลูกชิ้นเนื้อ",
+      "description": "ลูกชิ้นเนื้อวัว เนื้อแน่น หอมหวาน",
+      "price": "30.00",
+      "imageUrl": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_xb6r7dw9x_1753812074502",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_r2qi7o59l_1753812074516",
+      "isAvailable": true,
+      "rating": "4.2",
+      "name": "ลูกชิ้นปลาหมึก",
+      "description": "ลูกชิ้นปลาหมึกสด เคี้ยวเหนียว",
+      "price": "28.00",
+      "imageUrl": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_xb6r7dw9x_1753812074502",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_uqhtbv6ju_1753812074526",
+      "isAvailable": true,
+      "rating": "4.6",
+      "name": "ลูกชิ้นกุ้ง",
+      "description": "ลูกชิ้นกุ้งแท้ เนื้อกุ้งแน่น",
+      "price": "35.00",
+      "imageUrl": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_xb6r7dw9x_1753812074502",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_0upmrxywx_1753812074528",
+      "isAvailable": true,
+      "rating": "4.6",
+      "name": "ข้าวผัดกุ้ง",
+      "description": "ข้าวผัดกุ้งสด หอมกรุ่น",
+      "price": "45.00",
+      "imageUrl": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_bnez3wk89_1753812074504",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_esrvowelm_1753812074532",
+      "isAvailable": true,
+      "rating": "4.9",
+      "name": "ต้มยำกุ้ง",
+      "description": "ต้มยำกุ้งน้ำข้น รสเข้มข้น",
+      "price": "55.00",
+      "imageUrl": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_bnez3wk89_1753812074504",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_wiyqbrd3u_1753812074533",
+      "isAvailable": true,
+      "rating": "4.5",
+      "name": "แกงเขียวหวานไก่",
+      "description": "แกงเขียวหวานไก่ เผ็ดร้อน",
+      "price": "50.00",
+      "imageUrl": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_bnez3wk89_1753812074504",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_w4qg44pmh_1753812074541",
+      "isAvailable": true,
+      "rating": "4.7",
+      "name": "ส้มตำไทย",
+      "description": "ส้มตำไทยแซ่บ เผ็ดจี๊ดจ๊าด",
+      "price": "35.00",
+      "imageUrl": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_bnez3wk89_1753812074504",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_8ewzfbp84_1753812074552",
+      "isAvailable": true,
+      "rating": "4.3",
+      "name": "น้ำส้ม",
+      "description": "น้ำส้มคั้นสด เซาต์จัด",
+      "price": "15.00",
+      "imageUrl": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_kxvxt82jz_1753812074505",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_2oakwyfip_1753812074553",
+      "isAvailable": true,
+      "rating": "4.5",
+      "name": "ชาเย็น",
+      "description": "ชาเย็นหอมหวาน รสชาติเข้มข้น",
+      "price": "18.00",
+      "imageUrl": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_kxvxt82jz_1753812074505",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_z9dnuot99_1753812074562",
+      "isAvailable": true,
+      "rating": "4.6",
+      "name": "กาแฟเย็น",
+      "description": "กาแฟเย็นเข้มข้น หอมกรุ่น",
+      "price": "20.00",
+      "imageUrl": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_kxvxt82jz_1753812074505",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_plhsg5wka_1753812074563",
+      "isAvailable": true,
+      "rating": "4.2",
+      "name": "น้ำแข็งใส",
+      "description": "น้ำแข็งใสเย็นชื่นใจ",
+      "price": "10.00",
+      "imageUrl": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_kxvxt82jz_1753812074505",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    },
+    {
+      "id": "id_sdao5ttx8_1753812074564",
+      "isAvailable": true,
+      "rating": "4.4",
+      "name": "น้ำมะนาว",
+      "description": "น้ำมะนาวสด เซาต์เปรี้ยว",
+      "price": "12.00",
+      "imageUrl": "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200",
+      "categoryId": "id_kxvxt82jz_1753812074505",
+      "restaurantId": "id_kay6d35me_1753812074501"
+    }
+  ],
+  "banners": [],
+  "orders": [],
+  "orderItems": [],
+  "users": [
+    {
+      "id": "1755191659949",
+      "email": "test@example.com",
+      "password": "123456",
+      "name": "ทดสอบ",
+      "role": "customer",
+      "createdAt": "2025-08-14T17:14:19.949Z"
+    }
+  ],
+  "themeSettings": {
+    "themeId": "mint",
+    "updatedAt": "2025-08-14T16:15:18.639Z"
+  }
+}
