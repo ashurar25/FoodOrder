@@ -75,7 +75,7 @@ function AdminPanel() {
         showBackButton={true}
         backTo="/"
       />
-      
+
       <div className="container-responsive space-y-6 py-6">
         {/* Welcome Card */}
         <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white">
@@ -152,4 +152,5 @@ function AdminPanel() {
   );
 }
 
+export { AdminPanel };
 export default AdminPanel;

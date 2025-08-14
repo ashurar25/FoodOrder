@@ -20,4 +20,5 @@ function ProfileEditDialog() {
   );
 }
 
+export { ProfileEditDialog };
 export default ProfileEditDialog;

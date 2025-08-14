@@ -9,4 +9,5 @@ function AdminUsers() {
   );
 }
 
-export default AdminUsers;
+export { AdminUsersPage };
+export default AdminUsersPage;

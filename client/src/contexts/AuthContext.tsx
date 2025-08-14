@@ -93,3 +93,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
+
+export { AuthProvider, useAuth };
+export default AuthProvider;
