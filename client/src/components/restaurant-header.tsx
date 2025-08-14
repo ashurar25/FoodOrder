@@ -69,6 +69,19 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
           </div>
           
           <div className="flex items-center space-x-2">
+            {/* Auth Buttons - Mobile */}
+            <button 
+              className="bg-white/20 backdrop-blur-md rounded-full px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30"
+              onClick={() => window.location.href = '/login'}
+            >
+              เข้าสู่ระบบ
+            </button>
+            <button 
+              className="bg-white/30 backdrop-blur-md rounded-full px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/40 transition-all duration-300 border border-white/40"
+              onClick={() => window.location.href = '/register'}
+            >
+              สมัครสมาชิก
+            </button>
             <div className="relative">
               <button 
                 className="cart-button bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
@@ -115,6 +128,19 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Auth Buttons - Desktop */}
+              <button 
+                className="bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30"
+                onClick={() => window.location.href = '/login'}
+              >
+                เข้าสู่ระบบ
+              </button>
+              <button 
+                className="bg-white/30 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/40 transition-all duration-300 border border-white/40"
+                onClick={() => window.location.href = '/register'}
+              >
+                สมัครสมาชิก
+              </button>
               <div className="relative">
                 <button 
                   className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"

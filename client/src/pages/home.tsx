@@ -199,6 +199,16 @@ export default function Home() {
 
         {/* Food Items Grid */}
         <div className="fade-in">
+          {/* Debug info */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
+              <p className="text-sm text-blue-800">
+                Debug: Categories: {categories.length}, All Food Items: {allFoodItems.length}, 
+                Filtered: {filteredFoodItems.length}, Selected Category: {selectedCategory}
+              </p>
+            </div>
+          )}
+          
           {filteredFoodItems.length > 0 ? (
             <ResponsiveGrid cols={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5 }}>
               {filteredFoodItems.map((item) => (
@@ -216,6 +226,9 @@ export default function Home() {
                 <p className="text-lg mb-2">ไม่พบรายการอาหาร</p>
                 {searchQuery && (
                   <p className="text-sm">ลองค้นหาด้วยคำอื่น หรือเลือกหมวดหมู่อื่น</p>
+                )}
+                {allFoodItems.length === 0 && !foodItemsLoading && (
+                  <p className="text-sm mt-2">ยังไม่มีข้อมูลเมนูอาหาร</p>
                 )}
               </div>
             </div>

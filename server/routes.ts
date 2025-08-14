@@ -165,5 +165,82 @@ app.delete("/api/orders", async (req: Request, res: Response) => {
   }
 });
 
+// Initialize default data endpoint
+app.post("/api/init", async (req: Request, res: Response) => {
+  try {
+    await storage.initializeDefaultData();
+    res.json({ message: "Data initialized successfully" });
+  } catch (error) {
+    console.error("Init error:", error);
+    res.status(500).json({ message: "Failed to initialize data" });
+  }
+});
+
+// Restaurant endpoint
+app.get("/api/restaurant", async (req: Request, res: Response) => {
+  try {
+    const restaurant = await storage.getRestaurant();
+    res.json(restaurant);
+  } catch (error) {
+    console.error("Get restaurant error:", error);
+    res.status(500).json({ message: "Failed to get restaurant data" });
+  }
+});
+
+// Categories endpoint
+app.get("/api/categories", async (req: Request, res: Response) => {
+  try {
+    const categories = await storage.getCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error("Get categories error:", error);
+    res.status(500).json({ message: "Failed to get categories" });
+  }
+});
+
+// Food items endpoint
+app.get("/api/food-items", async (req: Request, res: Response) => {
+  try {
+    const foodItems = await storage.getFoodItems();
+    res.json(foodItems);
+  } catch (error) {
+    console.error("Get food items error:", error);
+    res.status(500).json({ message: "Failed to get food items" });
+  }
+});
+
+// Banners endpoint
+app.get("/api/banners", async (req: Request, res: Response) => {
+  try {
+    const banners = await storage.getBanners();
+    res.json(banners);
+  } catch (error) {
+    console.error("Get banners error:", error);
+    res.status(500).json({ message: "Failed to get banners" });
+  }
+});
+
+// Orders endpoint
+app.get("/api/orders", async (req: Request, res: Response) => {
+  try {
+    const orders = await storage.getOrders();
+    res.json(orders);
+  } catch (error) {
+    console.error("Get orders error:", error);
+    res.status(500).json({ message: "Failed to get orders" });
+  }
+});
+
+app.post("/api/orders", async (req: Request, res: Response) => {
+  try {
+    const orderData = req.body;
+    const order = await storage.createOrder(orderData);
+    res.json(order);
+  } catch (error) {
+    console.error("Create order error:", error);
+    res.status(500).json({ message: "Failed to create order" });
+  }
+});
+
 return server;
 } // ปิด registerRoutes function
