@@ -15,15 +15,15 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export function useAuth() {
+const useAuth = () => {
   return useContext(AuthContext);
-}
+};
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [dbUser, setDbUser] = useState<DatabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
