@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, Suspense, lazy } from "react";
+import { Link } from "wouter";
 import * as React from "react";
+import { useAuth, useLogout } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { PageContainer, ResponsiveGrid } from "@/components/layout/index";
 import RestaurantHeader from "@/components/restaurant-header";
 import SearchBar from "@/components/search-bar";
@@ -31,6 +34,11 @@ export default function Home() {
   const [showAddToCartToast, setShowAddToCartToast] = useState(false);
   const [addedItemName, setAddedItemName] = useState("");
   const [isBannerEditorOpen, setIsBannerEditorOpen] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  // Authentication
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const logout = useLogout();
 
   // Optimize data fetching with proper caching
   const { data: initData, isLoading: initLoading } = useQuery({
@@ -101,8 +109,15 @@ export default function Home() {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0);
   }, [cartItems]);
 
-  // Cart management functions
+  // Cart management functions with authentication check
   const addToCart = React.useCallback((foodItem: FoodItem) => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowAuthPrompt(true);
+      setTimeout(() => setShowAuthPrompt(false), 3000);
+      return;
+    }
+
     const existingItem = cartItems.find(item => item.foodItemId === foodItem.id);
 
     if (existingItem) {
@@ -125,7 +140,7 @@ export default function Home() {
     setAddedItemName(foodItem.name);
     setShowAddToCartToast(true);
     setTimeout(() => setShowAddToCartToast(false), 3000);
-  }, [cartItems]);
+  }, [cartItems, isAuthenticated]);
 
   const removeFromCart = React.useCallback((itemId: string) => {
     setCartItems(prev => prev.filter(item => item.id !== itemId));
@@ -170,6 +185,50 @@ export default function Home() {
       />
 
       <PageContainer className="space-y-6">
+        {/* Authentication Status */}
+        {!isAuthenticated && (
+          <div className="sticky top-16 z-40 bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-orange-800 font-medium">สมาชิกเท่านั้นที่สั่งอาหารได้</p>
+                <p className="text-orange-600 text-sm">เข้าสู่ระบบหรือสมัครสมาชิกเพื่อสั่งอาหาร</p>
+              </div>
+              <div className="flex space-x-2">
+                <Link href="/login">
+                  <Button size="sm" variant="outline" data-testid="button-login">
+                    เข้าสู่ระบบ
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" data-testid="button-register">
+                    สมัครสมาชิก
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isAuthenticated && user && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-800 font-medium">สวัสดี {user.name}!</p>
+                <p className="text-green-600 text-sm">พร้อมสั่งอาหารแล้ว</p>
+              </div>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => logout.mutate()} 
+                disabled={logout.isPending}
+                data-testid="button-logout"
+              >
+                {logout.isPending ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ'}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Search Bar */}
         <div className="sticky top-16 z-40 bg-gray-50 pt-4 pb-2">
           <SearchBar 
@@ -228,6 +287,20 @@ export default function Home() {
         {showAddToCartToast && (
           <div className="fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 scale-in">
             เพิ่ม "{addedItemName}" ลงตะกร้าแล้ว
+          </div>
+        )}
+
+        {/* Authentication Prompt Toast */}
+        {showAuthPrompt && (
+          <div className="fixed top-20 right-4 bg-orange-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 scale-in">
+            <div className="flex items-center space-x-2">
+              <span>กรุณาเข้าสู่ระบบก่อนสั่งอาหาร</span>
+              <Link href="/login">
+                <button className="underline font-semibold">
+                  เข้าสู่ระบบ
+                </button>
+              </Link>
+            </div>
           </div>
         )}
 

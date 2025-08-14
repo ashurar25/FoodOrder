@@ -103,9 +103,6 @@ export default function Orders() {
             <h1 className="text-2xl font-bold text-gray-800">คำสั่งซื้อของฉัน</h1>
             <p className="text-gray-600">ดูประวัติการสั่งซื้ออาหารของคุณ</p>
           </div>
-          <div className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 p-1 rounded-full">
-            <ShoppingBag className="w-6 h-6 text-white" />
-          </div></div>
         </div>
       </div>
 

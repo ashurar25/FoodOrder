@@ -1,23 +1,23 @@
 
-import { neon, neonConfig } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from '../shared/schema';
-
-// Enable array mode for better compatibility
-neonConfig.arrayMode = false;
 
 // Get the database URL from environment variables
 const databaseUrl = process.env.DATABASE_URL;
 
-if (!databaseUrl) {
-  console.error('DATABASE_URL environment variable is not set');
-  console.log('Please add your Supabase connection string to the Secrets tool');
-  process.exit(1);
+let db: any = null;
+let sql: any = null;
+
+if (databaseUrl) {
+  // Create the connection only if DATABASE_URL is available
+  sql = neon(databaseUrl);
+  db = drizzle(sql, { schema });
+} else {
+  console.log('DATABASE_URL not set, using file-based storage');
 }
 
-// Create the connection
-const sql = neon(databaseUrl);
-export const db = drizzle(sql, { schema });
+export { db, sql };
 
 // Export pool for compatibility (not used with Neon)
 export const pool = {};

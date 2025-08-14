@@ -4,33 +4,50 @@ import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { AuthProvider } from '@/contexts/AuthContext';
 import LoadingSkeleton from '@/components/loading-skeleton';
 import { Suspense, lazy } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('@/pages/home'));
 const LoginPage = lazy(() => import('@/pages/login'));
 const RegisterPage = lazy(() => import('@/pages/register'));
-const ProfilePage = lazy(() => import('@/pages/profile'));
 const AdminPanel = lazy(() => import('@/pages/admin'));
 const AdminBanners = lazy(() => import('@/pages/admin-banners'));
-const AdminFood = lazy(() => import('@/pages/admin-food'));
 const AdminOrders = lazy(() => import('@/pages/admin-orders'));
-const AdminUsers = lazy(() => import('@/pages/admin-users'));
-const AdminReports = lazy(() => import('@/pages/admin-reports'));
 const AdminDatabase = lazy(() => import('@/pages/admin-database'));
 const AdminRestaurant = lazy(() => import('@/pages/admin-restaurant'));
 const OrdersPage = lazy(() => import('@/pages/orders'));
 const NotFoundPage = lazy(() => import('@/pages/not-found'));
 
-// QueryClient is imported from queryClient.ts with default queryFn configured
+// Protected route component
+function ProtectedRoute({ component: Component, adminOnly = false }: { component: any, adminOnly?: boolean }) {
+  const { user, isLoading, isAuthenticated } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
+        <LoadingSkeleton type="card" count={6} />
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+  
+  if (adminOnly && user?.role !== 'admin') {
+    return <NotFoundPage />;
+  }
+  
+  return <Component />;
+}
 
 function AppRouter() {
   return (
     <Router>
       <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
           <LoadingSkeleton type="card" count={6} />
         </div>
       }>
@@ -38,16 +55,24 @@ function AppRouter() {
           <Route path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
-          <Route path="/profile" component={ProfilePage} />
-          <Route path="/admin" component={AdminPanel} />
-          <Route path="/admin/banners" component={AdminBanners} />
-          <Route path="/admin/food" component={AdminFood} />
-          <Route path="/admin/orders" component={AdminOrders} />
-          <Route path="/admin/users" component={AdminUsers} />
-          <Route path="/admin/reports" component={AdminReports} />
-          <Route path="/admin/database" component={AdminDatabase} />
-          <Route path="/admin/restaurant" component={AdminRestaurant} />
-          <Route path="/orders" component={OrdersPage} />
+          <Route path="/orders">
+            {() => <ProtectedRoute component={OrdersPage} />}
+          </Route>
+          <Route path="/admin">
+            {() => <ProtectedRoute component={AdminPanel} adminOnly={true} />}
+          </Route>
+          <Route path="/admin/banners">
+            {() => <ProtectedRoute component={AdminBanners} adminOnly={true} />}
+          </Route>
+          <Route path="/admin/orders">
+            {() => <ProtectedRoute component={AdminOrders} adminOnly={true} />}
+          </Route>
+          <Route path="/admin/database">
+            {() => <ProtectedRoute component={AdminDatabase} adminOnly={true} />}
+          </Route>
+          <Route path="/admin/restaurant">
+            {() => <ProtectedRoute component={AdminRestaurant} adminOnly={true} />}
+          </Route>
           <Route component={NotFoundPage} />
         </Switch>
       </Suspense>
@@ -59,12 +84,10 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <AppRouter />
-            <Toaster />
-          </TooltipProvider>
-        </AuthProvider>
+        <TooltipProvider>
+          <AppRouter />
+          <Toaster />
+        </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

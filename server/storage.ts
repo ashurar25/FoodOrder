@@ -1,13 +1,23 @@
-import type { Order } from '../shared/schema';
-
-export interface User {
-  id: string;
-  email: string;
-  password: string;
-  name: string;
-  role: 'customer' | 'admin';
-  createdAt: string;
-}
+import { 
+  users, 
+  restaurants,
+  categories,
+  foodItems,
+  banners,
+  orders,
+  type User,
+  type InsertUser,
+  type UpsertUser,
+  type Restaurant,
+  type Category,
+  type FoodItem,
+  type Banner,
+  type Order,
+  type InsertOrder
+} from '../shared/schema';
+import { db } from './db';
+import { eq } from 'drizzle-orm';
+import { hashPassword } from './auth';
 
 interface Database {
   users?: User[];
@@ -15,6 +25,161 @@ interface Database {
   orders?: Order[];
 }
 
+// Interface for storage operations
+export interface IStorage {
+  // User operations
+  getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Restaurant operations
+  getRestaurant(): Promise<Restaurant | undefined>;
+  updateRestaurant(id: string, updates: Partial<Restaurant>): Promise<Restaurant>;
+  
+  // Category operations
+  getCategories(): Promise<Category[]>;
+  createCategory(category: any): Promise<Category>;
+  
+  // Food item operations
+  getFoodItems(): Promise<FoodItem[]>;
+  getFoodItemsByCategory(categoryId: string): Promise<FoodItem[]>;
+  searchFoodItems(query: string): Promise<FoodItem[]>;
+  createFoodItem(item: any): Promise<FoodItem>;
+  
+  // Banner operations
+  getBanners(): Promise<Banner[]>;
+  createBanner(banner: any): Promise<Banner>;
+  
+  // Order operations
+  getOrders(): Promise<Order[]>;
+  createOrder(order: InsertOrder): Promise<Order>;
+  getUserOrders(userId: string): Promise<Order[]>;
+}
+
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(userData: InsertUser): Promise<User> {
+    // Hash the password before storing
+    const hashedPassword = await hashPassword(userData.password);
+    
+    const [user] = await db
+      .insert(users)
+      .values({ 
+        ...userData, 
+        password: hashedPassword 
+      })
+      .returning();
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // Restaurant operations
+  async getRestaurant(): Promise<Restaurant | undefined> {
+    const [restaurant] = await db.select().from(restaurants).limit(1);
+    return restaurant;
+  }
+
+  async updateRestaurant(id: string, updates: Partial<Restaurant>): Promise<Restaurant> {
+    const [restaurant] = await db
+      .update(restaurants)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(restaurants.id, id))
+      .returning();
+    return restaurant;
+  }
+
+  // Category operations
+  async getCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+
+  async createCategory(categoryData: any): Promise<Category> {
+    const [category] = await db
+      .insert(categories)
+      .values(categoryData)
+      .returning();
+    return category;
+  }
+
+  // Food item operations
+  async getFoodItems(): Promise<FoodItem[]> {
+    return await db.select().from(foodItems);
+  }
+
+  async getFoodItemsByCategory(categoryId: string): Promise<FoodItem[]> {
+    return await db.select().from(foodItems).where(eq(foodItems.categoryId, categoryId));
+  }
+
+  async searchFoodItems(query: string): Promise<FoodItem[]> {
+    // Simple search implementation - can be enhanced with full-text search
+    return await db.select().from(foodItems);
+  }
+
+  async createFoodItem(itemData: any): Promise<FoodItem> {
+    const [item] = await db
+      .insert(foodItems)
+      .values(itemData)
+      .returning();
+    return item;
+  }
+
+  // Banner operations
+  async getBanners(): Promise<Banner[]> {
+    return await db.select().from(banners);
+  }
+
+  async createBanner(bannerData: any): Promise<Banner> {
+    const [banner] = await db
+      .insert(banners)
+      .values(bannerData)
+      .returning();
+    return banner;
+  }
+
+  // Order operations
+  async getOrders(): Promise<Order[]> {
+    return await db.select().from(orders);
+  }
+
+  async createOrder(orderData: InsertOrder): Promise<Order> {
+    const [order] = await db
+      .insert(orders)
+      .values(orderData)
+      .returning();
+    return order;
+  }
+
+  async getUserOrders(userId: string): Promise<Order[]> {
+    return await db.select().from(orders).where(eq(orders.userId, userId));
+  }
+}
+
+// Legacy class for backward compatibility
 export class DataAccessLayer {
   private dbPath = './server/data/database.json';
 
@@ -160,7 +325,7 @@ export class DataAccessLayer {
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
 
     db.users.push(newUser);
@@ -241,5 +406,9 @@ export class DataAccessLayer {
 }
 
 // Create and export the storage instance
-const storage = new DataAccessLayer();
-export default storage;
+const dataAccessLayer = new DataAccessLayer();
+export default dataAccessLayer;
+export { dataAccessLayer };
+
+// Database storage for PostgreSQL (when DATABASE_URL is available)
+export const storage = new DatabaseStorage();

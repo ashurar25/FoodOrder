@@ -1,10 +1,24 @@
-import { Express, Request, Response } from "express";
-import { createServer } from "http";
-import storage from "./storage";
+import type { Express, Request, Response } from "express";
+import { createServer, type Server } from "http";
+import storage, { dataAccessLayer } from "./storage";
+import { getSessionConfig } from "./session";
+import { requireAuth, requireAdmin, optionalAuth, hashPassword, verifyPassword } from "./auth";
+
+// Extend Express Request interface to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
 
 // Export the registerRoutes function
-export function registerRoutes(app: Express) {
+export async function registerRoutes(app: Express): Promise<Server> {
   const server = createServer(app);
+
+  // Session middleware
+  app.use(getSessionConfig());
 
 // User Authentication Routes
 app.post("/api/register", async (req: Request, res: Response) => {
@@ -16,14 +30,18 @@ app.post("/api/register", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบถ้วน" });
     }
 
-    // Check if user already exists
-    const existingUser = await storage.getUserByEmail(email);
+    // Check if user already exists  
+    const existingUser = await dataAccessLayer.getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: "อีเมลนี้ถูกใช้งานแล้ว" });
     }
 
-    // Create new user
-    const newUser = await storage.createUser({ email, password, name, role: 'customer' });
+    // Create new user using legacy storage method
+    const newUser = await dataAccessLayer.createUser({ email, password, name, role: 'customer' });
+    
+    // Store user in session
+    (req as any).session.user = newUser;
+    
     res.json({ 
       message: "สมัครสมาชิกสำเร็จ",
       user: { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role }
@@ -42,10 +60,13 @@ app.post("/api/login", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "กรุณากรอกอีเมลและรหัสผ่าน" });
     }
 
-    const user = await storage.validateUser(email, password);
+    const user = await dataAccessLayer.validateUser(email, password);
     if (!user) {
       return res.status(401).json({ message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
     }
+
+    // Store user in session
+    (req as any).session.user = user;
 
     res.json({ 
       message: "เข้าสู่ระบบสำเร็จ",
@@ -60,7 +81,7 @@ app.post("/api/login", async (req: Request, res: Response) => {
 app.get("/api/profile/:userId", async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const user = await storage.getUserById(userId);
+    const user = await dataAccessLayer.getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้" });
@@ -73,6 +94,25 @@ app.get("/api/profile/:userId", async (req: Request, res: Response) => {
     console.error("Profile error:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้" });
   }
+});
+
+// Get current user session
+app.get("/api/auth/me", (req: Request, res: Response) => {
+  const user = (req as any).session?.user;
+  if (!user) {
+    return res.status(401).json({ message: "ไม่ได้เข้าสู่ระบบ" });
+  }
+  res.json(user);
+});
+
+// Logout route
+app.post("/api/auth/logout", (req: Request, res: Response) => {
+  (req as any).session.destroy((err: any) => {
+    if (err) {
+      return res.status(500).json({ message: "เกิดข้อผิดพลาดในการออกจากระบบ" });
+    }
+    res.json({ message: "ออกจากระบบสำเร็จ" });
+  });
 });
 
 app.put("/api/profile/:userId", async (req: Request, res: Response) => {
@@ -220,25 +260,61 @@ app.get("/api/banners", async (req: Request, res: Response) => {
   }
 });
 
-// Orders endpoint
+// Protected orders endpoint - only authenticated users can view their orders
 app.get("/api/orders", async (req: Request, res: Response) => {
   try {
-    const orders = await storage.getOrders();
+    const user = (req as any).session?.user;
+    if (!user) {
+      return res.status(401).json({ message: "กรุณาเข้าสู่ระบบเพื่อดูคำสั่งซื้อ" });
+    }
+
+    // If admin, get all orders; if customer, get only their orders
+    const orders = user.role === 'admin' 
+      ? await storage.getOrders()
+      : await storage.getOrdersByUserId(user.id);
     res.json(orders);
   } catch (error) {
     console.error("Get orders error:", error);
-    res.status(500).json({ message: "Failed to get orders" });
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำสั่งซื้อ" });
   }
 });
 
+// Protected order creation - only authenticated users can place orders
 app.post("/api/orders", async (req: Request, res: Response) => {
   try {
-    const orderData = req.body;
-    const order = await storage.createOrder(orderData);
-    res.json(order);
+    const user = (req as any).session?.user;
+    if (!user) {
+      return res.status(401).json({ message: "กรุณาเข้าสู่ระบบก่อนสั่งอาหาร" });
+    }
+
+    const { items, total, customerInfo } = req.body;
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: "กรุณาเลือกรายการอาหาร" });
+    }
+
+    // Create order with user info
+    const orderData = {
+      items,
+      total,
+      customerInfo: {
+        ...customerInfo,
+        userId: user.id,
+        userEmail: user.email,
+        userName: user.name,
+      },
+      status: 'pending' as const,
+    };
+
+    const newOrder = await storage.createOrder(orderData);
+    
+    res.json({ 
+      message: "สั่งอาหารสำเร็จ",
+      order: newOrder
+    });
   } catch (error) {
-    console.error("Create order error:", error);
-    res.status(500).json({ message: "Failed to create order" });
+    console.error("Order creation error:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการสั่งอาหาร" });
   }
 });
 
