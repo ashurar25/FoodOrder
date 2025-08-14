@@ -122,31 +122,77 @@ function AdminPanel() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-50 to-blue-100">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">0</div>
-              <div className="text-sm text-gray-500">คำสั่งซื้อวันนี้</div>
+              <div className="text-sm text-gray-600">คำสั่งซื้อวันนี้</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-green-50 to-green-100">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">0</div>
-              <div className="text-sm text-gray-500">เมนูอาหาร</div>
+              <div className="text-sm text-gray-600">เมนูอาหาร</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-purple-50 to-purple-100">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-purple-600">0</div>
-              <div className="text-sm text-gray-500">ลูกค้าทั้งหมด</div>
+              <div className="text-sm text-gray-600">ลูกค้าทั้งหมด</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-orange-50 to-orange-100">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">฿0</div>
-              <div className="text-sm text-gray-500">ยอดขายวันนี้</div>
+              <div className="text-sm text-gray-600">ยอดขายวันนี้</div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Admin Actions */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg">การดำเนินการด่วน</CardTitle>
+            <CardDescription>
+              เครื่องมือที่ใช้บ่อยสำหรับการจัดการร้าน
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/food')}
+                className="h-20 flex flex-col space-y-2"
+              >
+                <ShoppingBag className="h-6 w-6" />
+                <span className="text-xs">เพิ่มเมนู</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/orders')}
+                className="h-20 flex flex-col space-y-2"
+              >
+                <BarChart3 className="h-6 w-6" />
+                <span className="text-xs">ดูคำสั่งซื้อ</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/banners')}
+                className="h-20 flex flex-col space-y-2"
+              >
+                <Image className="h-6 w-6" />
+                <span className="text-xs">จัดการแบนเนอร์</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/restaurant')}
+                className="h-20 flex flex-col space-y-2"
+              >
+                <Settings className="h-6 w-6" />
+                <span className="text-xs">ตั้งค่าร้าน</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

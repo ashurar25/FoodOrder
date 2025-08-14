@@ -60,16 +60,38 @@ function RegisterPage() {
 
     setIsLoading(true);
     try {
-      await register(formData.email, formData.password);
-      toast({
-        title: "สมัครสมาชิกสำเร็จ!",
-        description: "ยินดีต้อนรับเข้าสู่ระบบ",
+      // เชื่อมต่อกับ API การสมัครสมาชิก
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
       });
-      navigate('/');
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // บันทึกข้อมูลผู้ใช้ใน localStorage หรือ context
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+        
+        toast({
+          title: "สมัครสมาชิกสำเร็จ!",
+          description: "ยินดีต้อนรับเข้าสู่ระบบ",
+        });
+        navigate('/');
+      } else {
+        throw new Error(data.message || 'เกิดข้อผิดพลาด');
+      }
     } catch (error) {
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่อีกครั้ง",
+        description: error instanceof Error ? error.message : "ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่อีกครั้ง",
         variant: "destructive",
       });
     } finally {

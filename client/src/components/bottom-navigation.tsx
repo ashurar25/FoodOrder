@@ -1,13 +1,21 @@
+
 import { Link, useLocation } from "wouter";
-import { Home, UtensilsCrossed, Receipt, User } from "lucide-react";
+import { Home, Receipt, User, Settings } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function BottomNavigation() {
   const [location] = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { href: "/", icon: Home, label: "หน้าหลัก" },
     { href: "/orders", icon: Receipt, label: "คำสั่งซื้อ" },
-    { href: "/admin", icon: User, label: "แอดมิน" },
+    ...(user ? [
+      { href: "/profile", icon: User, label: "โปรไฟล์" },
+      { href: "/admin", icon: Settings, label: "จัดการ" }
+    ] : [
+      { href: "/login", icon: User, label: "เข้าสู่ระบบ" }
+    ])
   ];
 
   return (
@@ -32,7 +40,7 @@ export default function BottomNavigation() {
                   )}
                   <div className="relative z-10">
                     <Icon className={`w-6 h-6 mb-1 transition-all duration-300 ${
-                      isActive ? 'animate-bounce' : 'group-hover:scale-110'
+                      isActive ? 'animate-pulse' : 'group-hover:scale-110'
                     }`} />
                     <span className="text-xs font-bold">{item.label}</span>
                   </div>

@@ -47,19 +47,37 @@ function LoginPage() {
 
     setIsLoading(true);
     try {
-      // ที่นี่จะเป็นการเข้าสู่ระบบจริง
-      // const response = await login(formData.email, formData.password);
-      
-      // สำหรับตอนนี้จะแสดงข้อความแจ้งเตือน
-      toast({
-        title: "เข้าสู่ระบบสำเร็จ!",
-        description: "ยินดีต้อนรับกลับมา",
+      // เชื่อมต่อกับ API การเข้าสู่ระบบ
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
       });
-      navigate('/');
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // บันทึกข้อมูลผู้ใช้ใน localStorage หรือ context
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+        
+        toast({
+          title: "เข้าสู่ระบบสำเร็จ!",
+          description: "ยินดีต้อนรับกลับมา",
+        });
+        navigate('/');
+      } else {
+        throw new Error(data.message || 'เกิดข้อผิดพลาด');
+      }
     } catch (error) {
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+        description: error instanceof Error ? error.message : "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
         variant: "destructive",
       });
     } finally {
