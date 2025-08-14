@@ -1,8 +1,9 @@
 
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Settings } from "lucide-react";
 import logoPath from "@assets/HLogo_1753815594471.png";
 import { useState, useEffect } from "react";
 import type { Restaurant } from "@shared/schema";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RestaurantHeaderProps {
   restaurant?: Restaurant;
@@ -12,6 +13,7 @@ interface RestaurantHeaderProps {
 
 export default function RestaurantHeader({ restaurant, cartItemCount, onCartClick }: RestaurantHeaderProps) {
   const [currentTime, setCurrentTime] = useState("");
+  const { user } = useAuth();
 
   useEffect(() => {
     const updateTime = () => {
@@ -69,19 +71,16 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
           </div>
           
           <div className="flex items-center space-x-2">
-            {/* Auth Buttons - Mobile */}
-            <button 
-              className="bg-white/20 backdrop-blur-md rounded-full px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30"
-              onClick={() => window.location.href = '/login'}
-            >
-              เข้าสู่ระบบ
-            </button>
-            <button 
-              className="bg-white/30 backdrop-blur-md rounded-full px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/40 transition-all duration-300 border border-white/40"
-              onClick={() => window.location.href = '/register'}
-            >
-              สมัครสมาชิก
-            </button>
+            {/* Admin Button - Mobile */}
+            {user && (
+              <button 
+                className="bg-white/20 backdrop-blur-md rounded-full p-2.5 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 group"
+                onClick={() => window.location.href = '/admin'}
+                title="จัดการระบบ"
+              >
+                <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+            )}
             <div className="relative">
               <button 
                 className="cart-button bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
@@ -128,19 +127,16 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Auth Buttons - Desktop */}
-              <button 
-                className="bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30"
-                onClick={() => window.location.href = '/login'}
-              >
-                เข้าสู่ระบบ
-              </button>
-              <button 
-                className="bg-white/30 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/40 transition-all duration-300 border border-white/40"
-                onClick={() => window.location.href = '/register'}
-              >
-                สมัครสมาชิก
-              </button>
+              {/* Admin Button - Desktop */}
+              {user && (
+                <button 
+                  className="bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center space-x-2 group"
+                  onClick={() => window.location.href = '/admin'}
+                >
+                  <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                  <span>จัดการระบบ</span>
+                </button>
+              )}
               <div className="relative">
                 <button 
                   className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"

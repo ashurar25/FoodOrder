@@ -11,15 +11,14 @@ export default function BottomNavigation() {
     { href: "/", icon: Home, label: "หน้าหลัก" },
     { href: "/orders", icon: Receipt, label: "คำสั่งซื้อ" },
     ...(user ? [
-      { href: "/profile", icon: User, label: "โปรไฟล์" },
-      { href: "/admin", icon: Settings, label: "จัดการ" }
+      { href: "/profile", icon: User, label: "โปรไฟล์" }
     ] : [
       { href: "/login", icon: User, label: "เข้าสู่ระบบ" }
     ])
   ];
 
   return (
-    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4">
+    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4 z-40">
       <div className="bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl px-6 py-3 shadow-2xl">
         <div className="flex justify-around items-center">
           {navItems.map((item) => {
