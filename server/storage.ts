@@ -1,4 +1,13 @@
-import { Order, User } from './types';
+import type { Order } from '../shared/schema';
+
+export interface User {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  role: 'user' | 'admin';
+  createdAt: string;
+}
 
 interface Database {
   users?: User[];
@@ -82,6 +91,12 @@ export class DataAccessLayer {
   async getAllOrders(): Promise<Order[]> {
     const db = await this.loadDatabase();
     return db.orders || [];
+  }
+
+  async resetAllOrders(): Promise<void> {
+    const db = await this.loadDatabase();
+    db.orders = [];
+    await this.saveDatabase(db);
   }
 
   // Get a specific order by ID
