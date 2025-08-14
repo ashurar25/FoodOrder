@@ -1,8 +1,10 @@
 import { Express, Request, Response } from "express";
+import { createServer } from "http";
 import * as storage from "./storage"; // สมมติว่ามีไฟล์ storage.ts ที่จัดการฐานข้อมูล
 
 // Export the registerRoutes function
 export function registerRoutes(app: Express) {
+  const server = createServer(app);
 
 // User Authentication Routes
 app.post("/api/register", async (req: Request, res: Response) => {
@@ -163,4 +165,5 @@ app.delete("/api/orders", async (req: Request, res: Response) => {
   }
 });
 
+return server;
 } // ปิด registerRoutes function
