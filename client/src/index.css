@@ -316,9 +316,36 @@ body::before {
   }
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.2s ease;
+/* Optimized smooth transitions - only for necessary properties */
+.transition-optimized {
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) {
+  * {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
+  }
+  
+  .float-gentle,
+  .floating-particles,
+  @keyframes float,
+  @keyframes float-gentle,
+  @keyframes float-particles {
+    animation: none !important;
+  }
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Better mobile touch targets */

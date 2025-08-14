@@ -53,7 +53,7 @@ function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -97,11 +97,11 @@ function RegisterPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             กลับ
           </Button>
-          
+
           <div className="mx-auto w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4">
             <User className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">สมัครสมาชิก</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2"> สมัครสมาชิก</h1>
           <p className="text-gray-600">เริ่มต้นการสั่งอาหารที่ดีที่สุด</p>
         </div>
 
@@ -115,7 +115,7 @@ function RegisterPage() {
               กรอกข้อมูลเพื่อเริ่มใช้งาน
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name Field */}

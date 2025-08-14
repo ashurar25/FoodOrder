@@ -2,44 +2,34 @@
 export function setupGlobalErrorHandlers() {
   // Handle unhandled promise rejections
   window.addEventListener('unhandledrejection', (event) => {
-    console.warn('Unhandled promise rejection:', event.reason);
-    
-    // Prevent the default behavior (logging to console) for known issues
-    if (event.reason && typeof event.reason === 'object') {
-      const reason = event.reason as any;
-      
-      // Handle Firebase auth errors gracefully
-      if (reason.code && reason.code.startsWith('auth/')) {
-        console.log('Firebase auth error handled:', reason.code);
-        event.preventDefault();
-        return;
-      }
-      
-      // Handle frame reading errors from Vite plugins
-      if (reason.message && reason.message.includes('frame')) {
-        console.log('Frame reading error handled');
-        event.preventDefault();
-        return;
-      }
+    console.error('Unhandled promise rejection:', event.reason);
+
+    // Show user-friendly error message for network errors
+    if (event.reason?.name === 'NetworkError' || event.reason?.message?.includes('fetch')) {
+      console.warn('Network error detected, user may need to check connection');
+    }
+
+    // Prevent the default behavior (which would log to console)
+    event.preventDefault();
+  });
+
+  // Handle JavaScript runtime errors
+  window.addEventListener('error', (event) => {
+    console.error('JavaScript error:', event.error);
+
+    // Don't break the app for minor errors
+    if (event.error?.name === 'ChunkLoadError') {
+      console.warn('Chunk load error, may need to refresh page');
+      // Optionally show a toast notification
     }
   });
 
-  // Handle general JavaScript errors
+  // Handle resource loading errors (images, scripts, etc.)
   window.addEventListener('error', (event) => {
-    // Handle frame reading errors specifically
-    if (event.message && event.message.includes('frame')) {
-      console.log('Frame reading error handled:', event.message);
-      event.preventDefault();
-      return;
+    if (event.target !== window) {
+      console.warn('Resource loading error:', event.target);
     }
-    
-    // Handle Firebase errors
-    if (event.message && event.message.includes('Firebase')) {
-      console.log('Firebase error handled:', event.message);
-      event.preventDefault();
-      return;
-    }
-  });
+  }, true);
 }
 
 // Safe wrapper for potentially problematic operations
