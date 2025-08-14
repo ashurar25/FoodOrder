@@ -28,7 +28,7 @@ if (isFirebaseConfigured()) {
   googleProvider = new GoogleAuthProvider();
 }
 
-export { auth, googleProvider, isFirebaseConfigured };
+export { app, auth, googleProvider, isFirebaseConfigured };
 
 // Export authentication functions
 export { signInWithRedirect, onAuthStateChanged, signOut };

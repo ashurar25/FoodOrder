@@ -1,31 +1,151 @@
+import { useLocation } from 'wouter';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { MobileFriendlyHeader } from '@/components/layout/mobile-friendly-header';
+import { 
+  BarChart3, 
+  Image, 
+  ShoppingBag, 
+  Users, 
+  Settings, 
+  Database,
+  ChevronRight
+} from 'lucide-react';
+
+const adminMenuItems = [
+  {
+    title: 'จัดการแบนเนอร์',
+    description: 'จัดการแบนเนอร์โฆษณาและโปรโมชั่น',
+    icon: Image,
+    path: '/admin/banners',
+    color: 'bg-blue-500'
+  },
+  {
+    title: 'จัดการอาหาร',
+    description: 'เพิ่ม แก้ไข และลบรายการอาหาร',
+    icon: ShoppingBag,
+    path: '/admin/food',
+    color: 'bg-green-500'
+  },
+  {
+    title: 'จัดการคำสั่งซื้อ',
+    description: 'ดูและจัดการคำสั่งซื้อของลูกค้า',
+    icon: BarChart3,
+    path: '/admin/orders',
+    color: 'bg-orange-500'
+  },
+  {
+    title: 'จัดการผู้ใช้',
+    description: 'จัดการบัญชีผู้ใช้และสิทธิ์',
+    icon: Users,
+    path: '/admin/users',
+    color: 'bg-purple-500'
+  },
+  {
+    title: 'รายงาน',
+    description: 'ดูรายงานยอดขายและสถิติ',
+    icon: BarChart3,
+    path: '/admin/reports',
+    color: 'bg-red-500'
+  },
+  {
+    title: 'ฐานข้อมูล',
+    description: 'จัดการฐานข้อมูลและการสำรองข้อมูล',
+    icon: Database,
+    path: '/admin/database',
+    color: 'bg-gray-500'
+  },
+  {
+    title: 'ตั้งค่าร้าน',
+    description: 'จัดการข้อมูลร้านและการตั้งค่า',
+    icon: Settings,
+    path: '/admin/restaurant',
+    color: 'bg-teal-500'
+  }
+];
+
 function AdminPanel() {
+  const [, navigate] = useLocation();
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">แผงควบคุมผู้ดูแลระบบ</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">จัดการแบนเนอร์</h3>
-          <p className="text-sm text-gray-600">จัดการแบนเนอร์โฆษณาและโปรโมชั่น</p>
+    <div className="min-h-screen bg-gray-50">
+      <MobileFriendlyHeader 
+        title="แผงควบคุมผู้ดูแลระบบ"
+        subtitle="จัดการระบบร้านอาหาร"
+        showBackButton={true}
+        backTo="/"
+      />
+      
+      <div className="container-responsive space-y-6 py-6">
+        {/* Welcome Card */}
+        <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <CardHeader>
+            <CardTitle className="text-xl">ยินดีต้อนรับสู่แผงควบคุม</CardTitle>
+            <CardDescription className="text-blue-100">
+              จัดการร้านอาหารของคุณอย่างมีประสิทธิภาพ
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        {/* Admin Menu Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {adminMenuItems.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <Card 
+                key={index}
+                className="border-0 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group"
+                onClick={() => navigate(item.path)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-lg ${item.color} text-white`}>
+                        <IconComponent className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">จัดการอาหาร</h3>
-          <p className="text-sm text-gray-600">เพิ่ม แก้ไข และลบรายการอาหาร</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">จัดการคำสั่งซื้อ</h3>
-          <p className="text-sm text-gray-600">ดูและจัดการคำสั่งซื้อของลูกค้า</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">จัดการผู้ใช้</h3>
-          <p className="text-sm text-gray-600">จัดการบัญชีผู้ใช้และสิทธิ์</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">รายงาน</h3>
-          <p className="text-sm text-gray-600">ดูรายงานยอดขายและสถิติ</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold mb-2">ฐานข้อมูล</h3>
-          <p className="text-sm text-gray-600">จัดการฐานข้อมูลและการสำรองข้อมูล</p>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-blue-600">0</div>
+              <div className="text-sm text-gray-500">คำสั่งซื้อวันนี้</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600">0</div>
+              <div className="text-sm text-gray-500">เมนูอาหาร</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-purple-600">0</div>
+              <div className="text-sm text-gray-500">ลูกค้าทั้งหมด</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-orange-600">฿0</div>
+              <div className="text-sm text-gray-500">ยอดขายวันนี้</div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

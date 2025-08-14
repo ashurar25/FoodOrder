@@ -1,10 +1,14 @@
 import { getAuth, getRedirectResult, GoogleAuthProvider, signInWithRedirect, signOut as firebaseSignOut, onAuthStateChanged, User, signInWithPopup } from "firebase/auth";
-import { app } from "./firebase"; // Assuming 'app' is exported from firebase.ts
+import { app, isFirebaseConfigured } from "./firebase";
 
-// Auth functions
-export const auth = getAuth(app);
+// Auth functions - only initialize if Firebase is configured
+export const auth = app ? getAuth(app) : null;
 
 export const signInWithGoogle = async () => {
+  if (!auth) {
+    throw new Error('Firebase not configured');
+  }
+  
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
@@ -16,6 +20,10 @@ export const signInWithGoogle = async () => {
 };
 
 export const signOut = async () => {
+  if (!auth) {
+    return;
+  }
+  
   try {
     await firebaseSignOut(auth);
   } catch (error) {
