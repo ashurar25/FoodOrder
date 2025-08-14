@@ -9,7 +9,6 @@ import FoodItemCard from "@/components/food-item-card";
 import CartModal from "@/components/cart-modal";
 import BottomNavigation from "@/components/bottom-navigation";
 import BannerEditor from "@/components/banner-editor";
-import Footer from "@/components/footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FoodCardSkeleton, CategorySkeleton, BannerSkeleton, RestaurantHeaderSkeleton } from "@/components/loading-skeleton";
 import type { Restaurant, Category, FoodItem, Banner } from "@shared/schema";
@@ -179,7 +178,7 @@ export default function Home() {
         <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-pink-300/40 rounded-full floating-particles" style={{animationDelay: '2s'}}></div>
         <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-red-300/20 rounded-full floating-particles" style={{animationDelay: '4s'}}></div>
       </div>
-      
+
       {/* Mobile Layout */}
       <div className="md:hidden max-w-md mx-auto bg-white/40 backdrop-blur-sm shadow-2xl min-h-screen relative">
         <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50">
@@ -358,13 +357,7 @@ export default function Home() {
           </div>
         </div>
 
-        <Footer restaurant={restaurant ? {
-          name: restaurant.name,
-          description: restaurant.description || '',
-          phone: '02-123-4567',
-          address: 'กรุงเทพฯ 10110',
-          hours: 'เปิดทุกวัน 08:00 - 22:00'
-        } : undefined} />
+        {/* Footer removed as per instruction */}
       </div>
 
       {/* Add to Cart Toast */}

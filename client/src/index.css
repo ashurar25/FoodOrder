@@ -151,6 +151,41 @@ body::before {
   50% { background-position: 100% 50%; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+  40%, 43% { transform: translateY(-15px); }
+  70% { transform: translateY(-8px); }
+  90% { transform: translateY(-2px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ลดการกระพริบของไอคอน */
+.animate-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+.animate-spin {
+  animation: spin 2s linear infinite;
+}
+
 .gradient-text {
   background: linear-gradient(-45deg, #52e5a4, #26d0ce, #10b981, #059669);
   background-size: 400% 400%;
@@ -224,7 +259,7 @@ body::before {
   .container {
     padding: 0 1rem;
   }
-  
+
   .food-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1rem;
@@ -327,7 +362,7 @@ body::before {
     animation-duration: 0.1s !important;
     transition-duration: 0.1s !important;
   }
-  
+
   .float-gentle,
   .floating-particles,
   @keyframes float,
@@ -354,20 +389,20 @@ body::before {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Ensure buttons are easily tappable */
   button, .touch-target {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Improve input field visibility */
   input, textarea, select {
     font-size: 16px; /* Prevents zoom on iOS */
     -webkit-appearance: none;
     border-radius: 8px;
   }
-  
+
   /* Better spacing for mobile */
   .mobile-spacing {
     padding: 16px;

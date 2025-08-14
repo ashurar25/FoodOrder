@@ -8,7 +8,6 @@ import PromotionalBanner from "@/components/promotional-banner";
 import CategoryButtons from "@/components/category-buttons";
 import FoodItemCard from "@/components/food-item-card";
 import BottomNavigation from "@/components/bottom-navigation";
-import Footer from "@/components/footer";
 import LoadingSkeleton from "@/components/loading-skeleton";
 import type { Restaurant, Category, FoodItem, Banner } from "@shared/schema";
 
@@ -105,7 +104,7 @@ export default function Home() {
   // Cart management functions
   const addToCart = React.useCallback((foodItem: FoodItem) => {
     const existingItem = cartItems.find(item => item.foodItemId === foodItem.id);
-    
+
     if (existingItem) {
       setCartItems(prev => prev.map(item => 
         item.foodItemId === foodItem.id 
@@ -206,7 +205,7 @@ export default function Home() {
               </p>
             </div>
           )}
-          
+
           {filteredFoodItems.length > 0 ? (
             <ResponsiveGrid cols={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5 }}>
               {filteredFoodItems.map((item) => (
@@ -233,48 +232,45 @@ export default function Home() {
           )}
         </div>
 
-        {/* Footer */}
-        <Footer />
+        {/* Add to Cart Toast */}
+        {showAddToCartToast && (
+          <div className="fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 scale-in">
+            เพิ่ม "{addedItemName}" ลงตะกร้าแล้ว
+          </div>
+        )}
+
+        {/* Bottom Navigation */}
+        <BottomNavigation />
+
+        {/* Lazy loaded modals */}
+        <Suspense fallback={null}>
+          {isCartOpen && (
+            <CartModal
+              isOpen={isCartOpen}
+              onClose={() => setIsCartOpen(false)}
+              items={cartItems}
+              onRemoveItem={(foodItemId) => {
+                const item = cartItems.find(item => item.foodItemId === foodItemId);
+                if (item) removeFromCart(item.id);
+              }}
+              onUpdateQuantity={(foodItemId, quantity) => {
+                const item = cartItems.find(item => item.foodItemId === foodItemId);
+                if (item) updateCartItemQuantity(item.id, quantity);
+              }}
+              total={cartTotal}
+            />
+          )}
+
+          {isBannerEditorOpen && (
+            <BannerEditor
+              isOpen={isBannerEditorOpen}
+              onClose={() => setIsBannerEditorOpen(false)}
+              banners={banners}
+              restaurantId={restaurant?.id || ''}
+            />
+          )}
+        </Suspense>
       </PageContainer>
-
-      {/* Add to Cart Toast */}
-      {showAddToCartToast && (
-        <div className="fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 scale-in">
-          เพิ่ม "{addedItemName}" ลงตะกร้าแล้ว
-        </div>
-      )}
-
-      {/* Bottom Navigation */}
-      <BottomNavigation />
-
-      {/* Lazy loaded modals */}
-      <Suspense fallback={null}>
-        {isCartOpen && (
-          <CartModal
-            isOpen={isCartOpen}
-            onClose={() => setIsCartOpen(false)}
-            items={cartItems}
-            onRemoveItem={(foodItemId) => {
-              const item = cartItems.find(item => item.foodItemId === foodItemId);
-              if (item) removeFromCart(item.id);
-            }}
-            onUpdateQuantity={(foodItemId, quantity) => {
-              const item = cartItems.find(item => item.foodItemId === foodItemId);
-              if (item) updateCartItemQuantity(item.id, quantity);
-            }}
-            total={cartTotal}
-          />
-        )}
-
-        {isBannerEditorOpen && (
-          <BannerEditor
-            isOpen={isBannerEditorOpen}
-            onClose={() => setIsBannerEditorOpen(false)}
-            banners={banners}
-            restaurantId={restaurant?.id || ''}
-          />
-        )}
-      </Suspense>
     </div>
   );
 }
