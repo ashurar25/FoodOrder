@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Router, Route, Switch } from 'wouter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -20,67 +20,26 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 
-function Router() {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <HomePage />,
-    },
-    {
-      path: '/login',
-      element: <LoginPage />,
-    },
-    {
-      path: '/register',
-      element: <RegisterPage />,
-    },
-    {
-      path: '/profile',
-      element: <ProfilePage />,
-    },
-    {
-      path: '/admin',
-      element: <AdminPanel />,
-    },
-    {
-      path: '/admin/banners',
-      element: <AdminBanners />,
-    },
-    {
-      path: '/admin/food',
-      element: <AdminFood />,
-    },
-    {
-      path: '/admin/orders',
-      element: <AdminOrders />,
-    },
-    {
-      path: '/admin/users',
-      element: <AdminUsers />,
-    },
-    {
-      path: '/admin/reports',
-      element: <AdminReports />,
-    },
-    {
-      path: '/admin/database',
-      element: <AdminDatabase />,
-    },
-    {
-      path: '/admin/restaurant',
-      element: <AdminRestaurant />,
-    },
-    {
-      path: '/orders',
-      element: <OrdersPage />,
-    },
-    {
-      path: '*',
-      element: <NotFoundPage />,
-    },
-  ]);
+function AppRouter() {
   return (
-    <RouterProvider router={router} />
+    <Router>
+      <Switch>
+        <Route path="/" component={HomePage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/profile" component={ProfilePage} />
+        <Route path="/admin" component={AdminPanel} />
+        <Route path="/admin/banners" component={AdminBanners} />
+        <Route path="/admin/food" component={AdminFood} />
+        <Route path="/admin/orders" component={AdminOrders} />
+        <Route path="/admin/users" component={AdminUsers} />
+        <Route path="/admin/reports" component={AdminReports} />
+        <Route path="/admin/database" component={AdminDatabase} />
+        <Route path="/admin/restaurant" component={AdminRestaurant} />
+        <Route path="/orders" component={OrdersPage} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </Router>
   );
 }
 
@@ -90,7 +49,7 @@ function App() {
       <QueryClientProvider client={new QueryClient()}>
         <AuthProvider>
           <TooltipProvider>
-            <Router />
+            <AppRouter />
             <Toaster />
           </TooltipProvider>
         </AuthProvider>

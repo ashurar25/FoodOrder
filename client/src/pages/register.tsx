@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -21,206 +22,158 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useState, useEffect } from 'react';
-import { Trash } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
-// Define the schema for the form
-const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(8, {
-    message: 'Password must be at least 8 characters long',
-  }),
+// Define the schema for registration form
+const registerSchema = z.object({
+  name: z.string().min(2, { message: 'ชื่อต้องมีอย่างน้อย 2 ตัวอักษร' }),
+  email: z.string().email({ message: 'รูปแบบอีเมลไม่ถูกต้อง' }),
+  password: z.string().min(6, { message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' }),
 });
 
-// Function to simulate registration
-const registerUser = async (userData) => {
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('Registering user:', userData);
-  // Simulate success or failure
-  if (userData.email === 'error@example.com') {
-    throw new Error('Registration failed');
-  }
-  return { success: true, userId: Math.random().toString(36).substring(7) };
-};
+type RegisterFormData = z.infer<typeof registerSchema>;
 
-// Function to simulate fetching orders
-const fetchOrders = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log('Fetching orders...');
-  return [
-    { id: 1, item: 'Product A', quantity: 2, price: 10 },
-    { id: 2, item: 'Product B', quantity: 1, price: 25 },
-  ];
-};
+// Function to call registration API
+const registerUser = async (userData: RegisterFormData) => {
+  const response = await fetch('/api/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userData),
+  });
 
-// Function to simulate resetting orders
-const resetOrders = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log('Resetting orders...');
-  // Simulate an error condition
-  if (Math.random() > 0.5) {
-    throw new Error('Failed to reset orders');
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
   }
-  return { success: true };
+
+  return response.json();
 };
 
 function MemberRegistration() {
-  const [orders, setOrders] = useState([]);
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
-  const [isResettingOrders, setIsResettingOrders] = useState(false);
-  const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: RegisterFormData) => {
     try {
-      await registerUser(values);
-      alert('Registration successful!');
+      const result = await registerUser(values);
+      toast({
+        title: "สำเร็จ",
+        description: result.message || "สมัครสมาชิกสำเร็จแล้ว",
+      });
       form.reset();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  useEffect(() => {
-    const loadOrders = async () => {
-      setIsLoadingOrders(true);
-      setError(null);
-      try {
-        const fetchedOrders = await fetchOrders();
-        setOrders(fetchedOrders);
-      } catch (err) {
-        setError('Failed to load orders.');
-        console.error('Error fetching orders:', err);
-      } finally {
-        setIsLoadingOrders(false);
-      }
-    };
-
-    loadOrders();
-  }, []);
-
-  const handleResetOrders = async () => {
-    setIsResettingOrders(true);
-    setError(null);
-    try {
-      await resetOrders();
-      alert('Orders reset successfully!');
-      setOrders([]); // Clear orders on successful reset
-    } catch (err) {
-      setError('Failed to reset orders.');
-      console.error('Error resetting orders:', err);
-    } finally {
-      setIsResettingOrders(false);
+      setIsOpen(false);
+    } catch (error) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการสมัครสมาชิก",
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <div className="p-4">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>สมัครสมาชิก</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>สมัครสมาชิก</DialogTitle>
-            <DialogDescription>
-              กรอกข้อมูลเพื่อสมัครสมาชิกใหม่
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="example@email.com" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This is your public display email.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Ensure your password is secure.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex justify-end gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    ยกเลิก
-                  </Button>
-                </DialogClose>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'กำลังสมัคร...' : 'สมัครสมาชิก'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Your Orders</h2>
-        {isLoadingOrders ? (
-          <p>Loading orders...</p>
-        ) : error && orders.length === 0 ? (
-          <p className="text-red-500">{error}</p>
-        ) : orders.length === 0 ? (
-          <p>No orders found.</p>
-        ) : (
-          <>
-            <ul className="space-y-2">
-              {orders.map((order) => (
-                <li key={order.id} className="border p-2 rounded flex justify-between items-center">
-                  <span>{order.item} - Quantity: {order.quantity} - Price: ${order.price}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 flex justify-end">
-              <Button
-                variant="destructive"
-                onClick={handleResetOrders}
-                disabled={isResettingOrders}
-              >
-                {isResettingOrders ? 'Resetting...' : 'Reset Orders'}
-                <Trash className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </>
-        )}
-        {error && !isLoadingOrders && orders.length > 0 && (
-          <p className="text-red-500 mt-4">Error: {error}</p>
-        )}
-      </div>
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>ระบบสมัครสมาชิก</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button>สมัครสมาชิก</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>สมัครสมาชิกใหม่</DialogTitle>
+                <DialogDescription>
+                  กรอกข้อมูลเพื่อสมัครสมาชิกใหม่
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>ชื่อ</FormLabel>
+                        <FormControl>
+                          <Input placeholder="กรอกชื่อของคุณ" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>อีเมล</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="example@email.com" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          อีเมลสำหรับเข้าสู่ระบบ
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>รหัสผ่าน</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="กรอกรหัสผ่าน"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex justify-end gap-2 pt-4">
+                    <DialogClose asChild>
+                      <Button type="button" variant="outline">
+                        ยกเลิก
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? 'กำลังสมัคร...' : 'สมัครสมาชิก'}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          
+          <div className="mt-6 text-sm text-muted-foreground">
+            <p>✅ ระบบสมัครสมาชิกพร้อมใช้งาน</p>
+            <p>✅ รองรับการตรวจสอบข้อมูล</p>
+            <p>✅ เชื่อมต่อกับ API ของเซิร์ฟเวอร์</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

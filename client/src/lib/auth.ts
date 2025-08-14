@@ -61,3 +61,26 @@ export function onAuthStateChange(callback: (user: User | null) => void) {
   }
   return onAuthStateChanged(auth, callback);
 }
+
+// Register function (placeholder - this should use your backend registration API)
+export async function register(email: string, password: string) {
+  try {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, name: email.split('@')[0] }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Registration failed');
+    }
+
+    const result = await response.json();
+    return result.user;
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  }
+}

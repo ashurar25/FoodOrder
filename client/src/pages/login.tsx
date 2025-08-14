@@ -11,18 +11,29 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { register } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { useLocation } from 'wouter';
 
 interface RegisterDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+function LoginPage() {
+  return (
+    <div className="container mx-auto p-4">
+      <h1>เข้าสู่ระบบ</h1>
+      <p>หน้าเข้าสู่ระบบ - ยังไม่ได้พัฒนาเต็มรูปแบบ</p>
+    </div>
+  );
+}
+
+export default LoginPage;
+
 export function RegisterDialog({ isOpen, onClose }: RegisterDialogProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
+  const [, navigate] = useLocation();
 
   const handleRegister = async () => {
     setError('');
@@ -30,7 +41,7 @@ export function RegisterDialog({ isOpen, onClose }: RegisterDialogProps) {
       const user = await register(email, password);
       if (user) {
         onClose();
-        router.push('/dashboard');
+        navigate('/');
       } else {
         setError('Registration failed. Please try again.');
       }

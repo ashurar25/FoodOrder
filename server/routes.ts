@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
 import { createServer } from "http";
-import * as storage from "./storage"; // สมมติว่ามีไฟล์ storage.ts ที่จัดการฐานข้อมูล
+import storage from "./storage";
 
 // Export the registerRoutes function
 export function registerRoutes(app: Express) {

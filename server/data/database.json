@@ -178,7 +178,16 @@
   "banners": [],
   "orders": [],
   "orderItems": [],
-  "users": [],
+  "users": [
+    {
+      "id": "1755191659949",
+      "email": "test@example.com",
+      "password": "123456",
+      "name": "ทดสอบ",
+      "role": "customer",
+      "createdAt": "2025-08-14T17:14:19.949Z"
+    }
+  ],
   "themeSettings": {
     "themeId": "mint",
     "updatedAt": "2025-08-14T16:15:18.639Z"
