@@ -30,7 +30,7 @@ export default function CategoryButtons({ categories, selectedCategory, onCatego
             <div className="relative z-10">
               <div className={`text-3xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 filter ${
                 selectedCategory === category.id 
-                  ? "scale-110 drop-shadow-lg animate-bounce" 
+                  ? "scale-110 drop-shadow-lg animate-pulse" 
                   : "group-hover:scale-125 group-hover:drop-shadow-lg"
               }`}>
                 {category.icon || '🍽️'}
@@ -46,7 +46,7 @@ export default function CategoryButtons({ categories, selectedCategory, onCatego
 
             {/* Selected Indicator */}
             {selectedCategory === category.id && (
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white animate-ping"></div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white animate-pulse"></div>
             )}
 
             {/* Glow Effect */}

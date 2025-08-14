@@ -175,15 +175,15 @@ body::before {
 
 /* ลดการกระพริบของไอคอน */
 .animate-pulse {
-  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-bounce {
-  animation: bounce 2s infinite;
+  animation: bounce 3s ease-in-out infinite;
 }
 
 .animate-spin {
-  animation: spin 2s linear infinite;
+  animation: spin 3s linear infinite;
 }
 
 .gradient-text {
@@ -358,9 +358,16 @@ body::before {
 
 /* Reduce animations on mobile for better performance */
 @media (max-width: 768px) {
-  * {
-    animation-duration: 0.1s !important;
-    transition-duration: 0.1s !important;
+  .animate-bounce {
+    animation: bounce 4s ease-in-out infinite;
+  }
+  
+  .animate-pulse {
+    animation: pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-spin {
+    animation: spin 4s linear infinite;
   }
 
   .float-gentle,
