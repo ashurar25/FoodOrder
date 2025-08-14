@@ -33,7 +33,7 @@ export default function CategoryButtons({ categories, selectedCategory, onCatego
                   ? "scale-110 drop-shadow-lg animate-bounce" 
                   : "group-hover:scale-125 group-hover:drop-shadow-lg"
               }`}>
-                {category.icon}
+                {category.icon || '🍽️'}
               </div>
               <span className={`text-xs md:text-sm font-bold transition-all duration-300 ${
                 selectedCategory === category.id 

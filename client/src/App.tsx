@@ -1,5 +1,6 @@
 import { Router, Route, Switch } from 'wouter';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -23,17 +24,7 @@ const AdminRestaurant = lazy(() => import('@/pages/admin-restaurant'));
 const OrdersPage = lazy(() => import('@/pages/orders'));
 const NotFoundPage = lazy(() => import('@/pages/not-found'));
 
-// Optimized QueryClient with better defaults
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+// QueryClient is imported from queryClient.ts with default queryFn configured
 
 function AppRouter() {
   return (

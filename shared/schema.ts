@@ -23,12 +23,14 @@ export interface Restaurant {
   address: string;
   phone: string;
   cuisine: string;
+  description?: string;
 }
 
 export interface Category {
   id: string;
   name: string;
   restaurantId: string;
+  icon?: string;
 }
 
 export interface FoodItem {
@@ -39,6 +41,7 @@ export interface FoodItem {
   categoryId: string;
   restaurantId: string;
   imageUrl?: string;
+  isAvailable: boolean;
 }
 
 export interface OrderItem {
@@ -63,6 +66,9 @@ export interface Banner {
   altText?: string;
   link?: string;
   restaurantId: string;
+  title?: string;
+  description?: string;
+  linkUrl?: string;
 }
 
 export interface ThemeSettings {

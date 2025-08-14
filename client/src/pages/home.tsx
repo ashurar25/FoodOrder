@@ -116,7 +116,7 @@ export default function Home() {
       const newItem: CartItem = {
         id: `${foodItem.id}-${Date.now()}`,
         name: foodItem.name,
-        price: parseFloat(foodItem.price),
+        price: foodItem.price,
         quantity: 1,
         foodItemId: foodItem.id
       };
@@ -166,18 +166,16 @@ export default function Home() {
       {/* Header */}
       <RestaurantHeader
         restaurant={restaurant}
-        cartItemsCount={totalCartItems}
+        cartItemCount={totalCartItems}
         onCartClick={() => setIsCartOpen(true)}
-        onBannerEditorClick={() => setIsBannerEditorOpen(true)}
       />
 
       <PageContainer className="space-y-6">
         {/* Search Bar */}
         <div className="sticky top-16 z-40 bg-gray-50 pt-4 pb-2">
           <SearchBar 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            placeholder="ค้นหาเมนูอาหาร..."
+            value={searchQuery}
+            onChange={setSearchQuery}
           />
         </div>
 
@@ -193,7 +191,7 @@ export default function Home() {
           <CategoryButtons
             categories={categories}
             selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
+            onCategoryChange={setSelectedCategory}
           />
         </div>
 
@@ -255,10 +253,15 @@ export default function Home() {
           <CartModal
             isOpen={isCartOpen}
             onClose={() => setIsCartOpen(false)}
-            cartItems={cartItems}
-            onRemoveItem={removeFromCart}
-            onUpdateQuantity={updateCartItemQuantity}
-            onClearCart={clearCart}
+            items={cartItems}
+            onRemoveItem={(foodItemId) => {
+              const item = cartItems.find(item => item.foodItemId === foodItemId);
+              if (item) removeFromCart(item.id);
+            }}
+            onUpdateQuantity={(foodItemId, quantity) => {
+              const item = cartItems.find(item => item.foodItemId === foodItemId);
+              if (item) updateCartItemQuantity(item.id, quantity);
+            }}
             total={cartTotal}
           />
         )}
@@ -267,6 +270,8 @@ export default function Home() {
           <BannerEditor
             isOpen={isBannerEditorOpen}
             onClose={() => setIsBannerEditorOpen(false)}
+            banners={banners}
+            restaurantId={restaurant?.id || ''}
           />
         )}
       </Suspense>
