@@ -167,7 +167,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gray-50">
         <LoadingSkeleton type="banner" />
-        <PageContainer className="space-y-6">
+        <PageContainer className="space-y-6 pb-24">
           <LoadingSkeleton type="list" count={3} />
           <LoadingSkeleton type="card" count={8} />
         </PageContainer>
@@ -184,7 +184,7 @@ export default function Home() {
         onCartClick={() => setIsCartOpen(true)}
       />
 
-      <PageContainer className="space-y-6">
+      <PageContainer className="space-y-6 pb-24">
         {/* Authentication Status */}
         {!isAuthenticated && (
           <div className="sticky top-16 z-40 bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
