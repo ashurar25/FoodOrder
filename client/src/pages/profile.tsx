@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { User, Mail, Settings, LogOut, Edit, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -93,7 +92,17 @@ function ProfilePage() {
         subtitle="จัดการข้อมูลส่วนตัว"
         showBackButton={true}
         backTo="/"
-      />
+      >
+        {/* Admin Button */}
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-orange-700 hover:bg-orange-100 p-2 rounded-lg"
+          onClick={() => navigate('/admin')}
+        >
+          <Settings className="h-5 w-5" />
+        </Button>
+      </MobileFriendlyHeader>
 
       <div className="container-responsive py-6">
         <div className="max-w-2xl mx-auto space-y-6">
@@ -223,14 +232,6 @@ function ProfilePage() {
                 >
                   <Settings className="h-4 w-4 mr-2" />
                   ดูประวัติการสั่งซื้อ
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/admin')}
-                  className="w-full justify-start"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  แผงควบคุมแอดมิน
                 </Button>
               </CardContent>
             </Card>

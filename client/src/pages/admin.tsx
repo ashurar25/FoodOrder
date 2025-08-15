@@ -2,6 +2,8 @@ import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MobileFriendlyHeader } from '@/components/layout/mobile-friendly-header';
+import { useAuth } from '@/hooks/useAuth';
+import { LoadingSkeleton } from '@/components/loading-skeleton';
 import { 
   BarChart3, 
   Image, 
@@ -9,7 +11,9 @@ import {
   Users, 
   Settings, 
   Database,
-  ChevronRight
+  ChevronRight,
+  Lock,
+  LogIn
 } from 'lucide-react';
 
 const adminMenuItems = [
@@ -66,6 +70,54 @@ const adminMenuItems = [
 
 function AdminPanel() {
   const [, navigate] = useLocation();
+  const { user, loading } = useAuth();
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <LoadingSkeleton type="banner" />
+        <div className="container-responsive space-y-6 py-6">
+          <LoadingSkeleton type="card" count={6} />
+        </div>
+      </div>
+    );
+  }
+
+  // Not authenticated - show admin login
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md border-0 shadow-2xl bg-white/10 backdrop-blur-md text-white">
+          <CardHeader className="text-center space-y-4">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Lock className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold">เข้าสู่ระบบแอดมิน</CardTitle>
+            <CardDescription className="text-gray-300">
+              กรุณาเข้าสู่ระบบเพื่อเข้าถึงแผงควบคุมผู้ดูแลระบบ
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              onClick={() => navigate('/login')}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl font-medium"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              เข้าสู่ระบบ
+            </Button>
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              className="w-full border-white/30 text-white hover:bg-white/10"
+            >
+              กลับหน้าหลัก
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

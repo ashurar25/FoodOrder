@@ -49,6 +49,13 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
         <div className="absolute top-8 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-6 left-1/2 w-3 h-3 bg-white/20 rounded-full animate-pulse" style={{animationDelay: '2s'}}></div>
       </div>
+
+      {/* Admin Button - Small floating button */}
+      <Link href="/admin">
+        <button className="absolute top-2 right-2 z-20 w-8 h-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 group">
+          <Settings className="w-4 h-4 text-white group-hover:rotate-45 transition-transform duration-200" />
+        </button>
+      </Link>
       
       {/* Mobile Layout */}
       <div className="relative z-10 p-1.5 md:hidden">
@@ -69,17 +76,6 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
           </div>
           
           <div className="flex items-center space-x-2">
-            {/* Admin Login Button - Mobile */}
-            <Link href="/login">
-              <Button
-                size="sm" 
-                variant="outline"
-                className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-xs"
-                data-testid="button-admin-login"
-              >
-                Admin
-              </Button>
-            </Link>
             {/* Cart Button - Mobile */}
             <div className="relative">
               <button 
@@ -123,17 +119,6 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Admin Login Button - Desktop */}
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="bg-white/10 border-white/30 text-white hover:bg-white/20"
-                  data-testid="button-admin-login-desktop"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Admin Login
-                </Button>
-              </Link>
               <div className="relative">
                 <button 
                   className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
