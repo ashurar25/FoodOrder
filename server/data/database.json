@@ -186,6 +186,14 @@
       "name": "ทดสอบ",
       "role": "customer",
       "createdAt": "2025-08-14T17:14:19.949Z"
+    },
+    {
+      "id": "1755242066035",
+      "email": "kenginol@admin.com",
+      "password": "Shamanking_12",
+      "name": "kenginol",
+      "role": "admin",
+      "createdAt": "2025-08-15T07:14:26.035Z"
     }
   ],
   "themeSettings": {

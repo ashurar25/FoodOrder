@@ -358,6 +358,22 @@ export class DataAccessLayer {
     return db.users || [];
   }
 
+  // Create default admin user if not exists
+  async createDefaultAdmin() {
+    const adminEmail = 'kenginol@admin.com';
+    const existingAdmin = await this.getUserByEmail(adminEmail);
+    
+    if (!existingAdmin) {
+      await this.createUser({
+        email: adminEmail,
+        password: 'Shamanking_12',
+        name: 'kenginol',
+        role: 'admin'
+      });
+      console.log('Default admin user created - ID: kenginol, Password: Shamanking_12');
+    }
+  }
+
   async updateUserRole(id: string, role: string): Promise<User | null> {
     return this.updateUser(id, { role: role as 'customer' | 'admin' });
   }

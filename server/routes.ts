@@ -209,6 +209,7 @@ app.delete("/api/orders", async (req: Request, res: Response) => {
 app.post("/api/init", async (req: Request, res: Response) => {
   try {
     await storage.initializeDefaultData();
+    await storage.createDefaultAdmin();
     res.json({ message: "Data initialized successfully" });
   } catch (error) {
     console.error("Init error:", error);

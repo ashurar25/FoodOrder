@@ -1,9 +1,11 @@
 
 import { ShoppingCart, Settings } from "lucide-react";
-import logoPath from "@assets/HLogo_1753815594471.png";
+// import logoPath from "@assets/HLogo_1753815594471.png";
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 import type { Restaurant } from "@shared/schema";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RestaurantHeaderProps {
   restaurant?: Restaurant;
@@ -52,12 +54,8 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
       <div className="relative z-10 p-1.5 md:hidden">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full border-2 border-white/50 shadow-2xl overflow-hidden ring-2 ring-white/20 bg-white hover:bg-white/90 transition-all duration-500 hover:scale-125 hover:rotate-12 cursor-pointer group">
-              <img 
-                src={logoPath} 
-                alt="Restaurant Logo" 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
+            <div className="w-10 h-10 rounded-full border-2 border-white/50 shadow-2xl overflow-hidden ring-2 ring-white/20 bg-white hover:bg-white/90 transition-all duration-500 hover:scale-125 hover:rotate-12 cursor-pointer group flex items-center justify-center">
+              <span className="text-purple-600 font-bold text-lg">🍜</span>
               <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             <div>
@@ -71,16 +69,18 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
           </div>
           
           <div className="flex items-center space-x-2">
-            {/* Admin Button - Mobile */}
-            {user && (
-              <button 
-                className="bg-white/20 backdrop-blur-md rounded-full p-2.5 text-white hover:bg-white/30 transition-all duration-300 border border-white/30 group"
-                onClick={() => window.location.href = '/admin'}
-                title="จัดการระบบ"
+            {/* Admin Login Button - Mobile */}
+            <Link href="/login">
+              <Button
+                size="sm" 
+                variant="outline"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-xs"
+                data-testid="button-admin-login"
               >
-                <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-              </button>
-            )}
+                Admin
+              </Button>
+            </Link>
+            {/* Cart Button - Mobile */}
             <div className="relative">
               <button 
                 className="cart-button bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
@@ -109,12 +109,8 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden bg-white hover:bg-white/90 transition-all duration-300 hover:scale-105 cursor-pointer">
-                <img 
-                  src={logoPath} 
-                  alt="Restaurant Logo" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden bg-white hover:bg-white/90 transition-all duration-300 hover:scale-105 cursor-pointer flex items-center justify-center">
+                <span className="text-purple-600 font-bold text-2xl">🍜</span>
               </div>
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
@@ -127,16 +123,17 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Admin Button - Desktop */}
-              {user && (
-                <button 
-                  className="bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center space-x-2 group"
-                  onClick={() => window.location.href = '/admin'}
+              {/* Admin Login Button - Desktop */}
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                  data-testid="button-admin-login-desktop"
                 >
-                  <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                  <span>จัดการระบบ</span>
-                </button>
-              )}
+                  <Settings className="w-4 h-4 mr-2" />
+                  Admin Login
+                </Button>
+              </Link>
               <div className="relative">
                 <button 
                   className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
