@@ -62,7 +62,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 rounded-full border-2 border-white/50 shadow-2xl overflow-hidden ring-2 ring-white/20 bg-white hover:bg-white/90 transition-all duration-500 hover:scale-125 hover:rotate-12 cursor-pointer group flex items-center justify-center">
-              <span className="text-purple-600 font-bold text-lg">🍜</span>
+              <img src="/logo.svg" alt="ซ้อมคอ" className="w-8 h-8 object-contain" />
               <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             <div>
@@ -106,7 +106,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
 
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden bg-white hover:bg-white/90 transition-all duration-300 hover:scale-105 cursor-pointer flex items-center justify-center">
-                <span className="text-purple-600 font-bold text-2xl">🍜</span>
+                <img src="/logo.svg" alt="ซ้อมคอ" className="w-12 h-12 object-contain" />
               </div>
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">

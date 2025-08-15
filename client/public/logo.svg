@@ -1,0 +1,33 @@
+
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="#000000" stroke="#ff69b4" stroke-width="4"/>
+  
+  <!-- Korean text -->
+  <text x="60" y="25" text-anchor="middle" fill="#4169e1" font-family="Arial, sans-serif" font-size="14" font-weight="bold">썸커</text>
+  
+  <!-- Inner circle -->
+  <circle cx="60" cy="60" r="35" fill="transparent" stroke="#ff69b4" stroke-width="3"/>
+  
+  <!-- Beer mug -->
+  <g transform="translate(60, 60)">
+    <!-- Mug body -->
+    <rect x="-12" y="-8" width="20" height="16" rx="2" fill="#ffd700"/>
+    <!-- Foam -->
+    <ellipse cx="-2" cy="-8" rx="10" ry="4" fill="#ffffff"/>
+    <!-- Foam bubbles -->
+    <circle cx="-8" cy="-6" r="1.5" fill="#ffffff"/>
+    <circle cx="2" cy="-6" r="1" fill="#ffffff"/>
+    <circle cx="-3" cy="-5" r="0.8" fill="#ffffff"/>
+    <!-- Handle -->
+    <path d="M8,-4 Q14,-4 14,0 Q14,4 8,4" fill="transparent" stroke="#ffd700" stroke-width="2"/>
+    <!-- Beer lines -->
+    <line x1="-8" y1="-2" x2="-8" y2="6" stroke="#ffcc00" stroke-width="1"/>
+    <line x1="-4" y1="-2" x2="-4" y2="6" stroke="#ffcc00" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="6" stroke="#ffcc00" stroke-width="1"/>
+    <line x1="4" y1="-2" x2="4" y2="6" stroke="#ffcc00" stroke-width="1"/>
+  </g>
+  
+  <!-- Thai text -->
+  <text x="60" y="100" text-anchor="middle" fill="#40e0d0" font-family="Arial, sans-serif" font-size="12" font-weight="bold">ซ้อมคอ</text>
+</svg>
