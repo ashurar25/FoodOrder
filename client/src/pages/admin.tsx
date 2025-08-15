@@ -100,11 +100,11 @@ function AdminPanel() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/admin/login')}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl font-medium"
             >
               <LogIn className="w-4 h-4 mr-2" />
-              เข้าสู่ระบบ
+              เข้าสู่ระบบแอดมิน
             </Button>
             <Button
               onClick={() => navigate('/')}

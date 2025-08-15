@@ -58,6 +58,7 @@ function AppRouter() {
           <Route path="/orders">
             {() => <ProtectedRoute component={OrdersPage} />}
           </Route>
+          <Route path="/admin/login" component={() => import('./pages/admin-login')} />
           <Route path="/admin">
             {() => <ProtectedRoute component={AdminPanel} adminOnly={true} />}
           </Route>

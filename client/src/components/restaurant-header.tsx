@@ -75,7 +75,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
             {/* Cart Button - Mobile */}
             <div className="relative">
               <button 
@@ -118,7 +118,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <div className="relative">
                 <button 
                   className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
