@@ -27,7 +27,7 @@ export default function BottomNavigation() {
           </Link>
         )}
       </nav>
-      <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4 z-40">
+      <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-sm w-full mx-4 z-50">
         <div className="bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl px-6 py-3 shadow-2xl">
           <div className="flex justify-around items-center">
             {navItems.map((item) => {
