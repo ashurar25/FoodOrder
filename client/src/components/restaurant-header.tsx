@@ -9,11 +9,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface RestaurantHeaderProps {
   restaurant?: Restaurant;
-  cartItemCount: number;
-  onCartClick: () => void;
 }
 
-export default function RestaurantHeader({ restaurant, cartItemCount, onCartClick }: RestaurantHeaderProps) {
+export default function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
   const [currentTime, setCurrentTime] = useState("");
   const { user } = useAuth();
 
@@ -75,24 +73,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            {/* Cart Button - Mobile */}
-            <div className="relative">
-              <button 
-                className="cart-button bg-white/20 backdrop-blur-md rounded-full p-3 hover:bg-white/30 transition-all duration-500 shadow-2xl touch-target group hover:scale-110 hover:rotate-12 relative overflow-hidden"
-                onClick={onCartClick}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
-                <ShoppingCart className="text-white w-6 h-6 relative z-10 group-hover:animate-bounce" />
-              </button>
-              {cartItemCount > 0 && (
-                <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-2xl animate-bounce border-2 border-white">
-                  {cartItemCount}
-                  <div className="absolute inset-0 rounded-full animate-ping bg-yellow-400/50"></div>
-                </div>
-              )}
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -118,21 +99,7 @@ export default function RestaurantHeader({ restaurant, cartItemCount, onCartClic
               </div>
             </div>
 
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                <button 
-                  className="cart-button bg-white/10 backdrop-blur-sm rounded-full p-3 hover:bg-white/20 transition-all duration-300 shadow-lg"
-                  onClick={onCartClick}
-                >
-                  <ShoppingCart className="text-white w-6 h-6" />
-                </button>
-                {cartItemCount > 0 && (
-                  <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold animate-bounce shadow-lg">
-                    {cartItemCount}
-                  </div>
-                )}
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

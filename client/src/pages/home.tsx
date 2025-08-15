@@ -180,8 +180,6 @@ export default function Home() {
       {/* Header */}
       <RestaurantHeader
         restaurant={restaurant}
-        cartItemCount={totalCartItems}
-        onCartClick={() => setIsCartOpen(true)}
       />
 
       <PageContainer className="space-y-6 pb-24">
@@ -305,7 +303,10 @@ export default function Home() {
         )}
 
         {/* Bottom Navigation */}
-        <BottomNavigation />
+        <BottomNavigation 
+          cartItemCount={totalCartItems}
+          onCartClick={() => setIsCartOpen(true)}
+        />
 
         {/* Lazy loaded modals */}
         <Suspense fallback={null}>
