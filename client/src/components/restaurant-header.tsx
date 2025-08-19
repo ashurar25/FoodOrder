@@ -57,49 +57,42 @@ export default function RestaurantHeader({ restaurant }: RestaurantHeaderProps) 
       
       {/* Mobile Layout */}
       <div className="relative z-10 p-1.5 md:hidden">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col items-center justify-center mb-1">
+          <div className="flex items-center space-x-3 mb-2">
             <div className="w-10 h-10 rounded-full border-2 border-white/50 shadow-2xl overflow-hidden ring-2 ring-white/20 bg-white hover:bg-white/90 transition-all duration-500 hover:scale-125 hover:rotate-12 cursor-pointer group flex items-center justify-center">
               <img src="/logo.jpg" alt="ซ้อมคอ" className="w-8 h-8 object-contain" />
               <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            <div>
-              <h1 className="text-sm font-bold text-white drop-shadow-lg">
-                {restaurant?.name || "ซ้อมคอ"}
-              </h1>
-              <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full inline-block">
-                {currentTime}
-              </div>
-            </div>
+            <h1 className="text-lg font-bold text-white drop-shadow-lg text-center">
+              {restaurant?.name || "ซ้อมคอ"}
+            </h1>
           </div>
-          
-
+          <div className="text-xs font-medium text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
+            {currentTime}
+          </div>
         </div>
       </div>
 
       {/* Desktop Layout */}
       <div className="hidden md:block relative z-10">
         <div className="desktop-container py-6">
-          <div className="flex items-center justify-between">
-            <div className="text-base font-medium text-white/90 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              {currentTime}
-            </div>
-
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex items-center space-x-6 mb-4">
               <div className="w-16 h-16 rounded-full border-2 border-white/30 shadow-lg overflow-hidden bg-white hover:bg-white/90 transition-all duration-300 hover:scale-105 cursor-pointer flex items-center justify-center">
                 <img src="/logo.jpg" alt="ซ้อมคอ" className="w-12 h-12 object-contain" />
               </div>
               <div className="text-center">
-                <h1 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
+                <h1 className="text-3xl font-bold text-white drop-shadow-lg mb-1">
                   {restaurant?.name || "ซ้อมคอ"}
                 </h1>
-                <p className="text-base text-white/80 font-medium">
+                <p className="text-lg text-white/80 font-medium">
                   {restaurant?.description || "เกาหลี-ไทย ฟิวชัน"}
                 </p>
               </div>
             </div>
-
-
+            <div className="text-base font-medium text-white/90 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+              {currentTime}
+            </div>
           </div>
         </div>
       </div>
